@@ -15,3 +15,6 @@ Méthodes de path :
 - isDone renvoit true si on a finit le chemin.
 
 **Si on a finit le chemin, getNextPosition renvoit la position actuelle**
+
+
+*bli*
