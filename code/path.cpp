@@ -1,19 +1,22 @@
 
 #include "path.hpp"
 
-Position Path::getNextPosition(Vector speed, double deltaT){
-	if(this.isDone())
-		return this.currentPos;
+Position Path::getNextPosition(Vector speed, double deltaT)
+{
+	if(isDone())
+		return currentPos;
 	
-	Vector diff = this.waypoints[this.current+1] - this.currentPos;
-	Vector direction = diff.normalize();
+	Vector diff = waypoints[current+1] - currentPos;
+	Vector direction = normalize(diff);
 	Vector toAdd = speed*deltaT*direction;
-	if(toAdd.norm()>diff.norm()){
-		this.current++;
-		this.currentPos=this.waypoints[this.current];
+
+	if(norm(toAdd)>norm(diff))
+	{
+		current++;
+		currentPos= waypoints[current];
 	}
-	else{
-		this.currentPos+=toAdd;	
-	}	
-	return this.currentPos;
+	else
+		currentPos += toAdd;	
+
+	return currentPos;
 }

@@ -10,8 +10,13 @@ On créé un path en lui donnant un vecteur de Vector. Ceux -ci doivent supporte
 - méthode : norm -> attention à la 2pi-périodicité
 
 Méthodes de path :
-- Path(vector<Position>& waypoints) initialise le path et affecte les waypoints. ( ok le passage par référence ? ça fait ultra longtemps que j'ai pas fait de cpp)
+- Path(vector<Position>& waypoints) initialise le path et affecte les waypoints.
 - getNextPosition(Vector speed, double deltaT) renvoit la prochaine position. speed contient les vitesses linéaires et angulaires.
 - isDone renvoit true si on a finit le chemin.
 
 **Si on a finit le chemin, getNextPosition renvoit la position actuelle**
+
+Pourquoi tu met des this.blablabla ?
+Soit c'est blablabla, soit c'est this->blablabla.
+Le Vector*Vector, c'est la multiplication composante par composante ?
+

@@ -1,17 +1,15 @@
-typedef Position Vector;
+#include <vector>
+#include "Vector.hpp"
 
 class Path{
 
 public:
+	Path(std::vector<Position>& w) : waypoints(w), current(1), currentPos(w[0]) { };
 	Position getNextPosition(Vector speed, double deltaT);
-	bool isDone(){ return this.current==this.waypoints.size()-1; }
-	Path(vector<Position>& w){
-		this.waypoints=w;
-		this.current=1;
-		this.currentPos=w[0];
-	}
+	bool isDone(){ return current==waypoints.size()-1; }
+
 private:
-	vector<Position> waypoints;
+	std::vector<Position> waypoints;
 	Position currentPos;
 	int current;
 };
