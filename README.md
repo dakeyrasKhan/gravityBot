@@ -16,7 +16,7 @@ Méthodes de path :
 
 **Si on a finit le chemin, getNextPosition renvoit la position actuelle**
 
-Pourquoi tu met des this.blablabla ?
-Soit c'est blablabla, soit c'est this->blablabla.
+
 Le Vector*Vector, c'est la multiplication composante par composante ?
+-> oui
 

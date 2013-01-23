@@ -1,9 +1,14 @@
+#ifndef VECTOR
+#define VECTOR
 #include <array>
+#include <cmath>
 #define N_DIM 10
 #define N_DIM_ANG 3
 #define PI 3.14159265359
 
 typedef std::array<double, N_DIM> Vector;
+typedef std::array<double, 3> Point;
+
 typedef Vector Position;
 
 template<typename T, int L>
@@ -87,3 +92,4 @@ Vector inline normalize(Vector p)
 
 	return p;
 }
+#endif

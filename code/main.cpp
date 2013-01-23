@@ -1,6 +1,7 @@
 #include "Vector.hpp"
+#include "octree.hpp"
 
-void main()
+int main()
 {
-	return;
+	return 0;
 }
