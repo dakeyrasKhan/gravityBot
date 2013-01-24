@@ -1,5 +1,4 @@
-#ifndef VECTOR
-#define VECTOR
+#pragma once
 #include <array>
 #include <cmath>
 #define N_DIM 10
@@ -11,7 +10,7 @@ typedef std::array<double, 3> Point;
 
 typedef Vector Position;
 
-template<typename T, int L>
+template<typename T, std::size_t L>
 inline std::array<T, L> operator+(const std::array<T, L> v0, const std::array<T, L> v1)
 {
 	std::array<T, L> out;
@@ -21,7 +20,7 @@ inline std::array<T, L> operator+(const std::array<T, L> v0, const std::array<T,
 	return out;
 }
 
-template<typename T, int L>
+template<typename T, std::size_t L>
 inline std::array<T, L> operator-(const std::array<T, L> v0, const std::array<T, L> v1)
 {
 	std::array<T, L> out;
@@ -31,7 +30,7 @@ inline std::array<T, L> operator-(const std::array<T, L> v0, const std::array<T,
 	return out;
 }
 
-template<typename T, int L>
+template<typename T, std::size_t L>
 inline std::array<T, L> operator*(const T d, const std::array<T, L> v)
 {
 	std::array<T, L> out;
@@ -41,13 +40,13 @@ inline std::array<T, L> operator*(const T d, const std::array<T, L> v)
 	return out;
 }
 
-template<typename T, int L>
+template<typename T, std::size_t L>
 inline std::array<T, L> operator*(const std::array<T, L> v, const double d)
 {
 	return d*v;
 }
 
-template<typename T, int L>
+template<typename T, std::size_t L>
 inline std::array<T, L> operator*(const std::array<T, L> v0, const std::array<T, L> v1)
 {
 	std::array<T, L> out;
@@ -57,7 +56,7 @@ inline std::array<T, L> operator*(const std::array<T, L> v0, const std::array<T,
 	return out;
 }
 
-template<typename T, int L>
+template<typename T, std::size_t L>
 inline void operator+=(std::array<T, L>& v0, const std::array<T, L> v1)
 {
 	for(int i=0; i<L; i++)
@@ -92,4 +91,3 @@ Vector inline normalize(Vector p)
 
 	return p;
 }
-#endif

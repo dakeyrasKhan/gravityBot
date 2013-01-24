@@ -1,4 +1,3 @@
-
 #include "path.hpp"
 
 Position Path::getNextPosition(Vector speed, double deltaT)
@@ -10,7 +9,7 @@ Position Path::getNextPosition(Vector speed, double deltaT)
 	Vector direction = normalize(diff);
 	Vector toAdd = speed*deltaT*direction;
 
-	if(norm(toAdd)>norm(diff))
+	if(norm(toAdd) > norm(diff))
 	{
 		current++;
 		currentPos= waypoints[current];

@@ -1,5 +1,4 @@
-#ifndef OCTREE
-#define OCTREE
+#pragma once
 #include "Vector.hpp"
 #include <vector>
 using namespace std;
@@ -19,6 +18,3 @@ public:
 	Octree* son[8];
 	double size[3];	
 };
-
-
-#endif
