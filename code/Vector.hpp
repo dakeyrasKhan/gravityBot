@@ -15,9 +15,9 @@ public:
 	Array<L, R>	Normalize() const;
 };
 
-typedef Array<03, 0> Point;
-typedef Array<10, 3> Vector;
-typedef Array<10, 3> Position;
+typedef Array<3, 0> Point;
+typedef Array<8, 3> Vector;
+typedef Array<8, 3> Position;
 
 template<std::size_t L, int R>
 inline Point Array<L, R>::ToPoint() const
