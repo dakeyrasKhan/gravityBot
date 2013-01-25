@@ -1,6 +1,6 @@
 #pragma once
 #include "octree.hpp"
-#include "scene.hpp"
+#include "Scene.h"
 #define NB_WAYPOINTS 1000*1000
 #define NB_NEIGHB 100
 

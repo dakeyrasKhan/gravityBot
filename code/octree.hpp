@@ -38,12 +38,12 @@ public:
 };
 
 
-int findSon(Position, Octree*);
+int findSon(Node, Octree*);
 bool excluded(Point,double, Octree*);
 bool included(Point,double, Octree*);
 Point calculateCenter(int, Octree*);
-void addPos(Position, Octree*);
+void addPos(Node, Octree*);
 int countInCube(Point, double, Octree*);
-void addToVect(Point, double, Octree*, vector<Position>*);
+void addToVect(Point, double, Octree*, vector<Node>*);
 double findSizeCube(double, double, Point, int, Octree*);
-void findNeighbours(Point,double,Octree*,vector<Position>*);
+void findNeighbours(Point,double,Octree*,vector<Node>*);

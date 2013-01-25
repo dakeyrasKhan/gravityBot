@@ -1,5 +1,9 @@
 #include "Scene.h"
 
+bool Scene::collision(Position pos){}
+
+bool Scene::validMove(Position a, Position b){}
+
 
 Scene::Scene()
 {

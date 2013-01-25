@@ -1,20 +1,26 @@
 #include "roadmap.hpp"
 
 Roadmap::Roadmap(Scene* scene){
+	int idCount=0;
 	while(waypoints.size()<NB_WAYPOINTS){
-		Position nouveau=Position::Random(scene->size);
-		if(scene->collision(nouveau))
+		
+		Node node;
+		node.pos=Position::Random(scene->size);
+		node.id=idCount++;
+
+		if(scene->collision(node.pos))
 			continue;
-		addPos(nouveau,&tree);
-		int idNouveau = tree.values.size()-1;
-		vector<Position> neighbours;
-		findNeighbours(nouveau.toPoint(),scene->maxSize(),&tree,&neighbours);
+		
+		addPos(node,&tree);
+		
+		vector<Node> neighbours;
+		findNeighbours(node.pos.ToPoint(),scene->maxSize(),&tree,&neighbours);
 		vector<int> newAdjacent;
 		double fail=0;
 		for(auto neighbour : neighbours){
-			if(scene->validMove(neighbour.pos,nouveau.pos)){
+			if(scene->validMove(neighbour.pos,node.pos)){
 				newAdjacent.push_back(neighbour.id);
-				adjacency[neighbour.id].push_back(idNouveau);
+				adjacency[neighbour.id].push_back(node.id);
 			}
 			else
 				fail++;

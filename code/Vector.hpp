@@ -3,6 +3,8 @@
 #include <cmath>
 
 const double Pi = 3.14159265359;
+const int DIM_CONF = 8;
+const int NB_ROT = 3;
 
 inline double mod(const double d0, const double d1)
 {
@@ -22,14 +24,14 @@ public:
 };
 
 typedef Array<3, 0> Point;
-typedef Array<8, 3> Vector;
-typedef Array<8, 3> Position;
+typedef Array<DIM_CONF, NB_ROT> Vector;
+typedef Array<DIM_CONF, NB_ROT> Position;
 
 template<std::size_t L, int R>
 Array<L,R> Array<L,R>::Random(const std::array<double, L>& a){
 	Array<L,R> toReturn;
 	for(int i=0;i<L;i++)
-		toReturn[i]=rand() mod a[i]0;
+		toReturn[i]=mod(rand(),a[i]);
 	return toReturn;
 }
 
