@@ -9,7 +9,6 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-
 	srand(42);
 	Scene scene;
 	Display display(&argc, argv, &scene);

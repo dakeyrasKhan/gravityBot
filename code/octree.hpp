@@ -4,7 +4,8 @@
 using namespace std;
 
 #define MAX_DEPTH 8
-const double EPS (1./double(1<<MAX_DEPTH));
+
+const double EPS = (1./double(1<<MAX_DEPTH));
 enum{X,Y,Z};
 
 const int sonFinder[2][2][2]={{{0,6},{2,4}},{{1,7},{3,5}}};
@@ -12,9 +13,20 @@ const double centerCalc[8][3]={{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},
 							{-1,1,1},{1,1,1},{-1,-1,1},{1,-1,1}};
 const int MAXCLUSTER = 10;
 
-struct Node{
+class Node{
+public:
+	Node(Position p,int i):pos(p),id(i){}
 	Position pos;
 	int id;
+};
+class NodeComp{
+public:
+	NodeComp(Node n, double d):node(n),dist(d){}
+	Node node;
+	double dist;
+	bool inline operator<(const NodeComp& other) const {
+		return dist>other.dist;
+	};
 };
 
 class Octree {

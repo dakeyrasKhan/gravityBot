@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
+#include <queue>
 #include <algorithm>
 #include <array>
 #include "octree.hpp"
+#include "path.hpp"
 #include "Vector.hpp"
 
 class Scene
