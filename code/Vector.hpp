@@ -8,16 +8,26 @@ template<std::size_t L, int R>
 class Array : public std::array<double, L>
 {
 public:
-				Array(const std::array<double, L>& a) : std::array<double, L>(a) { };
-				Array() { };
-	Array<3, 0>	ToPoint() const;
-	double		Norm() const;
-	Array<L, R>	Normalize() const;
+						Array(const std::array<double, L>& a) : std::array<double, L>(a) { };
+						Array() { };
+	Array<3, 0>			ToPoint() const;
+	double				Norm() const;
+	Array<L, R>			Normalize() const;
+	static Array<L,R>	Random(const std::array<double, L>& a);
 };
 
 typedef Array<3, 0> Point;
 typedef Array<8, 3> Vector;
 typedef Array<8, 3> Position;
+
+template<std::size_t L, int R>
+Array<L,R> Array<L,R>::Random(const std::array<double, L>& a){
+	Array<L,R> toReturn;
+	for(int i=0;i<L;i++)
+		toReturn[i]=rand() mod a[i]0;
+	return toReturn;
+}
+
 
 template<std::size_t L, int R>
 inline Point Array<L, R>::ToPoint() const

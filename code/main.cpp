@@ -2,11 +2,14 @@
 #include "Display.h"
 #include "Vector.hpp"
 #include "octree.hpp"
+#include <random>
+
 using namespace std;
 
 
 int main(int argc, char * argv[])
 {
+	srand(42);
 	Display display(&argc, argv);
 	display.MainLoop();
 

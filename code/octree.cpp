@@ -66,8 +66,10 @@ void addSon(Position pos, Octree* tree){
 }
 
 void addPos(Position pos, Octree* tree){
-	
-	tree->values.push_back(pos);
+	Node node;
+	Node.pos=pos;
+	Node.id=tree->values.size();
+	tree->values.push_back(node);
 	
 	if(tree->values.size()<=MAXCLUSTER || tree->depth==MAX_DEPTH)
 		return;
@@ -121,4 +123,7 @@ double findSizeCube(double begin, double end, Point center, int nbValues, Octree
 		return findSizeCube(mid,end,center,nbValues,tree);
 
 	return findSizeCube(begin,mid,center,nbValues,tree);
+}
+void findNeighbours(Point centerP,double size,Octree* tree,vector<Position>* vect){
+	addToVect(centerP,findSizeCube(0,size,centerP,10,&tree),&tree,&bli);
 }
