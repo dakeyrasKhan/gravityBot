@@ -6,10 +6,10 @@ Position Path::getNextPosition(Vector speed, double deltaT)
 		return currentPos;
 	
 	Vector diff = waypoints[current+1] - currentPos;
-	Vector direction = normalize(diff);
+	Vector direction = diff.Normalize();
 	Vector toAdd = speed*deltaT*direction;
 
-	if(norm(toAdd) > norm(diff))
+	if(toAdd.Norm() > diff.Norm())
 	{
 		current++;
 		currentPos= waypoints[current];

@@ -8,10 +8,11 @@ template<std::size_t L, int R>
 class Array : public std::array<double, L>
 {
 public:
-	Array(const std::array<double, L>& a) : std::array<double, L>(a) { };
-	Array() { };
-
-	Array<3, 0> ToPoint();
+				Array(const std::array<double, L>& a) : std::array<double, L>(a) { };
+				Array() { };
+	Array<3, 0>	ToPoint() const;
+	double		Norm() const;
+	Array<L, R>	Normalize() const;
 };
 
 typedef Array<03, 0> Point;
@@ -19,11 +20,46 @@ typedef Array<10, 3> Vector;
 typedef Array<10, 3> Position;
 
 template<std::size_t L, int R>
-inline Point Array<L, R>::ToPoint()
+inline Point Array<L, R>::ToPoint() const
 {
 	Point p;
 	for(int i=0; i<3; i++)
 		p[i] = (*this)[i];
+	return p;
+}
+
+template<std::size_t L, int R>
+double inline Array<L, R>::Norm() const
+{
+	double d = 0;
+	for(int i=0; i<R; i++)
+	{
+		double x = (*this)[i] - 2*Pi*floor((*this)[i]/(2*Pi));
+		d += x*x;
+	}
+	for(int i=R; i<L; i++)
+		d += (*this)[i]*(*this)[i];
+
+
+	return sqrt(d);
+}
+
+template<std::size_t L, int R>
+Array<L, R> inline Array<L, R>::Normalize() const
+{
+	Array<L, R> p = (*this);
+	for(int i=0; i<R; i++)
+		p[i] = p[i] - 2*Pi*floor(p[i]/(2*Pi));
+
+	double d = 0;
+	for(auto x : p)
+		d += x*x;
+
+	d = sqrt(d);
+
+	for(auto& x : p)
+		x = x/d;
+
 	return p;
 }
 
@@ -80,33 +116,3 @@ inline void operator+=(std::array<T, L>& v0, const std::array<T, L> v1)
 		v0[i] += v1[i];
 }
 
-template<std::size_t L, int R>
-double inline norm(Array<L, R> p)
-{
-	for(int i=0; i<R; i++)
-		p[i] = p[i] - 2*Pi*floor(p[i]/(2*Pi));
-
-	double d = 0;
-	for(auto x : p)
-		d += x*x;
-
-	return sqrt(d);
-}
-
-template<std::size_t L, int R>
-Array<L, R> inline normalize(Array<L, R> p)
-{
-	for(int i=0; i<R; i++)
-		p[i] = p[i] - 2*Pi*floor(p[i]/(2*Pi));
-
-	double d = 0;
-	for(auto x : p)
-		d += x*x;
-
-	d = sqrt(d);
-
-	for(auto& x : p)
-		x = x/d;
-
-	return p;
-}
