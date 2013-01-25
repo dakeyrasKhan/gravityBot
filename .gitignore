@@ -5,3 +5,4 @@
 *.opensdf
 code/Debug/*
 code/Release/*
+code/out
