@@ -2,7 +2,16 @@
 
 bool Scene::collision(Position pos){}
 
-bool Scene::validMove(Position a, Position b){}
+bool Scene::validMove(Position a, Position b){
+	double length=Position((b-a)).Norm();
+	if(length<=EPS)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+	if(collision(mid))
+		return false;
+	return validMove(a,mid) && validMove(mid,b);
+}
 
 
 Scene::Scene()

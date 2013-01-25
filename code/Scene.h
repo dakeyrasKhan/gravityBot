@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <array>
+#include "octree.hpp"
 #include "Vector.hpp"
 
 class Scene
