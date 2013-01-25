@@ -2,7 +2,7 @@
 
 int findSon(Position pos, Octree *tree)
 {
-	Point point; // = pos.toPoint();
+	Point point = pos.ToPoint();
 	Point center = tree->center;
 	int x = point[X] > center[X];
 	int y = point[Y] > center[Y];
