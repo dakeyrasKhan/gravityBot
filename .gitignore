@@ -6,3 +6,5 @@
 code/Debug/*
 code/Release/*
 code/out
+code/gravity
+code/Makefile
