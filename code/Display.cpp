@@ -6,7 +6,7 @@ void Render()
 	display->Render();
 }
 
-Display::Display(int* argc, char* argv[])
+Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene)
 {
 	display = this;
 
@@ -24,7 +24,9 @@ void Display::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glBegin(GL_TRIANGLES);
-		glVertex3f(-0.5,-0.5,0.0); glVertex3f(0.5,0.0,0.0); glVertex3f(0.0,0.5,0.0);
+	for(auto t : scene->triangles)
+		for(int i=0; i<3; i++)
+			glVertex3f(scene->points[t[i]][0], scene->points[t[i]][1], scene->points[t[i]][2]);
 	glEnd();
 
 	glutSwapBuffers();

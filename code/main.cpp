@@ -1,13 +1,14 @@
 #include <iostream>
 #include "Display.h"
-#include "Vector.hpp"
+#include "Scene.h"
 #include "octree.hpp"
 using namespace std;
 
 
 int main(int argc, char * argv[])
 {
-	Display display(&argc, argv);
+	Scene scene;
+	Display display(&argc, argv, &scene);
 	display.MainLoop();
 
 	return 0;
