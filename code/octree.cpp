@@ -9,7 +9,7 @@ Point toPoint(Position v){
 
 int findSon(Position pos, Octree *tree)
 {
-	Point point = toPoint(pos);
+	Point point = pos.ToPoint();
 	Point center = tree->center;
 	int x = point[X] > center[X];
 	int y = point[Y] > center[Y];
