@@ -4,6 +4,11 @@
 
 const double Pi = 3.14159265359;
 
+inline double mod(const double d0, const double d1)
+{
+	return d0 - d1*floor(d0/d1);
+}
+
 template<std::size_t L, int R>
 class Array : public std::array<double, L>
 {
