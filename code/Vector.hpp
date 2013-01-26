@@ -143,3 +143,19 @@ inline void operator+=(std::array<T, L>& v0, const std::array<T, L> v1)
 		v0[i] += v1[i];
 }
 
+template<typename T, std::size_t L>
+inline void operator-=(std::array<T, L>& v0, const std::array<T, L> v1)
+{
+	for(int i=0; i<L; i++)
+		v0[i] -= v1[i];
+}
+
+inline Point operator^(const Point& p0, const Point& p1)
+{
+	Point out;
+	out[0] = p0[1]*p1[2] - p0[2]*p1[1];
+	out[1] = p0[2]*p1[0] - p0[0]*p1[2];
+	out[2] = p0[0]*p1[1] - p0[1]*p1[0];
+
+	return out;
+}

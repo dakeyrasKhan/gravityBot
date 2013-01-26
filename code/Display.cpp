@@ -1,3 +1,5 @@
+#include <thread>
+#include <iostream>
 #include "Display.h"
 
 Display* display;
@@ -6,58 +8,155 @@ void Render()
 	display->Render();
 }
 
-Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene)
+void KeyboardFunc(unsigned char key, int x, int y)
+{
+	display->KeyboardFunc(key, true);
+}
+
+void KeyboardUpFunc(unsigned char key, int x, int y)
+{
+	display->KeyboardFunc(key, false);
+}
+
+
+Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(800), height(800)
 {
 	display = this;
+
+	for(auto& x : keys)
+		x = false;
+
+	position[0] = 20; position[1] = 10; position[2] = 50;
+	direction[0] = -2; direction[1] = -1; direction[2] = -5;
+	direction = direction.Normalize();
+	up[0] = 0; up[1] = 1; up[2] = 0;
 
 	glutInit(argc, argv);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Gravibot");
 
+	glutIgnoreKeyRepeat(GLUT_DEVICE_IGNORE_KEY_REPEAT);
 	glutDisplayFunc(&::Render);
+	glutIdleFunc(&::Render);
+	glutKeyboardFunc(&::KeyboardFunc);
+	glutKeyboardUpFunc(&::KeyboardUpFunc);
+
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	glEnable(GL_LIGHT0);
+	GLfloat lightpos[] = {10, 20, 10, 0};
+	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
+
+	lastRender = clock::now();
+	renderInterval = std::chrono::milliseconds(30);
 }
 
 
 void Display::Render() 
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f) ;
+	std::this_thread::sleep_until(lastRender + renderInterval);
+	clock::duration diff = clock::now() - lastRender;
+	double timediff = std::chrono::duration_cast<std::chrono::duration<double>>(diff).count();
+	lastRender = clock::now();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	SetView(timediff);
+
+	DrawAxis();
+
+	glEnable(GL_LIGHTING);
+	DrawTriangles();
+	glDisable(GL_LIGHTING);
+
+	glutSwapBuffers();
+}
+
+void Display::DrawAxis()
+{
+	glColor3d(1, 0, 0);
+	glBegin(GL_LINES);
+	  glVertex3d(0, 0, 0);
+	  glVertex3d(1000, 0, 0);
+	glEnd();
+
+	glColor3d(0, 1, 0);
+	glBegin(GL_LINES);
+	  glVertex3d(0, 0, 0);
+	  glVertex3d(0, 1000, 0);
+	glEnd();
+
+	glColor3d(0, 0, 1);
+	glBegin(GL_LINES);
+	  glVertex3d(0, 0, 0);
+	  glVertex3d(0, 0, 1000);
+	glEnd();
+}
+
+void Display::DrawTriangles()
+{
+	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+	glBegin(GL_TRIANGLES);
+	for(auto t : scene->triangles)
+	{
+		Point p[3] = { scene->points[t[0]], scene->points[t[1]], scene->points[t[2]] };
+		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
+		glNormal3d(n[0], n[1], n[2]);
+		for(int i=0; i<3; i++)
+			glVertex3f(p[i][0], p[i][1], p[i][2]);
+	}
+	glEnd();
+}
+
+void Display::SetView(double timediff)
+{
+	timediff *= SPEED;
+
+	width = glutGet(GLUT_WINDOW_WIDTH);
+	height = glutGet(GLUT_WINDOW_HEIGHT);
+
+	if(keys[Z])
+		position += direction*timediff;
+	if(keys[S])
+		position -= direction*timediff;
+	if(keys[Q])
+		position += (up^direction)*(timediff/5.0);
+	if(keys[D])
+		position -= (up^direction)*(timediff/5.0);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
 	GLdouble aspectratio = GLdouble(width) / GLdouble(height);
-	gluPerspective(25, aspectratio, 10, 200); 
+	gluPerspective(25, aspectratio, 0.01, 200); 
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(20, 10, 50, 0, 0, 0, 0, 1, 0);
 
-	// Enable depth test
-	glEnable(GL_DEPTH_TEST);
+	Point lookAt = position + direction;
+	gluLookAt(
+		position[0], position[1], position[2], 
+		lookAt[0], lookAt[1], lookAt[2],
+		up[0], up[1], up[2]);
+}
 
-	// Cull backfacing polygons
-	glCullFace(GL_BACK);
-	glEnable(GL_CULL_FACE);
-
-	// Draw a coordinate axis
-	glColor3d(0, 1, 1);
-
-	glBegin(GL_LINES);
-	  glVertex3d(0., 0., 0.);
-	  glVertex3d(12., 0., 0.);
-	  glVertex3d(0., 0., 0.);
-	  glVertex3d(0., 12., 0.);
-	  glVertex3d(0., 0., 0.);
-	  glVertex3d(0., 0., 12.);
-	glEnd();
-
-	glBegin(GL_TRIANGLES);
-	for(auto t : scene->triangles)
-		for(int i=0; i<3; i++)
-			glVertex3f(scene->points[t[i]][0], scene->points[t[i]][1], scene->points[t[i]][2]);
-	glEnd();
-
-	glutSwapBuffers();
+void Display::KeyboardFunc(unsigned char key, bool down)
+{
+	switch(key)
+	{
+	case 'z':
+		keys[Z] = down;
+		break;
+	case 'q':
+		keys[Q] = down;
+		break;
+	case 's':
+		keys[S] = down;
+		break;
+	case 'd':
+		keys[D] = down;
+		break;
+	}
 }

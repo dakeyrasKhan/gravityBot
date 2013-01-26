@@ -12,6 +12,8 @@ int main(int argc, char * argv[])
 	srand(42);
 	Scene scene;
 	Display display(&argc, argv, &scene);
+
+	std::cout << mod(42.42, Pi);
 	display.MainLoop();
 
 	return 0;
