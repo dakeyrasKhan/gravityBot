@@ -18,11 +18,20 @@ void KeyboardUpFunc(unsigned char key, int x, int y)
 	display->KeyboardFunc(key, false);
 }
 
+void MouseFunc(int button, int state, int x, int y)
+{
+	display->MouseFunc(button, state == GLUT_DOWN, x, y);
+}
+
+void MotionFunc(int x, int y)
+{
+	display->MotionFunc(x, y);
+}
+
 
 Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(800), height(800)
 {
 	display = this;
-
 	for(auto& x : keys)
 		x = false;
 
@@ -41,6 +50,8 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 	glutIdleFunc(&::Render);
 	glutKeyboardFunc(&::KeyboardFunc);
 	glutKeyboardUpFunc(&::KeyboardUpFunc);
+	glutMouseFunc(&::MouseFunc);
+	glutMotionFunc(&::MotionFunc);
 
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -73,6 +84,7 @@ void Display::Render()
 	glutSwapBuffers();
 }
 
+
 void Display::DrawAxis()
 {
 	glColor3d(1, 0, 0);
@@ -94,6 +106,7 @@ void Display::DrawAxis()
 	glEnd();
 }
 
+
 void Display::DrawTriangles()
 {
 	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
@@ -110,22 +123,52 @@ void Display::DrawTriangles()
 	glEnd();
 }
 
+
 void Display::SetView(double timediff)
 {
+	// Get new positions
 	timediff *= SPEED;
 
 	width = glutGet(GLUT_WINDOW_WIDTH);
 	height = glutGet(GLUT_WINDOW_HEIGHT);
+
+	Point yUp;
+	yUp[0] = 0;
+	yUp[1] = 1;
+	yUp[2] = 0;
+	Point left = (yUp^direction).Normalize();
 
 	if(keys[Z])
 		position += direction*timediff;
 	if(keys[S])
 		position -= direction*timediff;
 	if(keys[Q])
-		position += (up^direction)*(timediff/5.0);
+		position += left*(timediff/2.0);
 	if(keys[D])
-		position -= (up^direction)*(timediff/5.0);
+		position -= left*(timediff/2.0);
+	if(keys[R])
+		position += up*(timediff/2.0);
+	if(keys[F])
+		position -= up*(timediff/2.0);
 
+	if(keys[M_LEFT])
+	{
+		Pixel dMouse = mousePos - oldMousePos;
+		double dAngleX = double(dMouse[0])*0.001;
+		double dAngleY = double(dMouse[1])*0.001;
+
+		direction = direction*cos(dAngleX) + left*sin(dAngleX);
+		//left = up^direction;
+		left = (yUp^direction).Normalize();
+		direction = direction*cos(dAngleY) + up*sin(dAngleY);
+		up = direction^left;
+
+		up = up.Normalize();
+		direction = direction.Normalize();
+		oldMousePos = mousePos;
+	}
+
+	// Set the camera
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -141,6 +184,7 @@ void Display::SetView(double timediff)
 		lookAt[0], lookAt[1], lookAt[2],
 		up[0], up[1], up[2]);
 }
+
 
 void Display::KeyboardFunc(unsigned char key, bool down)
 {
@@ -158,5 +202,29 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 	case 'd':
 		keys[D] = down;
 		break;
+	case 'r':
+		keys[R] = down;
+		break;
+	case 'f':
+		keys[F] = down;
+		break;
 	}
+}
+
+
+void Display::MouseFunc(int button, bool down, int x, int y)
+{
+	if(button == GLUT_LEFT_BUTTON)
+		keys[M_LEFT] = down;
+
+	oldMousePos[0] = x;
+	oldMousePos[1] = y;
+	mousePos = oldMousePos;
+}
+ 
+
+void Display::MotionFunc(int x, int y)
+{
+	mousePos[0] = x;
+	mousePos[1] = y;
 }

@@ -1,8 +1,12 @@
 #include "Scene.h"
 
-bool Scene::collision(Position pos){}
+bool Scene::collision(Position pos)
+{
+	return false;
+}
 
-bool Scene::validMove(Position a, Position b){
+bool Scene::validMove(Position a, Position b)
+{
 	double length=Position((b-a)).Norm();
 	if(length<=EPS)
 		return true;
