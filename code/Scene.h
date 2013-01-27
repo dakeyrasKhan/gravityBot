@@ -10,7 +10,7 @@
 class Scene
 {
 public:
-	Scene();
+	Scene(const char* sceneFile);
 	std::vector<Point> points;
 	std::vector<std::array<int, 3>> triangles;
 	std::array<double, DIM_CONF> size;
