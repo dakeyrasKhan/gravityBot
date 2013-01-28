@@ -33,8 +33,13 @@ void MotionFunc(int x, int y)
 Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(800), height(800)
 {
 	display = this;
+	isTrajectoryEnded = true;
+	lastWaypoint = 0;
 	for(auto& x : keys)
 		x = false;
+
+	Position p; p[0] = 0; p[1] = 0; p[2] = 0;
+	trajectory.push_back(p);
 
 	position[0] = 20; position[1] = 10; position[2] = 50;
 	direction[0] = -2; direction[1] = -1; direction[2] = -5;
@@ -82,10 +87,9 @@ void Display::Render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->StaticScene());
 
-	Position p; p[0] = 0; p[1] = 0; p[2] = 0;
 	color[0] = 1; color[1] = 0; color[2] = .4;
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-	DrawObject(scene->RobotObject(p));
+	DrawObject(scene->RobotObject(UpdatePosition(lastRender)));
 
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
@@ -133,7 +137,7 @@ void Display::DrawObject(const Object& object)
 void Display::SetView(double timediff)
 {
 	// Get new positions
-	timediff *= SPEED;
+	timediff *= CAM_SPEED;
 
 	width = glutGet(GLUT_WINDOW_WIDTH);
 	height = glutGet(GLUT_WINDOW_HEIGHT);
@@ -234,3 +238,44 @@ void Display::MotionFunc(int x, int y)
 	mousePos[0] = x;
 	mousePos[1] = y;
 }
+
+
+void Display::SetTrajectory(const std::vector<Position>& trajectory)
+{
+	this->trajectory = trajectory;
+	isTrajectoryEnded = false;
+	lastWaypointTime = clock::now();
+	lastWaypoint = 0;
+
+}
+
+
+Position Display::UpdatePosition(clock::time_point time)
+{
+	if(isTrajectoryEnded)
+		return trajectory[lastWaypoint];
+
+	clock::duration diff = time - lastWaypointTime;
+	double timediff = std::chrono::duration_cast<std::chrono::duration<double>>(diff).count();
+	double distanceDone = timediff*ROBOT_SPEED;
+	Position direction = trajectory[lastWaypoint] - trajectory[lastWaypoint];
+	double distance = direction.Norm();
+
+	while(distanceDone >= distance)
+	{
+		distanceDone -= distance;
+		direction = trajectory[lastWaypoint] - trajectory[lastWaypoint];
+		distance = direction.Norm();
+
+		lastWaypoint++;
+		if(lastWaypoint == trajectory.size() + 1)
+		{
+			isTrajectoryEnded = true;
+			return *trajectory.end();
+		}
+		lastWaypointTime = time;
+	}
+
+	return trajectory[lastWaypoint] + direction*(distanceDone/distance);
+}
+

@@ -1,9 +1,11 @@
 #pragma once
 #include <chrono>
 #include "Scene.hpp"
+#include "path.hpp"
 #include <GL/glut.h>
 
-#define SPEED 20.0
+#define CAM_SPEED 20.0
+#define ROBOT_SPEED 1.0
 
 class Display
 {
@@ -14,6 +16,7 @@ public:
 	void KeyboardFunc(unsigned char key, bool down);
 	void MouseFunc(int button, bool down, int x, int y);
 	void MotionFunc(int x, int y);
+	void SetTrajectory(const std::vector<Position>& trajectory);
 
 private:
 	typedef std::chrono::high_resolution_clock clock;
@@ -33,5 +36,11 @@ private:
 	Point position, direction, up;
 	Pixel mousePos;
 	Pixel oldMousePos;
+
+	std::vector<Position> trajectory;
+	bool isTrajectoryEnded;
+	clock::time_point lastWaypointTime;
+	int lastWaypoint;
+	Position UpdatePosition(clock::time_point time);
 };
 

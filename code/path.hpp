@@ -1,8 +1,8 @@
 #include <vector>
 #include "Vector.hpp"
 
-class Path{
-
+class Path
+{
 public:
 	Path(){};
 	Path(std::vector<Position>& w) : waypoints(w), current(1), currentPos(w[0]) { };
