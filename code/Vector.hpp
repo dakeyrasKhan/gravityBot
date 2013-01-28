@@ -3,8 +3,13 @@
 #include <cmath>
 
 const double Pi = 3.14159265359;
-const int DIM_CONF = 8;
-const int NB_ROT = 3;
+
+// The meanning of each dimension
+#define DIM_CONF	3
+#define NB_ROT		1
+#define ROBOT_ROT	0
+#define ROBOT_X		1
+#define ROBOT_Z		2
 
 inline double mod(const double d0, const double d1)
 {
