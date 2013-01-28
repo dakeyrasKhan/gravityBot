@@ -1,6 +1,7 @@
 #pragma once
 #include "octree.hpp"
-#include "Scene.h"
+#include "Scene.hpp"
+#include "path.hpp"
 #include <queue>
 #include <stack>
 #define NB_WAYPOINTS 10000

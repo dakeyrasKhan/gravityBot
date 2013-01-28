@@ -1,8 +1,9 @@
 #include <thread>
 #include <iostream>
-#include "Display.h"
+#include "Display.hpp"
 
 Display* display;
+
 void Render()
 {
 	display->Render();
@@ -78,7 +79,7 @@ void Display::Render()
 	DrawAxis();
 
 	glEnable(GL_LIGHTING);
-	DrawTriangles();
+	DrawScene();
 	glDisable(GL_LIGHTING);
 
 	glutSwapBuffers();
@@ -107,14 +108,16 @@ void Display::DrawAxis()
 }
 
 
-void Display::DrawTriangles()
+void Display::DrawScene()
 {
 	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	glBegin(GL_TRIANGLES);
-	for(auto t : scene->Triangles())
+	Object staticScene = scene->StaticScene();
+
+	for(auto t : staticScene.triangles)
 	{
-		Point p[3] = { scene->Points()[t[0]], scene->Points()[t[1]], scene->Points()[t[2]] };
+		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
 		glNormal3d(n[0], n[1], n[2]);
 		for(int i=0; i<3; i++)

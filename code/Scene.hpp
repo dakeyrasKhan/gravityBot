@@ -1,12 +1,9 @@
 #pragma once
-#include <vector>
-#include <queue>
 #include <algorithm>
 #include <ozcollide/aabbtree_poly.h>
-#include "octree.hpp"
-#include "path.hpp"
 #include "Vector.hpp"
-
+#include "Object.hpp"
+#include "Robot.hpp"
 
 class Scene
 {
@@ -14,8 +11,6 @@ public:
 	Scene(const char* sceneFile);
 	~Scene();
 
-	const std::vector<Point> Points() const { return points; };
-	const std::vector<std::array<int, 3>> Triangles() const { return triangles; };
 	bool Collision(Position position, bool, Point*);
 
 	std::array<double, DIM_CONF> size;
@@ -26,13 +21,15 @@ public:
 
 
 	Point Drop(Position);
+	const Object& StaticScene() const { return staticScene; };
 
 private:
 	void ReadObjFile(const char* fileName);
 	void BuildCollisionTree();
 
-	std::vector<Point> points;
-	std::vector<std::array<int, 3>> triangles;
+	Object staticScene;
+	Robot robot;
+	const double robotY;
 
 	ozcollide::AABBTreePoly* collisionTree;
 };

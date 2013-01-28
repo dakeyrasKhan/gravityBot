@@ -1,6 +1,6 @@
 #pragma once
 #include <chrono>
-#include "Scene.h"
+#include "Scene.hpp"
 #include <GL/glut.h>
 
 #define SPEED 20.0
@@ -24,7 +24,7 @@ private:
 	int width;
 	int height;
 	void DrawAxis();
-	void DrawTriangles();
+	void DrawScene();
 	void SetView(double timediff);
 
 	std::array<bool, 7> keys;
