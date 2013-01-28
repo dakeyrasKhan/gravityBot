@@ -3,6 +3,7 @@
 #include "Display.h"
 
 Display* display;
+
 void Render()
 {
 	display->Render();

@@ -16,9 +16,14 @@ bool Scene::validMove(Position a, Position b)
 }
 
 
-Scene::Scene(const char* sceneFileName) : collisionTree(nullptr)
+Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(0)
 {
 	ReadObjFile(sceneFileName);
+
+	robot.xSide = 2;
+	robot.ySide = 1;
+	robot.zSide = 3;
+
 }
 
 
@@ -71,6 +76,7 @@ void Scene::BuildCollisionTree()
 		ozcollide::Polygon poly;
 		poly.setNormal(ozcollide::Vec3f(n[0], n[1], n[2]));
 		poly.setIndicesMemory(3, t.data());
+
 	}
 
 	// Build the vertices vector
@@ -84,5 +90,20 @@ void Scene::BuildCollisionTree()
 
 bool Scene::Collision(Position pos)
 {
-	return false;
+	ozcollide::Matrix3x3 robotRotation;
+	robotRotation.identity();
+	robotRotation.m_[0][0] = cos(pos[ROBOT_ROT]);
+	robotRotation.m_[2][0] = sin(pos[ROBOT_ROT]);
+	robotRotation.m_[0][2] = -sin(pos[ROBOT_ROT]);
+	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
+
+	ozcollide::OBB robotBox;
+	robotBox.extent = ozcollide::Vec3f(robot.xSide, robot.ySide, robot.zSide);
+	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
+	robotBox.matrix = robotRotation;
+
+	ozcollide::AABBTreePoly::OBBColResult result;
+	collisionTree->collideWithOBB(robotBox, result);
+
+	return result.polys_.size() == 0;
 }
