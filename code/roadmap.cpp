@@ -92,7 +92,7 @@ Roadmap::Roadmap(Scene* scene){
 		
 		Node node(Position::Random(scene->size),idCount++);
 
-		if(scene->collision(node.pos))
+		if(scene->Collision(node.pos))
 			continue;
 		
 		addPos(node,&tree);
