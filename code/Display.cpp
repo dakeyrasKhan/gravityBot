@@ -112,9 +112,9 @@ void Display::DrawTriangles()
 	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	glBegin(GL_TRIANGLES);
-	for(auto t : scene->triangles)
+	for(auto t : scene->Triangles())
 	{
-		Point p[3] = { scene->points[t[0]], scene->points[t[1]], scene->points[t[2]] };
+		Point p[3] = { scene->Points()[t[0]], scene->Points()[t[1]], scene->Points()[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
 		glNormal3d(n[0], n[1], n[2]);
 		for(int i=0; i<3; i++)

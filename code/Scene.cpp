@@ -20,9 +20,22 @@ bool Scene::validMove(Position a, Position b)
 }
 
 
-Scene::Scene(const char* sceneFileName)
+Scene::Scene(const char* sceneFileName) : collisionTree(nullptr)
 {
-	std::ifstream sceneFile(sceneFileName);
+	ReadObjFile(sceneFileName);
+}
+
+
+Scene::~Scene()
+{
+	if(collisionTree != nullptr)
+		collisionTree->destroy();
+}
+
+
+void Scene::ReadObjFile(const char* fileName)
+{
+	std::ifstream sceneFile(fileName);
 	while(!sceneFile.eof())
 	{
 		Point p;
@@ -45,4 +58,10 @@ Scene::Scene(const char* sceneFileName)
 			sceneFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 	}
+}
+
+
+void Scene::BuildCollisionTree()
+{
+
 }
