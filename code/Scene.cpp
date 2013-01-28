@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <ozcollide/aabbtreepoly_builder.h>
-#include "Scene.h"
+#include "Scene.hpp"
 
 bool Scene::validMove(Position a, Position b)
 {
@@ -46,12 +46,12 @@ void Scene::ReadObjFile(const char* fileName)
 		{
 		case 'v':
 			sceneFile >> p[0] >> p[1] >> p[2];
-			points.push_back(p);
+			staticScene.points.push_back(p);
 			break;
 		case 'f':
 			sceneFile >> triangle[0] >> triangle[1] >> triangle[2];
 			triangle -= 1;
-			triangles.push_back(triangle);
+			staticScene.triangles.push_back(triangle);
 			break;
 		case '\n':
 			break;
@@ -68,9 +68,9 @@ void Scene::BuildCollisionTree()
 
 	// Build the polygons vector
 	std::vector<ozcollide::Polygon> polygons;
-	for(auto t : triangles)
+	for(auto t : staticScene.triangles)
 	{
-		Point p[3] = { points[t[0]], points[t[1]], points[t[2]] };
+		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
 
 		ozcollide::Polygon poly;
@@ -81,8 +81,8 @@ void Scene::BuildCollisionTree()
 
 	// Build the vertices vector
 	std::vector<ozcollide::Vec3f> vertices;
-	for(int i=0; i<points.size(); i++)
-		vertices.push_back(ozcollide::Vec3f(points[i][0], points[i][1], points[i][2]));
+	for(int i=0; i<staticScene.points.size(); i++)
+		vertices.push_back(ozcollide::Vec3f(staticScene.points[i][0], staticScene.points[i][1], staticScene.points[i][2]));
 
 	collisionTree = builder.buildFromPolys(polygons.data(), polygons.size(), vertices.data(), vertices.size());
 }

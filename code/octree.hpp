@@ -3,9 +3,6 @@
 #include <vector>
 using namespace std;
 
-#define MAX_DEPTH 8
-
-const double EPS = (1./double(1<<MAX_DEPTH));
 enum{X,Y,Z};
 
 const int sonFinder[2][2][2]={{{0,6},{2,4}},{{1,7},{3,5}}};

@@ -2,7 +2,10 @@
 #include <array>
 #include <cmath>
 
+#define MAX_DEPTH 8
 const double Pi = 3.14159265359;
+const double EPS = (1./double(1<<MAX_DEPTH));
+
 
 // The meanning of each dimension
 #define DIM_CONF	3
