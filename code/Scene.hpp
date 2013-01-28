@@ -12,6 +12,8 @@ public:
 	~Scene();
 
 	bool Collision(Position position, bool, Point*);
+	const Object& StaticScene() const { return staticScene; };
+	Object RobotObject(Position) const;
 
 	std::array<double, DIM_CONF> size;
 	double maxSize(){ return *std::max_element(size.begin(),size.end()); }
@@ -21,7 +23,6 @@ public:
 
 
 	Point Drop(Position);
-	const Object& StaticScene() const { return staticScene; };
 
 private:
 	void ReadObjFile(const char* fileName);

@@ -57,10 +57,6 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-	glEnable(GL_LIGHT0);
-	GLfloat lightpos[] = {10, 20, 10, 0};
-	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
-
 	lastRender = clock::now();
 	renderInterval = std::chrono::milliseconds(30);
 }
@@ -77,11 +73,21 @@ void Display::Render()
 	SetView(timediff);
 
 	DrawAxis();
-
 	glEnable(GL_LIGHTING);
-	DrawScene();
-	glDisable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	GLfloat lightpos[] = {10, 30, 20, 0};
+	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
+	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+	DrawObject(scene->StaticScene());
+
+	Position p; p[0] = 0; p[1] = 0; p[2] = 0;
+	color[0] = 1; color[1] = 0; color[2] = .4;
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+	DrawObject(scene->RobotObject(p));
+
+	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
 }
 
@@ -108,16 +114,13 @@ void Display::DrawAxis()
 }
 
 
-void Display::DrawScene()
+void Display::DrawObject(const Object& object)
 {
-	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	glBegin(GL_TRIANGLES);
-	Object staticScene = scene->StaticScene();
 
-	for(auto t : staticScene.triangles)
+	for(auto t : object.triangles)
 	{
-		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
+		Point p[3] = { object.points[t[0]], object.points[t[1]], object.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
 		glNormal3d(n[0], n[1], n[2]);
 		for(int i=0; i<3; i++)

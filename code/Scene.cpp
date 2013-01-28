@@ -24,7 +24,7 @@ Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(0)
 {
 	ReadObjFile(sceneFileName);
 	Point robotSize;
-	robotSize[0] = 2; robotSize[1] = 1; robotSize[2] = 3;
+	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
 	robot = Robot(robotSize);
 }
 
@@ -90,7 +90,7 @@ void Scene::BuildCollisionTree()
 }
 
 
-bool Scene::Collision(Position pos,bool with,Point* object)
+bool Scene::Collision(Position pos, bool with, Point* object)
 {
 	ozcollide::Matrix3x3 robotRotation;
 	robotRotation.identity();
@@ -107,4 +107,14 @@ bool Scene::Collision(Position pos,bool with,Point* object)
 	collisionTree->collideWithOBB(robotBox, result);
 
 	return result.polys_.size() == 0;
+}
+
+
+Object Scene::RobotObject(Position pos) const
+{
+	Object obj = robot.GetObject();
+	Point y; y[0] = 0; y[1] = 1; y[2] = 0;
+	obj.Translate(pos[ROBOT_X], 0, pos[ROBOT_Z]);
+	obj.Rotate(y, pos[ROBOT_ROT]);
+	return obj;
 }

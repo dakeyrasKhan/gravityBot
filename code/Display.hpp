@@ -24,7 +24,7 @@ private:
 	int width;
 	int height;
 	void DrawAxis();
-	void DrawScene();
+	void DrawObject(const Object& object);
 	void SetView(double timediff);
 
 	std::array<bool, 7> keys;

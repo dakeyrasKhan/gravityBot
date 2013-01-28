@@ -12,6 +12,7 @@ void Object::Translate(double x, double y, double z)
 
 void Object::Rotate(Point axis, double angle)
 {
+	axis = axis.Normalize();
 	double c = cos(angle);
 	double s = sin(angle);
 	double x = axis[0];

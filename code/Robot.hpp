@@ -7,10 +7,11 @@ class Robot
 {
 public:
 	Robot() { };
-	Robot(Point size) : size(size) { };
-	Object GetObject() const;
+	Robot(Point size);
+	Object GetObject() const { return object; };
 	ozcollide::OBB GetBox() const;
 
 private:
 	Point size;
+	Object object;
 };
