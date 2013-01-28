@@ -20,6 +20,7 @@ sources = ../src/ozcollide/aabbtree.cpp \
           ../src/ozcollide/intr_spherebox.cpp \
           ../src/ozcollide/intr_sphereline.cpp \
           ../src/ozcollide/intr_tribox.cpp \
+          ../src/ozcollide/intr_spheretri.cpp \
           ../src/ozcollide/intr_tripoint.cpp \
           ../src/ozcollide/matrix.cpp \
           ../src/ozcollide/obb.cpp \
@@ -32,4 +33,4 @@ sources = ../src/ozcollide/aabbtree.cpp \
           ../src/ozcollide/vector.cpp \
 
 all:
-	g++ $(sources) -I../include -o ozcollide.a
+	g++ -c -fPIC $(sources) -I../include
