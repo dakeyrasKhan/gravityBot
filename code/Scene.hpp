@@ -1,0 +1,38 @@
+#pragma once
+#include <algorithm>
+#include <ozcollide/aabbtree_poly.h>
+#include "Vector.hpp"
+#include "Object.hpp"
+
+
+struct Robot
+{
+	double xSide;
+	double ySide;
+	double zSide;
+};
+
+class Scene
+{
+public:
+	Scene(const char* sceneFile);
+	~Scene();
+
+	bool Collision(Position position);
+	const Object& StaticScene() const { return staticScene; };
+
+	std::array<double, DIM_CONF> size;
+	double maxSize(){ return *std::max_element(size.begin(),size.end()); }
+	bool validMove(Position, Position);
+
+private:
+	void ReadObjFile(const char* fileName);
+	void BuildCollisionTree();
+
+	Object staticScene;
+	Robot robot;
+	const double robotY;
+
+	ozcollide::AABBTreePoly* collisionTree;
+};
+
