@@ -11,6 +11,7 @@ const double Pi = 3.14159265359;
 #define ROBOT_X		1
 #define ROBOT_Z		2
 
+
 inline double mod(const double d0, const double d1)
 {
 	return d0 - d1*floor(d0/d1);
@@ -31,6 +32,10 @@ public:
 typedef Array<3, 0> Point;
 typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
+
+
+Position randomCatch(Point p);
+
 
 template<std::size_t L, int R>
 Array<L,R> Array<L,R>::Random(const std::array<double, L>& a){

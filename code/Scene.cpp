@@ -3,16 +3,20 @@
 #include <ozcollide/aabbtreepoly_builder.h>
 #include "Scene.h"
 
-bool Scene::validMove(Position a, Position b)
+Point Scene::Drop(Position p){
+	return Point();
+}
+
+bool Scene::validMove(Position a, Position b, bool with, Point* object)
 {
 	double length=Position((b-a)).Norm();
 	if(length<=EPS)
 		return true;
 
 	Position mid = Position((a+b))/2.;
-	if(Collision(mid))
+	if(Collision(mid,with,object))
 		return false;
-	return validMove(a,mid) && validMove(mid,b);
+	return validMove(a,mid,with,object) && validMove(mid,b,with,object);
 }
 
 
@@ -82,7 +86,7 @@ void Scene::BuildCollisionTree()
 }
 
 
-bool Scene::Collision(Position pos)
+bool Scene::Collision(Position pos,bool with,Point* object)
 {
 	return false;
 }

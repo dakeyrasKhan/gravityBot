@@ -13,16 +13,17 @@ const double centerCalc[8][3]={{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},
 							{-1,1,1},{1,1,1},{-1,-1,1},{1,-1,1}};
 const int MAXCLUSTER = 10;
 
-class Node{
+class FullNode{
 public:
-	Node(Position p,int i):pos(p),id(i){}
+	FullNode(Position p,int i,bool w):pos(p),id(i),with(w){}
 	Position pos;
 	int id;
+	bool with;
 };
 class NodeComp{
 public:
-	NodeComp(Node n, double d):node(n),dist(d){}
-	Node node;
+	NodeComp(FullNode n, double d):node(n),dist(d){}
+	FullNode node;
 	double dist;
 	bool inline operator<(const NodeComp& other) const {
 		return dist>other.dist;
@@ -35,13 +36,16 @@ public:
 		for(int i=0;i<8;i++)
 			son[i]=NULL;
 		brokenDown = false;
+		nbWith=nbWithout=0;
 	};
 	~Octree(){
 		for(int i=0;i<8;i++)
 			if(son[i]!=NULL)
 				delete son[i];
 	}
-	vector<Node> values;
+	vector<FullNode> values;
+	int nbWith;
+	int nbWithout;
 	int depth;
 	Point center;
 	Octree* son[8];
@@ -50,12 +54,13 @@ public:
 };
 
 
-int findSon(Node, Octree*);
+int findSon(FullNode, Octree*);
 bool excluded(Point,double, Octree*);
 bool included(Point,double, Octree*);
 Point calculateCenter(int, Octree*);
-void addPos(Node, Octree*);
-int countInCube(Point, double, Octree*);
-void addToVect(Point, double, Octree*, vector<Node>*);
-double findSizeCube(double, double, Point, int, Octree*);
-void findNeighbours(Point,double,Octree*,vector<Node>*);
+void addPos(FullNode, Octree*);
+
+int countInCube(Point, double, bool, Octree*);
+void addToVect(Point, double, bool, Octree*, vector<FullNode>*);
+double findSizeCube(double, double, Point, int, bool, Octree*);
+void findNeighbours(Point,double,bool,Octree*,vector<FullNode>*);

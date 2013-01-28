@@ -1,13 +1,13 @@
 #include "roadmap.hpp"
 
 
-Path Roadmap::getPath(Position start, Position end){
-	vector<Node> neighbours;
-	findNeighbours(start.ToPoint(),scene->maxSize(),&tree,&neighbours);
+Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
+	vector<FullNode> neighbours;
+	findNeighbours(start.ToPoint(),scene->maxSize(),with,&tree,&neighbours);
 	priority_queue<NodeComp> heap;
 
 	for(auto neighbour : neighbours){
-		if(scene->validMove(start,neighbour.pos))
+		if(scene->validMove(start,neighbour.pos,with,pos))
 			heap.push(NodeComp(neighbour,Position(neighbour.pos-start).Norm()));
 	}
 	Path path;
@@ -23,11 +23,15 @@ Path Roadmap::getPath(Position start, Position end){
 	}
 
 	while(!heap.empty()){
-		Node current = heap.top().node;
+		FullNode current = heap.top().node;
 		heap.pop();
 		if(seen[current.id])
 			continue;
 		for(auto neighbour : adjacency[current.id]){
+			if(pos!=NULL){
+				if(!scene->validMove(current.pos,neighbour.pos,with,pos))
+					continue;
+			}
 			double dist = Position(current.pos-neighbour.pos).Norm();
 			if(distances[current.id] + dist < distances[neighbour.id]){
 				distances[neighbour.id] = distances[current.id] + dist;
@@ -37,14 +41,14 @@ Path Roadmap::getPath(Position start, Position end){
 		}
 	}
 	neighbours.clear();
-	findNeighbours(end.ToPoint(),scene->maxSize(),&tree,&neighbours);
+	findNeighbours(end.ToPoint(),scene->maxSize(),with,&tree,&neighbours);
 	int endPoint=-1;
 	double distToEnd=INFINITY;
 	for(auto neighbour : neighbours){
 		//Si on peut l'atteindre depuis le début
 		if(distances[neighbour.id]<INFINITY){
 			//Si on peut atteindre la fin depuis
-			if(scene->validMove(end,neighbour.pos)){
+			if(scene->validMove(end,neighbour.pos,with,pos)){
 				//Si c'est mieux
 				if(distances[neighbour.id]+Position(neighbour.pos-end).Norm()<distToEnd){
 					distToEnd=distances[neighbour.id]+Position(neighbour.pos-end).Norm();
@@ -68,7 +72,7 @@ Path Roadmap::getPath(Position start, Position end){
 	}
 	path.add(start);
 	while(!idPathStack.empty()){
-		path.add(waypoints[idPathStack.top()]);
+		path.add(waypoints[idPathStack.top()].pos);
 		idPathStack.pop();
 	}
 	path.add(end);
@@ -86,36 +90,61 @@ void Roadmap::explore(int curNode, int curClasse){
 		explore(neighbour.id,curClasse);
 }
 
+void Roadmap::addNode(FullNode node){
+	
+	if(scene->Collision(node.pos,node.with,NULL))
+		return;
+
+	addPos(node,&tree);	
+	waypoints.push_back(node);
+	adjacency.push_back(vector<FullNode>());		
+
+	vector<FullNode> neighbours;
+	findNeighbours(node.pos.ToPoint(),scene->maxSize(),node.with,&tree,&neighbours);
+	double fail=0;
+	for(auto neighbour : neighbours){
+		if(neighbour.pos == node.pos && 
+		   scene->validMove(neighbour.pos,node.pos,node.with,NULL)){
+				adjacency[neighbour.id].push_back(node);
+		}
+		else
+			fail++;
+	}
+	failRate.push_back(fail/double(neighbours.size()));
+}
+
+
 Roadmap::Roadmap(Scene* scene){
 	int idCount=0;
-	while(waypoints.size()<NB_WAYPOINTS){
-		
-		Node node(Position::Random(scene->size),idCount++);
-
-		if(scene->Collision(node.pos))
-			continue;
-		
-		addPos(node,&tree);
-		waypoints.push_back(node.pos);
-		classes.push_back(-1);	
-		vector<Node> neighbours;
-		findNeighbours(node.pos.ToPoint(),scene->maxSize(),&tree,&neighbours);
-		vector<int> newAdjacent;
-		double fail=0;
-		for(auto neighbour : neighbours){
-			if(scene->validMove(neighbour.pos,node.pos)){
-				newAdjacent.push_back(neighbour.id);
-				adjacency[neighbour.id].push_back(node);
-			}
-			else
-				fail++;
+	for(int i=0;i<2;i++){
+		while(waypoints.size()<NB_WAYPOINTS){
+			FullNode node(Position::Random(scene->size),idCount++,(i<1));
+			addNode(node);
 		}
-		failRate.push_back(fail/double(neighbours.size()));
+		/*int curClasse=0;
+		for(int i=0;i<classes.size();i++){
+			if(classes[i]!=-1)
+				continue;
+			explore(i,curClasse++);
+		}
+		nbClasses = curClasse;*/
 	}
-	int curClasse=0;
-	for(int i=0;i<classes.size();i++){
-		if(classes[i]!=-1)
+	for(auto node : waypoints){
+		if(!node.with)
 			continue;
-		explore(i,curClasse++);
-	}
+		Point pos=scene->Drop(node.pos);
+		for(int i=0;i<NB_DROP;i++){
+			Position r = randomCatch(pos);
+			if(scene->Collision(r,false,NULL))
+				continue;
+			Path p = getPath(node.pos,r,false,&pos);
+			if(!p.empty()){
+				drop[node.id]=p;
+				addNode(FullNode(r,waypoints.size(),true));
+				adjacency[node.id].push_back(FullNode(r,waypoints.size()-1,true));
+				break;
+			}
+		}
+
+	}	
 }

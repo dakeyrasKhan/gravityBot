@@ -52,7 +52,7 @@ Point calculateCenter(int son, Octree* tree){
 	return result;
 }
 
-void addSon(Node pos, Octree* tree){
+void addSon(FullNode pos, Octree* tree){
 	int son = findSon(pos.pos,tree);
 	if(tree->son[son]==NULL){
 		tree->son[son]= new Octree;
@@ -65,9 +65,12 @@ void addSon(Node pos, Octree* tree){
 	addPos(pos,tree->son[son]);
 }
 
-void addPos(Node pos, Octree* tree){
+void addPos(FullNode pos, Octree* tree){
 	tree->values.push_back(pos);
-	
+	if(pos.with)
+		tree->nbWith++;
+	else
+		tree->nbWithout++;
 	if(tree->values.size()<=MAXCLUSTER || tree->depth==MAX_DEPTH)
 		return;
 	
@@ -80,47 +83,52 @@ void addPos(Node pos, Octree* tree){
 		addSon(pos,tree);
 }
 
-int countInCube(Point center, double size, Octree* tree){
+int countInCube(Point center, double size, bool with, Octree* tree){
 	if(tree==NULL || excluded(center,size,tree)){
 		return 0;
 	}
 	if(included(center,size,tree) || tree->depth==MAX_DEPTH || 
 	   tree->brokenDown==false){
-		return tree->values.size();
+		return (with)?tree->nbWith:tree->nbWithout;
 	}
 
 	int total=0;
 	for(int i=0;i<8;i++)
-		total+=countInCube(center,size,tree->son[i]);
+		total+=countInCube(center,size, with,tree->son[i]);
 	return total;
 }
 
-void addToVect(Point center, double size, Octree* tree, vector<Node>* values){
+void addToVect(Point center, double size, bool with, Octree* tree, vector<FullNode>* values){
 	if(tree==NULL || excluded(center,size,tree)){
 		return;
 	}
-	if(included(center,size,tree) || tree->depth==MAX_DEPTH || tree->brokenDown==false)
-	   	values->insert(values->end(),tree->values.begin(), tree->values.end());
+	if(included(center,size,tree) || tree->depth==MAX_DEPTH || tree->brokenDown==false){
+		for(auto p : tree->values){
+			if(p.with==with)
+				values->push_back(p);
+		}
+	}
+//	   	values->insert(values->end(),tree->values.begin(), tree->values.end());
 	
 
 	for(int i=0;i<8;i++)
-		addToVect(center,size,tree->son[i],values);
+		addToVect(center,size,with,tree->son[i],values);
 }
 
-double findSizeCube(double begin, double end, Point center, int nbValues, Octree *tree){
+double findSizeCube(double begin, double end, Point center, int nbValues, bool with, Octree *tree){
 	
-	int beginC = countInCube(center,begin,tree);
-	int endC = countInCube(center,end,tree);
+	int beginC = countInCube(center,begin,with,tree);
+	int endC = countInCube(center,end,with,tree);
 	if(beginC>=endC || abs(end-begin)<=EPS*tree->size[0]){
 		return end;
 	}
 	double mid = (end+begin)/2.;
-	int count = countInCube(center,mid,tree);
+	int count = countInCube(center,mid,with,tree);
 	if(count<=nbValues)
-		return findSizeCube(mid,end,center,nbValues,tree);
+		return findSizeCube(mid,end,center,nbValues,with,tree);
 
-	return findSizeCube(begin,mid,center,nbValues,tree);
+	return findSizeCube(begin,mid,center,nbValues,with,tree);
 }
-void findNeighbours(Point centerP,double size,Octree* tree,vector<Node>* vect){
-	addToVect(centerP,findSizeCube(0,size,centerP,10,tree),tree,vect);
+void findNeighbours(Point centerP,double size, bool with,Octree* tree,vector<FullNode>* vect){
+	addToVect(centerP,findSizeCube(0,size,centerP,10,with,tree), with,tree,vect);
 }

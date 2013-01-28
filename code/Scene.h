@@ -16,13 +16,16 @@ public:
 
 	const std::vector<Point> Points() const { return points; };
 	const std::vector<std::array<int, 3>> Triangles() const { return triangles; };
-	bool Collision(Position position);
+	bool Collision(Position position, bool, Point*);
 
 	std::array<double, DIM_CONF> size;
 	double maxSize(){ return *std::max_element(size.begin(),size.end()); }
 
 
-	bool validMove(Position, Position);
+	bool validMove(Position, Position, bool, Point*);
+
+
+	Point Drop(Position);
 
 private:
 	void ReadObjFile(const char* fileName);

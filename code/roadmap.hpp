@@ -3,28 +3,24 @@
 #include "Scene.h"
 #include <queue>
 #include <stack>
-#define NB_WAYPOINTS 1000*1000
-#define NB_NEIGHB 100
+#define NB_WAYPOINTS 10000
+#define NB_NEIGHB 50
+#define NB_DROP 5
 
 class Roadmap{
 public:
 	Roadmap(Scene*);
 	void explore(int,int);
-	Path getPath(Position,Position);
+	Path getPath(Position,Position,bool,Point*);
+
 private:
+	void addNode(FullNode);
 	Scene* scene;
 	Octree tree;
+	int nbClasses;
 	vector<int> classes;
-	vector<Position> waypoints;
-	vector<vector<Node>> adjacency;
+	vector<FullNode> waypoints;
+	vector<vector<FullNode>> adjacency;
 	vector<double> failRate;
-};
-
-class FullRoadmap{
-public:
-	FullRoadmap(Scene* scene):with(scene),without(scene){};
-	//void connexify();
-private:
-	Roadmap with;
-	Roadmap without;
+	vector<Path> drop;
 };
