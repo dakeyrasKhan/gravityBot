@@ -9,6 +9,7 @@ public:
 	Position getNextPosition(Vector speed, double deltaT);
 	bool isDone(){ return current==waypoints.size()-1; };
 	void add(Position a){ waypoints.push_back(a);};
+	bool empty(){ return waypoints.empty();};
 private:
 	std::vector<Position> waypoints;
 	Position currentPos;

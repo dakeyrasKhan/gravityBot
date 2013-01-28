@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char * argv[])
 {
 	srand(42);
-	Scene scene("..\\scenes\\test.obj");
+	Scene scene("../scenes/test.obj");
 	Display display(&argc, argv, &scene);
 
 	std::cout << mod(42.42, Pi);

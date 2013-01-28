@@ -1,5 +1,6 @@
 #include "roadmap.hpp"
 
+
 Path Roadmap::getPath(Position start, Position end){
 	vector<Node> neighbours;
 	findNeighbours(start.ToPoint(),scene->maxSize(),&tree,&neighbours);
@@ -77,6 +78,14 @@ Path Roadmap::getPath(Position start, Position end){
 	return path;
 }
 
+void Roadmap::explore(int curNode, int curClasse){
+	if(classes[curNode]!=-1)
+		return;
+	classes[curNode]=curClasse;
+	for(auto neighbour : adjacency[curNode])
+		explore(neighbour.id,curClasse);
+}
+
 Roadmap::Roadmap(Scene* scene){
 	int idCount=0;
 	while(waypoints.size()<NB_WAYPOINTS){
@@ -88,7 +97,7 @@ Roadmap::Roadmap(Scene* scene){
 		
 		addPos(node,&tree);
 		waypoints.push_back(node.pos);
-		
+		classes.push_back(-1);	
 		vector<Node> neighbours;
 		findNeighbours(node.pos.ToPoint(),scene->maxSize(),&tree,&neighbours);
 		vector<int> newAdjacent;
@@ -102,5 +111,11 @@ Roadmap::Roadmap(Scene* scene){
 				fail++;
 		}
 		failRate.push_back(fail/double(neighbours.size()));
+	}
+	int curClasse=0;
+	for(int i=0;i<classes.size();i++){
+		if(classes[i]!=-1)
+			continue;
+		explore(i,curClasse++);
 	}
 }
