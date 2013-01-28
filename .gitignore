@@ -3,9 +3,11 @@
 *.suo
 *.vcxproj*
 *.opensdf
+*.dll
 code/Debug/*
 code/Release/*
+ozcollide/VisualStudio/*
+code/ipch/*
 code/out
 code/gravity
 code/Makefile
-ozcollide/VisualStudio/*
