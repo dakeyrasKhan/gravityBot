@@ -19,11 +19,9 @@ bool Scene::validMove(Position a, Position b)
 Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(0)
 {
 	ReadObjFile(sceneFileName);
-
-	robot.xSide = 2;
-	robot.ySide = 1;
-	robot.zSide = 3;
-
+	Point robotSize;
+	robotSize[0] = 2; robotSize[1] = 1; robotSize[2] = 3;
+	robot = Robot(robotSize);
 }
 
 
@@ -97,8 +95,7 @@ bool Scene::Collision(Position pos)
 	robotRotation.m_[0][2] = -sin(pos[ROBOT_ROT]);
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
-	ozcollide::OBB robotBox;
-	robotBox.extent = ozcollide::Vec3f(robot.xSide, robot.ySide, robot.zSide);
+	ozcollide::OBB robotBox = robot.GetBox();
 	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 

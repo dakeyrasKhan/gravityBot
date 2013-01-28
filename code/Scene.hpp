@@ -3,14 +3,7 @@
 #include <ozcollide/aabbtree_poly.h>
 #include "Vector.hpp"
 #include "Object.hpp"
-
-
-struct Robot
-{
-	double xSide;
-	double ySide;
-	double zSide;
-};
+#include "Robot.hpp"
 
 class Scene
 {
