@@ -4,7 +4,7 @@
 #include "Scene.hpp"
 
 
-Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(0)
+Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(ROBOT_Y)
 {
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
@@ -60,7 +60,7 @@ void Scene::BuildCollisionTree()
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
-		if(n[0] == 0 && n[1] == 1 && n[2] == 0)
+		if(n[0] == 0 && n[1] == 1 && n[2] == 0 && p[0][2] == ROBOT_Y - ROBOT_HEIGHT)
 			continue;
 
 		ozcollide::Polygon poly;
@@ -89,19 +89,11 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
 	ozcollide::OBB robotBox = robot.GetBox();
-	robotBox.center += ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
+	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 
 	ozcollide::AABBTreePoly::OBBColResult result;
 	collisionTree->collideWithOBB(robotBox, result);
-
-	for(int i=0; i<result.polys_.size(); i++)
-	{
-		std::cout << result.polys_[i]->getNormal().x << " "
-			<< result.polys_[i]->getNormal().y << " "
-			<< result.polys_[i]->getNormal().z << " "
-			<< std::endl;
-	}
 
 	return result.polys_.size() > 0;
 }
@@ -111,8 +103,8 @@ Object Scene::RobotObject(Position pos) const
 {
 	Object obj = robot.GetObject();
 	Point y; y[0] = 0; y[1] = 1; y[2] = 0;
-	obj.Translate(pos[ROBOT_X], 0, pos[ROBOT_Z]);
 	obj.Rotate(y, pos[ROBOT_ROT]);
+	obj.Translate(pos[ROBOT_X], ROBOT_Y, pos[ROBOT_Z]);
 	return obj;
 }
 

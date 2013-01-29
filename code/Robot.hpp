@@ -3,6 +3,9 @@
 #include "Vector.hpp"
 #include "Object.hpp"
 
+#define ROBOT_Y 0.25
+#define ROBOT_HEIGHT 0.5
+
 class Robot
 {
 public:

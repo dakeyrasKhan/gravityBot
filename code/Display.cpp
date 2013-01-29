@@ -279,14 +279,14 @@ Position Display::UpdatePosition(clock::time_point time)
 	while(distanceDone >= distance)
 	{
 		distanceDone -= distance;
-		direction = trajectory[lastWaypoint] - trajectory[lastWaypoint];
+		direction = trajectory[lastWaypoint+1] - trajectory[lastWaypoint];
 		distance = direction.Norm();
 
 		lastWaypoint++;
-		if(lastWaypoint == trajectory.size() + 1)
+		if(lastWaypoint+1 == trajectory.size())
 		{
 			isTrajectoryEnded = true;
-			return *trajectory.end();
+			return trajectory[lastWaypoint];
 		}
 		lastWaypointTime = time;
 	}
