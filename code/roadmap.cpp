@@ -1,17 +1,15 @@
 #include "roadmap.hpp"
+#include <iostream>
 
 
 Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 	vector<FullNode> neighbours;
-	findNeighbours(start.ToPoint(),scene->maxSize(),with,&tree,&neighbours);
-	priority_queue<NodeComp> heap;
-
-	for(auto neighbour : neighbours){
-		if(scene->validMove(start,neighbour.pos,with,pos))
-			heap.push(NodeComp(neighbour,Position(neighbour.pos-start).Norm()));
-	}
 	Path path;
+
+	findNeighbours(start.ToPoint(),scene->maxSize,with,&tree,&neighbours);
+	std::cout<<"Found "<<neighbours.size()<<" potential start neighbours"<<std::endl;
 	
+	priority_queue<NodeComp> heap;
 	bool *seen = new bool[waypoints.size()];
 	double *distances = new double[waypoints.size()];
 	int *father = new int[waypoints.size()];
@@ -21,17 +19,32 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		distances[i]=INFINITY;
 		father[i]=-1;
 	}
+	
+
+	for(auto neighbour : neighbours){
+
+		if(scene->validMove(start,neighbour.pos,with,pos)){
+			distances[neighbour.id]=Position(neighbour.pos-start).Norm();
+			heap.push(NodeComp(neighbour,Position(neighbour.pos-start).Norm()));
+		}
+	}
+	
+	
+	std::cout<<"starting dijkstra with "<<heap.size()<<" nodes"<<std::endl;
 
 	while(!heap.empty()){
 		FullNode current = heap.top().node;
 		heap.pop();
 		if(seen[current.id])
 			continue;
+		seen[current.id]=true;
 		for(auto neighbour : adjacency[current.id]){
+
 			if(pos!=NULL){
 				if(!scene->validMove(current.pos,neighbour.pos,with,pos))
 					continue;
 			}
+
 			double dist = Position(current.pos-neighbour.pos).Norm();
 			if(distances[current.id] + dist < distances[neighbour.id]){
 				distances[neighbour.id] = distances[current.id] + dist;
@@ -40,8 +53,10 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 			}
 		}
 	}
+	std::cout<<"dijkstra ended"<<std::endl;
 	neighbours.clear();
-	findNeighbours(end.ToPoint(),scene->maxSize(),with,&tree,&neighbours);
+	findNeighbours(end.ToPoint(),scene->maxSize,with,&tree,&neighbours);
+	std::cout<<"found "<<neighbours.size()<<" possible end"<<std::endl;
 	int endPoint=-1;
 	double distToEnd=INFINITY;
 	for(auto neighbour : neighbours){
@@ -63,7 +78,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		delete[] seen;
 		return path;
 	}
-
+	std::cout<<"found end"<<std::endl;
 	std::stack<int> idPathStack;
 	int current = endPoint;
 	while(current!=-1){
@@ -92,18 +107,20 @@ void Roadmap::explore(int curNode, int curClasse){
 
 void Roadmap::addNode(FullNode node){
 	
-	if(scene->Collision(node.pos,node.with,NULL))
+	if(scene->Collision(node.pos,node.with,NULL)){
+		//std::cout<<"Collision : "<<node.pos[0]<<","<<node.pos[1]<<","<<node.pos[2]<<std::endl;
 		return;
-
+	}
+	
 	addPos(node,&tree);	
 	waypoints.push_back(node);
 	adjacency.push_back(vector<FullNode>());		
 
 	vector<FullNode> neighbours;
-	findNeighbours(node.pos.ToPoint(),scene->maxSize(),node.with,&tree,&neighbours);
+	findNeighbours(node.pos.ToPoint(),scene->maxSize,node.with,&tree,&neighbours);
 	double fail=0;
 	for(auto neighbour : neighbours){
-		if(neighbour.pos == node.pos && 
+		if(neighbour.with == node.with && 
 		   scene->validMove(neighbour.pos,node.pos,node.with,NULL)){
 				adjacency[neighbour.id].push_back(node);
 		}
@@ -114,21 +131,20 @@ void Roadmap::addNode(FullNode node){
 }
 
 
-Roadmap::Roadmap(Scene* scene){
-	int idCount=0;
-	for(int i=0;i<2;i++){
+Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->negSize.ToPoint(),scene->posSize.ToPoint()){
+	int prec=0;
+	for(int i=1;i<2;i++){
 		while(waypoints.size()<NB_WAYPOINTS){
-			FullNode node(Position::Random(scene->size),idCount++,(i<1));
+			Position randompos=Position::Random(scene->negSize,scene->posSize);
+			FullNode node(randompos,waypoints.size(),(i<1));
 			addNode(node);
+			if(waypoints.size()%100==0 && waypoints.size()!=prec){
+				std::cout<<waypoints.size()<<std::endl;
+				prec=waypoints.size();
+			}
 		}
-		/*int curClasse=0;
-		for(int i=0;i<classes.size();i++){
-			if(classes[i]!=-1)
-				continue;
-			explore(i,curClasse++);
-		}
-		nbClasses = curClasse;*/
 	}
+	return;
 	for(auto node : waypoints){
 		if(!node.with)
 			continue;

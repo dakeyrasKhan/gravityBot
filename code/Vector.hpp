@@ -2,7 +2,7 @@
 #include <array>
 #include <cmath>
 
-#define MAX_DEPTH 8
+#define MAX_DEPTH 15
 const double Pi = 3.14159265359;
 const double EPS = (1./double(1<<MAX_DEPTH));
 
@@ -13,11 +13,18 @@ const double EPS = (1./double(1<<MAX_DEPTH));
 #define ROBOT_ROT	0
 #define ROBOT_X		1
 #define ROBOT_Z		2
+#define ARM_LENGTH  42.
+#define ARM1		21.
+#define ARM2		21.
+#define SPACE		10.
 
 
 inline double mod(const double d0, const double d1)
 {
-	return d0 - d1*floor(d0/d1);
+	if(d0>0)
+		return d0 - d1*floor(d0/d1);
+	else
+		return d1*ceil(d0/d1)-d0;
 }
 
 template<std::size_t L, int R>
@@ -29,7 +36,7 @@ public:
 	Array<3, 0>			ToPoint() const;
 	double				Norm() const;
 	Array<L, R>			Normalize() const;
-	static Array<L,R>	Random(const std::array<double, L>& a);
+	static Array<L,R>	Random(const std::array<double, L>& neg,const std::array<double, L>& pos);
 };
 
 typedef Array<3, 0> Point;
@@ -41,10 +48,10 @@ Position randomCatch(Point p);
 
 
 template<std::size_t L, int R>
-Array<L,R> Array<L,R>::Random(const std::array<double, L>& a){
+Array<L,R> Array<L,R>::Random(const std::array<double, L>& neg,const std::array<double, L>& pos){
 	Array<L,R> toReturn;
 	for(int i=0;i<L;i++)
-		toReturn[i]=mod(rand(),a[i]);
+		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
 	return toReturn;
 }
 
@@ -64,7 +71,7 @@ double inline Array<L, R>::Norm() const
 	double d = 0;
 	for(int i=0; i<R; i++)
 	{
-		double x = (*this)[i] - 2*Pi*floor((*this)[i]/(2*Pi));
+		double x = mod((*this)[i],2.*Pi);
 		d += x*x;
 	}
 	for(int i=R; i<L; i++)

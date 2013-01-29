@@ -5,6 +5,8 @@
 #include "Object.hpp"
 #include "Robot.hpp"
 
+#define NB_TRY 1000
+
 class Scene
 {
 public:
@@ -19,21 +21,25 @@ public:
 	Position GetNegSize() const { return negSize; };
 	double GetMaxSize() const { return maxSize; };
 
-
-	bool validMove(Position, Position, bool, Point*);
+	std::vector<Position> Optimize(std::vector<Position> p);
+	bool validMove(Position, Position, bool, Point*,bool p=false);
 	Point Drop(Position);
+
+	Position posSize, negSize;
+	double maxSize;
+
+	Robot robot;
 
 private:
 	void ReadObjFile(const char* fileName);
 	void BuildCollisionTree();
 
 	Object staticScene;
-	Robot robot;
+	
 	const double robotY;
 
 	ozcollide::AABBTreePoly* collisionTree;
 
-	Position posSize, negSize;
-	double maxSize;
+
 };
 

@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include "Vector.hpp"
 
@@ -10,8 +11,9 @@ public:
 	bool isDone(){ return current==waypoints.size()-1; };
 	void add(Position a){ waypoints.push_back(a);};
 	bool empty(){ return waypoints.empty();};
-private:
 	std::vector<Position> waypoints;
+private:
+
 	Position currentPos;
 	int current;
 };

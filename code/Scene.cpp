@@ -3,7 +3,35 @@
 #include <ozcollide/aabbtreepoly_builder.h>
 #include "Scene.hpp"
 
+std::vector<Position> Scene::Optimize(std::vector<Position> path){
+	std::vector<Position> retour = path;
+	for(int essai=0;essai<NB_TRY;essai++){
+		int a = rand()%retour.size()-1;
+		int b = rand()%retour.size()-1;
+		if(a==b)
+			continue;
+		if(a>b){
+			int c=a;
+			a=b;
+			b=c;
+		}
 
+
+		double c= double(rand())/double(RAND_MAX);
+		double d= double(rand())/double(RAND_MAX);
+
+		Position start = retour[a]+(retour[a+1]-retour[a])*c;
+		Position end = retour[b]+(retour[b+1]-retour[b])*d;
+
+
+		if(validMove(start,end,false,NULL)){
+			retour.erase(retour.begin()+a+1,retour.begin()+b+1);
+			retour.insert(retour.begin()+a+1,end);
+			retour.insert(retour.begin()+a+1,start);
+		}
+	}
+	return retour;
+}
 Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(ROBOT_Y)
 {
 	Point robotSize;
@@ -46,12 +74,12 @@ void Scene::ReadObjFile(const char* fileName)
 			if(p[0] > posSize[ROBOT_X])
 				posSize[ROBOT_X] = p[0];
 			else if(p[0] < negSize[ROBOT_X])
-				negSize[ROBOT_Y] = p[0];
+				negSize[ROBOT_Z] = p[0];
 
-			if(p[2] > posSize[ROBOT_Y])
-				posSize[ROBOT_Y] = p[2];
-			else if(p[2] < negSize[ROBOT_Y])
-				negSize[ROBOT_Y] = p[2];
+			if(p[2] > posSize[ROBOT_Z])
+				posSize[ROBOT_Z] = p[2];
+			else if(p[2] < negSize[ROBOT_Z])
+				negSize[ROBOT_Z] = p[2];
 			break;
 		case 'f':
 			sceneFile >> triangle[0] >> triangle[1] >> triangle[2];
@@ -64,7 +92,7 @@ void Scene::ReadObjFile(const char* fileName)
 			sceneFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 	}
-
+	maxSize=0;
 	for(auto x : posSize)
 		maxSize = std::max(maxSize, x);
 	for(auto x : negSize)
@@ -111,7 +139,7 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
 	ozcollide::OBB robotBox = robot.GetBox();
-	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
+	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY+1, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 
 	ozcollide::AABBTreePoly::OBBColResult result;
@@ -126,7 +154,7 @@ Object Scene::RobotObject(Position pos) const
 	Object obj = robot.GetObject();
 	Point y; y[0] = 0; y[1] = 1; y[2] = 0;
 	obj.Rotate(y, pos[ROBOT_ROT]);
-	obj.Translate(pos[ROBOT_X], ROBOT_Y, pos[ROBOT_Z]);
+	obj.Translate(pos[ROBOT_X], ROBOT_Y+1, pos[ROBOT_Z]);
 	return obj;
 }
 
@@ -140,14 +168,27 @@ Point Scene::Drop(Position p)
 	return Point();
 }
 
-bool Scene::validMove(Position a, Position b, bool with, Point* object)
+bool Scene::validMove(Position a, Position b, bool with, Point* object,bool print)
 {
 	double length=Position((b-a)).Norm();
-	if(length<=EPS)
+	if(print){
+		std::cout<<"length : "<<length<<" eps : "<<EPS<<std::endl;
+		for(auto p : a)
+			std::cout<<"---"<<p<<std::endl;
+		for(auto p : b)
+			std::cout<<"---"<<p<<std::endl;
+	}
+	
+	//std::cout<<"length : "<<length<<" eps : "<<EPS<<std::endl;
+	if(length<=0.1){
+		//std::cout<<"return"<<std::endl;
 		return true;
-
+	}
+	//std::cout<<"continue"<<std::endl;
 	Position mid = Position((a+b))/2.;
 	if(Collision(mid,with,object))
 		return false;
-	return validMove(a,mid,with,object) && validMove(mid,b,with,object);
+	if(print)
+		std::cout<<"continue"<<std::endl;
+	return validMove(a,mid,with,object,print) && validMove(mid,b,with,object,print);
 }

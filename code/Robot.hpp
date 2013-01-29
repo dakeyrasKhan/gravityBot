@@ -13,7 +13,7 @@ public:
 	Robot(Point size);
 	Object GetObject() const { return object; };
 	ozcollide::OBB GetBox() const;
-
+	void printSize() const;
 private:
 	Point size;
 	Object object;

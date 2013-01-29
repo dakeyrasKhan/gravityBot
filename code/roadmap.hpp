@@ -4,8 +4,8 @@
 #include "path.hpp"
 #include <queue>
 #include <stack>
-#define NB_WAYPOINTS 10000
-#define NB_NEIGHB 50
+#define NB_WAYPOINTS 500
+#define NB_NEIGHB 10
 #define NB_DROP 5
 
 class Roadmap{

@@ -1,7 +1,7 @@
 #include "Robot.hpp"
+#include <cstdio>
 
-
-Robot::Robot(Point size) : size(size)
+Robot::Robot(Point s):size(s)
 {
 	std::array<double, 3> vertices[] =
 	{
@@ -30,19 +30,22 @@ Robot::Robot(Point size) : size(size)
 		{2, 6, 4},
 		{4, 6, 7}
 	};
-
 	for(int i=0; i<8; i++)
 		object.points.push_back(vertices[i]);
 	for(int i=0; i<12; i++)
 		object.triangles.push_back(faces[i]);
-
 	object.Translate(-size[0]/2, -size[1]/2, -size[2]/2);
 }
 
+void Robot::printSize() const
+{
+	printf("robot size : %lf %lf %lf \n",size[0],size[1],size[2]);
+}
 
 ozcollide::OBB Robot::GetBox() const
 {
 	ozcollide::OBB box;
+	
 	box.extent = ozcollide::Vec3f(size[0], size[1], size[2]);
 	return box;
 }

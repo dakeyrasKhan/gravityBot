@@ -3,12 +3,12 @@
 #include <vector>
 using namespace std;
 
-enum{X,Y,Z};
+enum{Y,X,Z};
 
 const int sonFinder[2][2][2]={{{0,6},{2,4}},{{1,7},{3,5}}};
 const double centerCalc[8][3]={{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},
 							{-1,1,1},{1,1,1},{-1,-1,1},{1,-1,1}};
-const int MAXCLUSTER = 10;
+const int MAXCLUSTER = 5;
 
 class FullNode{
 public:
@@ -34,12 +34,24 @@ public:
 			son[i]=NULL;
 		brokenDown = false;
 		nbWith=nbWithout=0;
+		depth=0;
+	};
+	Octree(Point neg, Point pos){
+		for(int i=0;i<neg.size();i++){
+			size[i]=pos[i]-neg[i];
+			center[i]=(pos[i]+neg[i])/2.;
+		}
+		for(int i=0;i<8;i++)
+			son[i]=NULL;
+		brokenDown = false;
+		nbWith=nbWithout=0;
+		depth=0;
 	};
 	~Octree(){
 		for(int i=0;i<8;i++)
 			if(son[i]!=NULL)
 				delete son[i];
-	}
+	};
 	vector<FullNode> values;
 	int nbWith;
 	int nbWithout;
