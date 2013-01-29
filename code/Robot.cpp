@@ -43,6 +43,6 @@ Robot::Robot(Point size) : size(size)
 ozcollide::OBB Robot::GetBox() const
 {
 	ozcollide::OBB box;
-	box.extent = ozcollide::Vec3f(size[0], size[1], size[2]);
+	box.extent = ozcollide::Vec3f(size[0]/2, size[1]/2, size[2]/2);
 	return box;
 }
