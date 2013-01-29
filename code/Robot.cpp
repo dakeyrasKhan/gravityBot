@@ -35,6 +35,7 @@ Robot::Robot(Point size) : size(size)
 		object.points.push_back(vertices[i]);
 	for(int i=0; i<12; i++)
 		object.triangles.push_back(faces[i]);
+
 }
 
 
@@ -42,5 +43,6 @@ ozcollide::OBB Robot::GetBox() const
 {
 	ozcollide::OBB box;
 	box.extent = ozcollide::Vec3f(size[0], size[1], size[2]);
+	box.center = ozcollide::Vec3f(size[0]/2, size[1]/2, size[2]/2);
 	return box;
 }
