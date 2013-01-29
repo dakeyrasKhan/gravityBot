@@ -31,9 +31,6 @@ int main(int argc, char * argv[])
 		trajectory.push_back(start);
 		trajectory.push_back(end);
 	}
-	
-
-
 
 	
 	/*Position pos;
@@ -52,6 +49,7 @@ int main(int argc, char * argv[])
 
 	Display display(&argc, argv, &scene);
 	display.SetTrajectory(trajectory);
+
 
 	display.MainLoop();
 

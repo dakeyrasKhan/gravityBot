@@ -110,7 +110,8 @@ void Scene::BuildCollisionTree()
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
-		if(n[0] == 0 && n[1] == 1 && n[2] == 0 && p[0][2] == ROBOT_Y - ROBOT_HEIGHT)
+
+		if(n[0] == 0 && n[1] == 1 && n[2] == 0 && p[0][1] == ROBOT_Y - ROBOT_HEIGHT/2)
 			continue;
 
 		ozcollide::Polygon poly;
