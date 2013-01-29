@@ -838,4 +838,8 @@ void AABBTreePoly::scale(float _scale)
 	}
 }
 
+AABBTreePoly::OBBColResult::~OBBColResult()
+{
+}
+
 LEAVE_NAMESPACE

@@ -83,6 +83,7 @@ public:
      */
     class OBBColResult {
     public:
+		OZCOLLIDE_API ~OBBColResult();
         Vector<const Polygon *> polys_;
         Vector<int> users_;
         OBB obbQuery_;
