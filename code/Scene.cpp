@@ -118,15 +118,6 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	ozcollide::AABBTreePoly::OBBColResult result;
 	collisionTree->collideWithOBB(robotBox, result);
 
-	std::cout << result.polys_.size() << std::endl;
-	for(int i = 0; i< result.polys_.size(); i++)
-	{
-		std::cout << result.polys_[i]->getIndex(0) << " "
-			<< result.polys_[i]->getIndex(1) << " "
-			<< result.polys_[i]->getIndex(2) << " "
-			<< std::endl;
-	}
-
 	return result.polys_.size() > 0;
 }
 
