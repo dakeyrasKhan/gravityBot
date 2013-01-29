@@ -60,6 +60,8 @@ void Scene::BuildCollisionTree()
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
+		if(n[0] == 0 && n[1] == 1 && n[2] == 0)
+			continue;
 
 		ozcollide::Polygon poly;
 		poly.setNormal(ozcollide::Vec3f(n[0], n[1], n[2]));
@@ -87,11 +89,19 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
 	ozcollide::OBB robotBox = robot.GetBox();
-	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
+	robotBox.center += ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 
 	ozcollide::AABBTreePoly::OBBColResult result;
 	collisionTree->collideWithOBB(robotBox, result);
+
+	for(int i=0; i<result.polys_.size(); i++)
+	{
+		std::cout << result.polys_[i]->getNormal().x << " "
+			<< result.polys_[i]->getNormal().y << " "
+			<< result.polys_[i]->getNormal().z << " "
+			<< std::endl;
+	}
 
 	return result.polys_.size() > 0;
 }

@@ -12,7 +12,7 @@ int main(int argc, char * argv[])
 	Display display(&argc, argv, &scene);
 
 	Position pos;
-	pos[0] = 0; pos[1] = -1; pos[2] = -2;
+	pos[0] = 0; pos[1] = 0; pos[2] = 0;
 	display.SetTrajectory(pos);
 	std::cout << scene.Collision(pos, false, nullptr);
 	display.MainLoop();
