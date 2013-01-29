@@ -140,7 +140,7 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
 	ozcollide::OBB robotBox = robot.GetBox();
-	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY+1, pos[ROBOT_Z]);
+	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 
 	ozcollide::AABBTreePoly::OBBColResult result;
@@ -155,7 +155,7 @@ Object Scene::RobotObject(Position pos) const
 	Object obj = robot.GetObject();
 	Point y; y[0] = 0; y[1] = 1; y[2] = 0;
 	obj.Rotate(y, pos[ROBOT_ROT]);
-	obj.Translate(pos[ROBOT_X], ROBOT_Y+1, pos[ROBOT_Z]);
+	obj.Translate(pos[ROBOT_X], ROBOT_Y, pos[ROBOT_Z]);
 	return obj;
 }
 
