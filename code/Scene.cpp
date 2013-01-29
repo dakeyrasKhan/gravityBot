@@ -3,29 +3,15 @@
 #include <ozcollide/aabbtreepoly_builder.h>
 #include "Scene.hpp"
 
-Point Scene::Drop(Position p){
-	return Point();
-}
-
-bool Scene::validMove(Position a, Position b, bool with, Point* object)
-{
-	double length=Position((b-a)).Norm();
-	if(length<=EPS)
-		return true;
-
-	Position mid = Position((a+b))/2.;
-	if(Collision(mid,with,object))
-		return false;
-	return validMove(a,mid,with,object) && validMove(mid,b,with,object);
-}
-
 
 Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(0)
 {
-	ReadObjFile(sceneFileName);
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
 	robot = Robot(robotSize);
+
+	ReadObjFile(sceneFileName);
+	BuildCollisionTree();
 }
 
 
@@ -70,7 +56,7 @@ void Scene::BuildCollisionTree()
 
 	// Build the polygons vector
 	std::vector<ozcollide::Polygon> polygons;
-	for(auto t : staticScene.triangles)
+	for(auto& t : staticScene.triangles)
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
@@ -78,6 +64,7 @@ void Scene::BuildCollisionTree()
 		ozcollide::Polygon poly;
 		poly.setNormal(ozcollide::Vec3f(n[0], n[1], n[2]));
 		poly.setIndicesMemory(3, t.data());
+		polygons.push_back(poly);
 
 	}
 
@@ -106,7 +93,7 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	ozcollide::AABBTreePoly::OBBColResult result;
 	collisionTree->collideWithOBB(robotBox, result);
 
-	return result.polys_.size() == 0;
+	return result.polys_.size() > 0;
 }
 
 
@@ -117,4 +104,26 @@ Object Scene::RobotObject(Position pos) const
 	obj.Translate(pos[ROBOT_X], 0, pos[ROBOT_Z]);
 	obj.Rotate(y, pos[ROBOT_ROT]);
 	return obj;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////				TODO				////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+Point Scene::Drop(Position p)
+{
+	return Point();
+}
+
+bool Scene::validMove(Position a, Position b, bool with, Point* object)
+{
+	double length=Position((b-a)).Norm();
+	if(length<=EPS)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+	if(Collision(mid,with,object))
+		return false;
+	return validMove(a,mid,with,object) && validMove(mid,b,with,object);
 }

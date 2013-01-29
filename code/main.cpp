@@ -4,8 +4,6 @@
 #include "octree.hpp"
 #include <random>
 
-using namespace std;
-
 
 int main(int argc, char * argv[])
 {
@@ -13,7 +11,10 @@ int main(int argc, char * argv[])
 	Scene scene("../scenes/scene0.obj");
 	Display display(&argc, argv, &scene);
 
-	std::cout << mod(42.42, Pi);
+	Position pos;
+	pos[0] = 0; pos[1] = -1; pos[2] = -2;
+	display.SetTrajectory(pos);
+	std::cout << scene.Collision(pos, false, nullptr);
 	display.MainLoop();
 
 	return 0;

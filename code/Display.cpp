@@ -164,8 +164,8 @@ void Display::SetView(double timediff)
 	if(keys[M_LEFT])
 	{
 		Pixel dMouse = mousePos - oldMousePos;
-		double dAngleX = double(dMouse[0])*0.001;
-		double dAngleY = double(dMouse[1])*0.001;
+		double dAngleX = double(dMouse[0])*0.005;
+		double dAngleY = double(dMouse[1])*0.005;
 
 		direction = direction*cos(dAngleX) + left*sin(dAngleX);
 		//left = up^direction;
@@ -243,10 +243,25 @@ void Display::MotionFunc(int x, int y)
 void Display::SetTrajectory(const std::vector<Position>& trajectory)
 {
 	this->trajectory = trajectory;
-	isTrajectoryEnded = false;
-	lastWaypointTime = clock::now();
 	lastWaypoint = 0;
 
+	if(trajectory.size() > 1)
+	{
+		isTrajectoryEnded = false;
+		lastWaypointTime = clock::now();
+	}
+	else
+		isTrajectoryEnded = true;
+
+}
+
+
+void Display::SetTrajectory(const Position& position)
+{
+	trajectory.clear();
+	trajectory.push_back(position);
+	lastWaypoint = 0;
+	isTrajectoryEnded = true;
 }
 
 
@@ -258,7 +273,7 @@ Position Display::UpdatePosition(clock::time_point time)
 	clock::duration diff = time - lastWaypointTime;
 	double timediff = std::chrono::duration_cast<std::chrono::duration<double>>(diff).count();
 	double distanceDone = timediff*ROBOT_SPEED;
-	Position direction = trajectory[lastWaypoint] - trajectory[lastWaypoint];
+	Position direction = trajectory[lastWaypoint+1] - trajectory[lastWaypoint];
 	double distance = direction.Norm();
 
 	while(distanceDone >= distance)

@@ -17,6 +17,7 @@ public:
 	void MouseFunc(int button, bool down, int x, int y);
 	void MotionFunc(int x, int y);
 	void SetTrajectory(const std::vector<Position>& trajectory);
+	void SetTrajectory(const Position& position);
 
 private:
 	typedef std::chrono::high_resolution_clock clock;
