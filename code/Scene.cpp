@@ -181,7 +181,7 @@ bool Scene::validMove(Position a, Position b, bool with, Point* object,bool prin
 	}
 	
 	//std::cout<<"length : "<<length<<" eps : "<<EPS<<std::endl;
-	if(length<=0.1){
+	if(length<=0.01){
 		//std::cout<<"return"<<std::endl;
 		return true;
 	}
