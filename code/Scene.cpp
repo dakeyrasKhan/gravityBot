@@ -24,6 +24,13 @@ Scene::~Scene()
 
 void Scene::ReadObjFile(const char* fileName)
 {
+	posSize[ROBOT_ROT] = 2*Pi;
+	posSize[ROBOT_X] = 0;
+	posSize[ROBOT_Z] = 0;
+	negSize[ROBOT_ROT] = 0;
+	negSize[ROBOT_X] = 0;
+	negSize[ROBOT_Z] = 0;
+
 	std::ifstream sceneFile(fileName);
 	while(!sceneFile.eof())
 	{
@@ -35,6 +42,16 @@ void Scene::ReadObjFile(const char* fileName)
 		case 'v':
 			sceneFile >> p[0] >> p[1] >> p[2];
 			staticScene.points.push_back(p);
+
+			if(p[0] > posSize[ROBOT_X])
+				posSize[ROBOT_X] = p[0];
+			else if(p[0] < negSize[ROBOT_X])
+				negSize[ROBOT_Y] = p[0];
+
+			if(p[2] > posSize[ROBOT_Y])
+				posSize[ROBOT_Y] = p[2];
+			else if(p[2] < negSize[ROBOT_Y])
+				negSize[ROBOT_Y] = p[2];
 			break;
 		case 'f':
 			sceneFile >> triangle[0] >> triangle[1] >> triangle[2];
@@ -47,6 +64,11 @@ void Scene::ReadObjFile(const char* fileName)
 			sceneFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 	}
+
+	for(auto x : posSize)
+		maxSize = std::max(maxSize, x);
+	for(auto x : negSize)
+		maxSize = std::max(maxSize, -x);
 }
 
 

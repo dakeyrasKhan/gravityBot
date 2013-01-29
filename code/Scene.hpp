@@ -15,13 +15,12 @@ public:
 	const Object& StaticScene() const { return staticScene; };
 	Object RobotObject(Position) const;
 
-	std::array<double, DIM_CONF> size;
-	double maxSize(){ return *std::max_element(size.begin(),size.end()); }
+	Position GetPosSize() const { return posSize; };
+	Position GetNegSize() const { return negSize; };
+	double GetMaxSize() const { return maxSize; };
 
 
 	bool validMove(Position, Position, bool, Point*);
-
-
 	Point Drop(Position);
 
 private:
@@ -33,5 +32,8 @@ private:
 	const double robotY;
 
 	ozcollide::AABBTreePoly* collisionTree;
+
+	Position posSize, negSize;
+	double maxSize;
 };
 
