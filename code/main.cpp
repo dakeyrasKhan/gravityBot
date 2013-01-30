@@ -19,9 +19,9 @@ int main(int argc, char * argv[])
 	bool withRoadmap=true;
 	bool optimize=false;
 	Position start;
-	start[0]=3;start[1]=3;start[2]=3;start[3]=-3;start[4]=1;
+	start[0]=3;start[1]=1;start[2]=-1;start[3]=-3;start[4]=1;
 	Position end;
-	end[0]=5;end[1]=5;end[2]=5;end[3]=-3;end[4]=-4;
+	end[0]=5;end[1]=0;end[2]=0;end[3]=-3;end[4]=-4;
 
 	if(withRoadmap)
 	{
@@ -32,12 +32,7 @@ int main(int argc, char * argv[])
 		if(optimize)
 			trajectory = scene.Optimize(p.waypoints);
 		else{
-			Position s=p.waypoints[0];
-			Position e=p.waypoints[1];
-			Position collision((s+2.*e)/3.);
-			trajectory.push_back(collision);
-			std::cout<<"BLAH : "<< scene.Collision(collision,false,NULL)<<std::endl;
-			//trajectory.push_back(p.waypoints[1]);
+			trajectory = p.waypoints;
 		}
 	}
 	else

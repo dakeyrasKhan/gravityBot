@@ -5,6 +5,7 @@
 
 std::vector<Position> Scene::Optimize(std::vector<Position> path)
 {
+	int optimization=0;
 	std::vector<Position> retour = path;
 	for(int essai=0;essai<NB_TRY;essai++){
 		int a = rand()%retour.size()-1;
@@ -28,6 +29,9 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path)
 			retour.erase(retour.begin()+a+1,retour.begin()+b+1);
 			retour.insert(retour.begin()+a+1,end);
 			retour.insert(retour.begin()+a+1,start);
+			optimization++;
+			if(optimization>20)
+				break;
 		}
 	}
 	return retour;
@@ -52,8 +56,10 @@ Scene::~Scene()
 
 void Scene::ReadObjFile(const char* fileName)
 {
-	posSize[ROBOT_ROT] = posSize[ROBOT_ARM0] = posSize[ROBOT_ARM1] = 2*Pi; 
-	negSize[ROBOT_ROT] = negSize[ROBOT_ARM0] = negSize[ROBOT_ARM1] = 0;
+	posSize[ROBOT_ROT] = 2*Pi;
+	posSize[ROBOT_ARM0] = posSize[ROBOT_ARM1] = Pi/2.; 
+	negSize[ROBOT_ROT] = 0;
+	negSize[ROBOT_ARM0] = negSize[ROBOT_ARM1] = -Pi/2.;
 	posSize[ROBOT_X] = posSize[ROBOT_Z] = negSize[ROBOT_X] = negSize[ROBOT_Z] = 0;
 
 	std::ifstream sceneFile(fileName);

@@ -6,7 +6,6 @@
 #define MAX_DEPTH 15
 const double Pi = 3.14159265359;
 const double EPS = (1./double(1<<MAX_DEPTH));
-#define INFINITY std::numeric_limits<double>::infinity()
 
 
 #define DIM_CONF	5
@@ -15,6 +14,8 @@ const double EPS = (1./double(1<<MAX_DEPTH));
 #define ARM1		21.
 #define ARM2		21.
 #define SPACE		10.
+#define ROBOT_X 	3
+#define ROBOT_Z 	4
 
 
 inline double mod(const double d0, const double d1)
@@ -42,10 +43,7 @@ typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
 
 
-inline Position randomCatch(Point p)
-{
-	return Position();
-}
+Position randomCatch(Point p);
 
 
 template<std::size_t L, int R>
