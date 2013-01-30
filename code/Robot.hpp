@@ -17,6 +17,10 @@ public:
 
 	const Point baseSize;
 	const double yPos;
+	const double armWidth;
+	const double armLength0;
+	const double armLength1;
 private:
-	Object object;
+	Object baseObject, arm0Object, arm1Object;
+	static Object BuildBox(const Point& size);
 };

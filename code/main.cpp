@@ -13,8 +13,9 @@ int main(int argc, char * argv[])
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
 	Scene scene("../scenes/scene0.obj", robotSize);
+
 	
-	std::vector<Position> trajectory;
+	/*std::vector<Position> trajectory;
 	bool withRoadmap=true;
 	bool optimize=false;
 	Position start;
@@ -45,10 +46,14 @@ int main(int argc, char * argv[])
 		trajectory.push_back(end);
 	}
 
+	display.SetTrajectory(trajectory);*/
+
+	Position p;
+
 	Display display(&argc, argv, &scene);
-	display.SetTrajectory(trajectory);
-
-
+	p[0] = 1.12507; p[1] = -0.333333; p[2] = -0.333333;
+	std::cout <<"BLAH : " << scene.Collision(p, false, NULL) << std::endl;
+	display.SetTrajectory(p);
 	display.MainLoop();
 
 	return 0;

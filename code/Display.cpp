@@ -41,7 +41,7 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 	Position p; p[0] = 0; p[1] = 0; p[2] = 0;
 	trajectory.push_back(p);
 
-	position[0] = -1; position[1] = 20; position[2] = 5;
+	camPos[0] = -1; camPos[1] = 20; camPos[2] = 5;
 	direction[0] = 0.1; direction[1] = -3; direction[2] = -1;
 	direction = direction.Normalize();
 	up[0] = 0; up[1] = 1; up[2] = 0;
@@ -87,9 +87,17 @@ void Display::Render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->StaticScene());
 
-	color[0] = 1; color[1] = 0; color[2] = .4;
+	Position position = UpdatePosition(lastRender, timediff);
+	if(scene->Collision(position, false, nullptr))
+	{
+		color[0] = .8; color[1] = 0; color[2] = 0;
+	}
+	else
+	{
+		color[0] = 0; color[1] = .8; color[2] = 0;
+	}
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-	DrawObject(scene->RobotObject(UpdatePosition(lastRender)));
+	DrawObject(scene->RobotObject(position));
 
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
@@ -149,17 +157,17 @@ void Display::SetView(double timediff)
 	Point left = (yUp^direction).Normalize();
 
 	if(keys[Z])
-		position += direction*timediff;
+		camPos += direction*timediff;
 	if(keys[S])
-		position -= direction*timediff;
+		camPos -= direction*timediff;
 	if(keys[Q])
-		position += left*(timediff/2.0);
+		camPos += left*(timediff/2.0);
 	if(keys[D])
-		position -= left*(timediff/2.0);
+		camPos -= left*(timediff/2.0);
 	if(keys[R])
-		position += up*(timediff/2.0);
+		camPos += up*(timediff/2.0);
 	if(keys[F])
-		position -= up*(timediff/2.0);
+		camPos -= up*(timediff/2.0);
 
 	if(keys[M_LEFT])
 	{
@@ -188,9 +196,9 @@ void Display::SetView(double timediff)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	Point lookAt = position + direction;
+	Point lookAt = camPos + direction;
 	gluLookAt(
-		position[0], position[1], position[2], 
+		camPos[0], camPos[1], camPos[2], 
 		lookAt[0], lookAt[1], lookAt[2],
 		up[0], up[1], up[2]);
 }
@@ -217,6 +225,24 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 		break;
 	case 'f':
 		keys[F] = down;
+		break;
+	case '8':
+		keys[N_8] = down;
+		break;
+	case '2':
+		keys[N_2] = down;
+		break;
+	case '4':
+		keys[N_4] = down;
+		break;
+	case '6':
+		keys[N_6] = down;
+		break;
+	case '7':
+		keys[N_7] = down;
+		break;
+	case '9':
+		keys[N_9] = down;
 		break;
 	}
 }
@@ -265,32 +291,50 @@ void Display::SetTrajectory(const Position& position)
 }
 
 
-Position Display::UpdatePosition(clock::time_point time)
+Position Display::UpdatePosition(clock::time_point time, double timediff)
 {
 	if(isTrajectoryEnded)
-		return trajectory[lastWaypoint];
-
-	clock::duration diff = time - lastWaypointTime;
-	double timediff = std::chrono::duration_cast<std::chrono::duration<double>>(diff).count();
-	double distanceDone = timediff*ROBOT_SPEED;
-	Position direction = trajectory[lastWaypoint+1] - trajectory[lastWaypoint];
-	double distance = direction.Norm();
-
-	while(distanceDone >= distance)
 	{
-		distanceDone -= distance;
-		direction = trajectory[lastWaypoint+1] - trajectory[lastWaypoint];
-		distance = direction.Norm();
+		if(keys[N_8])
+			trajectory[lastWaypoint][ROBOT_Z] -= timediff;
+		if(keys[N_2])
+			trajectory[lastWaypoint][ROBOT_Z] += timediff;
+		if(keys[N_4])
+			trajectory[lastWaypoint][ROBOT_X] -= timediff;
+		if(keys[N_6])
+			trajectory[lastWaypoint][ROBOT_X] += timediff;
+		if(keys[N_7])
+			trajectory[lastWaypoint][ROBOT_ROT] += timediff;
+		if(keys[N_9])
+			trajectory[lastWaypoint][ROBOT_ROT] -= timediff;
 
-		lastWaypoint++;
-		if(lastWaypoint+1 == trajectory.size())
-		{
-			isTrajectoryEnded = true;
-			return trajectory[lastWaypoint];
-		}
-		lastWaypointTime = time;
+		return trajectory[lastWaypoint];
 	}
 
-	return trajectory[lastWaypoint] + direction*(distanceDone/distance);
+	else
+	{
+		clock::duration diff = time - lastWaypointTime;
+		double timediff = std::chrono::duration_cast<std::chrono::duration<double>>(diff).count();
+		double distanceDone = timediff*ROBOT_SPEED;
+		Position direction = trajectory[lastWaypoint+1] - trajectory[lastWaypoint];
+		double distance = direction.Norm();
+
+		while(distanceDone >= distance)
+		{
+			distanceDone -= distance;
+			direction = trajectory[lastWaypoint+1] - trajectory[lastWaypoint];
+			distance = direction.Norm();
+
+			lastWaypoint++;
+			if(lastWaypoint+1 == trajectory.size())
+			{
+				isTrajectoryEnded = true;
+				return trajectory[lastWaypoint];
+			}
+			lastWaypointTime = time;
+		}
+
+		return trajectory[lastWaypoint] + direction*(distanceDone/distance);
+	}
 }
 

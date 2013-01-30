@@ -32,6 +32,8 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path)
 	}
 	return retour;
 }
+
+
 Scene::Scene(const char* sceneFile, const Point& robotSize) : 
 	collisionTree(nullptr), 
 	robot(robotSize)
@@ -134,8 +136,8 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	ozcollide::Matrix3x3 robotRotation;
 	robotRotation.identity();
 	robotRotation.m_[0][0] = cos(pos[ROBOT_ROT]);
-	robotRotation.m_[2][0] = sin(pos[ROBOT_ROT]);
-	robotRotation.m_[0][2] = -sin(pos[ROBOT_ROT]);
+	robotRotation.m_[2][0] = -sin(pos[ROBOT_ROT]);
+	robotRotation.m_[0][2] = sin(pos[ROBOT_ROT]);
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
 	ozcollide::OBB robotBox = robot.GetBox();
