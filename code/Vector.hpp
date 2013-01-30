@@ -9,12 +9,8 @@ const double EPS = (1./double(1<<MAX_DEPTH));
 #define INFINITY std::numeric_limits<double>::infinity()
 
 
-// The meanning of each dimension
 #define DIM_CONF	3
 #define NB_ROT		1
-#define ROBOT_ROT	0
-#define ROBOT_X		1
-#define ROBOT_Z		2
 #define ARM_LENGTH  42.
 #define ARM1		21.
 #define ARM2		21.

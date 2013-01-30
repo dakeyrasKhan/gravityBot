@@ -3,7 +3,8 @@
 #include <ozcollide/aabbtreepoly_builder.h>
 #include "Scene.hpp"
 
-std::vector<Position> Scene::Optimize(std::vector<Position> path){
+std::vector<Position> Scene::Optimize(std::vector<Position> path)
+{
 	std::vector<Position> retour = path;
 	for(int essai=0;essai<NB_TRY;essai++){
 		int a = rand()%retour.size()-1;
@@ -15,7 +16,6 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path){
 			a=b;
 			b=c;
 		}
-
 
 		double c= double(rand())/double(RAND_MAX);
 		double d= double(rand())/double(RAND_MAX);
@@ -32,13 +32,11 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path){
 	}
 	return retour;
 }
-Scene::Scene(const char* sceneFileName) : collisionTree(nullptr), robotY(ROBOT_Y)
+Scene::Scene(const char* sceneFile, const Point& robotSize) : 
+	collisionTree(nullptr), 
+	robot(robotSize)
 {
-	Point robotSize;
-	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
-	robot = Robot(robotSize);
-
-	ReadObjFile(sceneFileName);
+	ReadObjFile(sceneFile);
 	BuildCollisionTree();
 }
 
@@ -106,12 +104,13 @@ void Scene::BuildCollisionTree()
 
 	// Build the polygons vector
 	std::vector<ozcollide::Polygon> polygons;
+	double robotBottom = robot.yPos - robot.baseSize[1]/2;
 	for(auto& t : staticScene.triangles)
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
 
-		if(n[0] == 0 && n[1] == 1 && n[2] == 0 && p[0][1] == ROBOT_Y - ROBOT_HEIGHT/2)
+		if(n[0] == 0 && n[1] == 1 && n[2] == 0 && p[0][1] == robotBottom)
 			continue;
 
 		ozcollide::Polygon poly;
@@ -140,23 +139,13 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
 
 	ozcollide::OBB robotBox = robot.GetBox();
-	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robotY, pos[ROBOT_Z]);
+	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robot.yPos, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 
 	ozcollide::AABBTreePoly::OBBColResult result;
 	collisionTree->collideWithOBB(robotBox, result);
 
 	return result.polys_.size() > 0;
-}
-
-
-Object Scene::RobotObject(Position pos) const
-{
-	Object obj = robot.GetObject();
-	Point y; y[0] = 0; y[1] = 1; y[2] = 0;
-	obj.Rotate(y, pos[ROBOT_ROT]);
-	obj.Translate(pos[ROBOT_X], ROBOT_Y, pos[ROBOT_Z]);
-	return obj;
 }
 
 
