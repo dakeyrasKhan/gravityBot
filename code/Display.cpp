@@ -176,7 +176,6 @@ void Display::SetView(double timediff)
 		double dAngleY = double(dMouse[1])*0.005;
 
 		direction = direction*cos(dAngleX) + left*sin(dAngleX);
-		//left = up^direction;
 		left = (yUp^direction).Normalize();
 		direction = direction*cos(dAngleY) + up*sin(dAngleY);
 		up = direction^left;

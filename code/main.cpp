@@ -15,7 +15,7 @@ int main(int argc, char * argv[])
 	Scene scene("../scenes/scene0.obj", robotSize);
 	Display display(&argc, argv, &scene);
 	
-	/*std::vector<Position> trajectory;
+	std::vector<Position> trajectory;
 	bool withRoadmap=true;
 	bool optimize=false;
 	Position start;
@@ -46,15 +46,16 @@ int main(int argc, char * argv[])
 		trajectory.push_back(end);
 	}
 
-	display.SetTrajectory(trajectory);*/
+	display.SetTrajectory(trajectory);
 
-	Position p;
+	/*Position p;
 	p[ROBOT_ROT] = 1.12507; 
 	p[ROBOT_ARM0] = 0.5;
 	p[ROBOT_ARM1] = 0.5;
 	p[ROBOT_X] = -0.333333;
 	p[ROBOT_Z] = -0.333333;
-	display.SetTrajectory(p);
+	display.SetTrajectory(p);*/
+
 	display.MainLoop();
 
 	return 0;

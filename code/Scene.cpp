@@ -52,12 +52,9 @@ Scene::~Scene()
 
 void Scene::ReadObjFile(const char* fileName)
 {
-	posSize[ROBOT_ROT] = 2*Pi;
-	posSize[ROBOT_X] = 0;
-	posSize[ROBOT_Z] = 0;
-	negSize[ROBOT_ROT] = 0;
-	negSize[ROBOT_X] = 0;
-	negSize[ROBOT_Z] = 0;
+	posSize[ROBOT_ROT] = posSize[ROBOT_ARM0] = posSize[ROBOT_ARM1] = 2*Pi; 
+	negSize[ROBOT_ROT] = negSize[ROBOT_ARM0] = negSize[ROBOT_ARM1] = 0;
+	posSize[ROBOT_X] = posSize[ROBOT_Z] = negSize[ROBOT_X] = negSize[ROBOT_Z] = 0;
 
 	std::ifstream sceneFile(fileName);
 	while(!sceneFile.eof())
