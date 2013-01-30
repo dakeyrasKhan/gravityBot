@@ -4,18 +4,23 @@
 Robot::Robot(Point s): 
 	baseSize(s), 
 	yPos(0.25), 
-	armWidth(0.2), 
-	armLength0(1),
-	armLength1(1)
+	armWidth(0.1), 
+	arm0Length(1),
+	arm1Length(1)
 {
 	baseObject = BuildBox(s);
+	baseObject.Translate(-s[0]/2, -s[1]/2, -s[2]/2);
 
-	Point p;
-	p[0] = p[1] = armWidth;
-	p[2] = armLength0;
+	Point p; 
+	p[0] = p[2] = armWidth;
+
+	p[1] = arm0Length;
 	arm0Object = BuildBox(p);
-	p[2] = armLength1;
+	arm0Object.Translate(-armWidth/2, 0, -armWidth/2);
+
+	p[1] = arm1Length;
 	arm1Object = BuildBox(p);
+	arm1Object.Translate(-armWidth/2, 0, -armWidth/2);
 }
 
 void Robot::printSize() const
@@ -33,10 +38,21 @@ ozcollide::OBB Robot::GetBox() const
 Object Robot::GetObject(const Position& pos) const
 {
 	Point y; y[0] = 0; y[1] = 1; y[2] = 0;
-	Object obj = baseObject;
-	obj.Rotate(y, pos[ROBOT_ROT]);
-	obj.Translate(pos[ROBOT_X], yPos, pos[ROBOT_Z]);
-	return obj;
+	Point z; z[0] = 0; z[1] = 0; z[2] = 1;
+
+	Object object = arm1Object;
+	object.Rotate(z, pos[ROBOT_ARM1]);
+	object.Translate(0, arm0Length, 0);
+
+	object += arm0Object;
+	object.Rotate(z, pos[ROBOT_ARM0]);
+	object.Translate(0, baseSize[1]/2, 0);
+
+	object += baseObject;
+	object.Rotate(y, pos[ROBOT_ROT]);
+	object.Translate(pos[ROBOT_X], yPos, pos[ROBOT_Z]);
+
+	return object;
 } 
 
 Object Robot::BuildBox(const Point& size)
@@ -74,7 +90,6 @@ Object Robot::BuildBox(const Point& size)
 		object.points.push_back(vertices[i]);
 	for(int i=0; i<12; i++)
 		object.triangles.push_back(faces[i]);
-	object.Translate(-size[0]/2, -size[1]/2, -size[2]/2);
 
 	return object;
 }

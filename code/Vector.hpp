@@ -9,8 +9,8 @@ const double EPS = (1./double(1<<MAX_DEPTH));
 #define INFINITY std::numeric_limits<double>::infinity()
 
 
-#define DIM_CONF	3
-#define NB_ROT		1
+#define DIM_CONF	5
+#define NB_ROT		3
 #define ARM_LENGTH  42.
 #define ARM1		21.
 #define ARM2		21.

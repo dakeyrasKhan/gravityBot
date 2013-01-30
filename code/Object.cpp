@@ -32,3 +32,16 @@ void Object::Rotate(Point axis, double angle)
 		p[2] = m[2][0]*p2[0] + m[2][1]*p2[1] + m[2][2]*p2[2];
 	}
 }
+
+
+void Object::operator+=(const Object& obj)
+{
+	int pointSize = points.size();
+	int triangleSize = triangles.size();
+
+	points.insert(points.end(), obj.points.begin(), obj.points.end());
+	triangles.insert(triangles.end(), obj.triangles.begin(), obj.triangles.end());
+	for(int i=triangleSize; i<triangles.size(); i++)
+		for(auto& x : triangles[i])
+			x += pointSize;
+}

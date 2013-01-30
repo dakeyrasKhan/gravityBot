@@ -144,10 +144,8 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robot.yPos, pos[ROBOT_Z]);
 	robotBox.matrix = robotRotation;
 
-	ozcollide::AABBTreePoly::OBBColResult result;
-	collisionTree->collideWithOBB(robotBox, result);
+	return collisionTree->isCollideWithOBB(robotBox);
 
-	return result.polys_.size() > 0;
 }
 
 
