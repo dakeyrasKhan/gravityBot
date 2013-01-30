@@ -1,18 +1,16 @@
 #pragma once
 #include <array>
 #include <cmath>
+#include <limits>
 
 #define MAX_DEPTH 15
 const double Pi = 3.14159265359;
 const double EPS = (1./double(1<<MAX_DEPTH));
+#define INFINITY std::numeric_limits<double>::infinity()
 
 
-// The meanning of each dimension
-#define DIM_CONF	3
-#define NB_ROT		1
-#define ROBOT_ROT	0
-#define ROBOT_X		1
-#define ROBOT_Z		2
+#define DIM_CONF	5
+#define NB_ROT		3
 #define ARM_LENGTH  42.
 #define ARM1		21.
 #define ARM2		21.
@@ -44,7 +42,10 @@ typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
 
 
-Position randomCatch(Point p);
+inline Position randomCatch(Point p)
+{
+	return Position();
+}
 
 
 template<std::size_t L, int R>

@@ -16,7 +16,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 
 	for(int i=0;i<waypoints.size();i++){
 		seen[i]=false;
-		distances[i]=INFINITY;
+		distances[i]= INFINITY;
 		father[i]=-1;
 	}
 	

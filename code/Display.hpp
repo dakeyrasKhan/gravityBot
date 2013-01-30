@@ -22,7 +22,8 @@ public:
 private:
 	typedef std::chrono::high_resolution_clock clock;
 	typedef std::array<int, 2> Pixel;
-	enum Key {Z, Q, S, D, R, F, M_LEFT};
+	enum Key {Z, Q, S, D, R, F, M_LEFT, N_0, DOT,
+		N_8, N_2, N_4, N_6, N_7, N_9, N_1, N_3};
 
 	Scene* scene;
 	int width;
@@ -31,10 +32,10 @@ private:
 	void DrawObject(const Object& object);
 	void SetView(double timediff);
 
-	std::array<bool, 7> keys;
+	std::array<bool, 17> keys;
 	clock::time_point lastRender;
 	clock::duration renderInterval;
-	Point position, direction, up;
+	Point camPos, direction, up;
 	Pixel mousePos;
 	Pixel oldMousePos;
 
@@ -42,6 +43,6 @@ private:
 	bool isTrajectoryEnded;
 	clock::time_point lastWaypointTime;
 	int lastWaypoint;
-	Position UpdatePosition(clock::time_point time);
+	Position UpdatePosition(clock::time_point time, double timediff);
 };
 

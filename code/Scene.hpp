@@ -10,12 +10,12 @@
 class Scene
 {
 public:
-	Scene(const char* sceneFile);
+	Scene(const char* sceneFile, const Point& robotSize);
 	~Scene();
 
 	bool Collision(Position position, bool, Point*);
 	const Object& StaticScene() const { return staticScene; };
-	Object RobotObject(Position) const;
+	Object RobotObject(Position pos) const { return robot.GetObject(pos); };
 
 	Position GetPosSize() const { return posSize; };
 	Position GetNegSize() const { return negSize; };
@@ -28,15 +28,12 @@ public:
 	Position posSize, negSize;
 	double maxSize;
 
-	Robot robot;
-
 private:
 	void ReadObjFile(const char* fileName);
 	void BuildCollisionTree();
 
 	Object staticScene;
-	
-	const double robotY;
+	Robot robot;
 
 	ozcollide::AABBTreePoly* collisionTree;
 

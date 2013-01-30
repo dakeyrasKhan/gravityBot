@@ -4,6 +4,7 @@
 *.vcxproj*
 *.opensdf
 *.dll
+*.vspx
 code/Debug/*
 code/Release/*
 ozcollide/VisualStudio/*
