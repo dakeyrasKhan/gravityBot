@@ -39,21 +39,6 @@ int main(int argc, char * argv[])
 		trajectory.push_back(end);
 	}
 
-	
-	/*Position pos;
-	std::vector<Position> trajectory;
-
-	pos[0] = 0; pos[1] = 0; pos[2] = 0;
-	trajectory.push_back(pos);
-	pos[0] = 6.20878; pos[1] = 3; pos[2] = -2;
-	trajectory.push_back(pos);
-
-	display.SetTrajectory(trajectory);
-	return 0;*/
-	// = p.waypoints;
-		
-
-
 	Display display(&argc, argv, &scene);
 	display.SetTrajectory(trajectory);
 
