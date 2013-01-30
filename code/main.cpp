@@ -29,6 +29,9 @@ int main(int argc, char * argv[])
 			Position s=p.waypoints[0];
 			Position e=p.waypoints[1];
 			Position collision((s+2.*e)/3.);
+			for(auto p:collision){
+				std::cout<<"----"<<p<<std::endl;
+			}
 			trajectory.push_back(collision);
 			std::cout<<"BLAH : "<<scene.Collision(collision,false,NULL)<<std::endl;
 			//trajectory.push_back(p.waypoints[1]);
