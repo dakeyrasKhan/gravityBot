@@ -244,6 +244,18 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 	case '9':
 		keys[N_9] = down;
 		break;
+	case '1':
+		keys[N_1] = down;
+		break;
+	case '3':
+		keys[N_3] = down;
+		break;
+	case '0':
+		keys[N_0] = down;
+		break;
+	case '.':
+		keys[DOT] = down;
+		break;
 	}
 }
 
@@ -307,6 +319,14 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 			trajectory[lastWaypoint][ROBOT_ROT] += timediff;
 		if(keys[N_9])
 			trajectory[lastWaypoint][ROBOT_ROT] -= timediff;
+		if(keys[N_1])
+			trajectory[lastWaypoint][ROBOT_ARM0] += timediff;
+		if(keys[N_3])
+			trajectory[lastWaypoint][ROBOT_ARM0] -= timediff;
+		if(keys[N_0])
+			trajectory[lastWaypoint][ROBOT_ARM1] += timediff;
+		if(keys[DOT])
+			trajectory[lastWaypoint][ROBOT_ARM1] -= timediff;
 
 		return trajectory[lastWaypoint];
 	}
