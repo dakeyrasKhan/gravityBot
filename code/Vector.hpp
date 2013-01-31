@@ -44,7 +44,7 @@ typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
 
 
-Position randomCatch(Point p);
+inline Position randomCatch(Point p) { throw std::exception("Not implemented"); };
 
 
 template<std::size_t L, int R>
