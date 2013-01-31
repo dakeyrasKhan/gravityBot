@@ -42,7 +42,7 @@ Point Matrix::operator*(const Point& p) const
 	return out;
 }
 
-static Matrix Rotate(double angle, axis axis)
+Matrix Matrix::Rotate(const double angle, const axis axis)
 {
 	Matrix out = Matrix::Identity;
 	double c = cos(angle);
@@ -71,4 +71,21 @@ static Matrix Rotate(double angle, axis axis)
 	}
 
 	return out;
+}
+
+Matrix Matrix::Rotate(const double angle, Point axis)
+{
+	axis = axis.Normalize();
+	double c = cos(angle);
+	double s = sin(angle);
+	double x = axis[0];
+	double y = axis[1];
+	double z = axis[2];
+
+	Matrix m;
+	m[0][0] = x*x*(1-c) + c;	m[0][1] = x*y*(1-c) - z*s;	m[0][2] = z*x*(1-c) + y*s;
+	m[1][0] = x*y*(1-c) + z*s;	m[1][1] = y*y*(1-c) + c;	m[1][2] = z*y*(1-c) - x*s;
+	m[2][0] = x*z*(1-c) - y*s;	m[2][1] = y*z*(1-c) + x*s;	m[2][2] = z*z*(1-c) + c;
+
+	return m;
 }

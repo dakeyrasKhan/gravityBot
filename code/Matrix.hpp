@@ -15,8 +15,8 @@ public:
 	Point operator*(const Point& p) const;
 
 	const static Matrix Identity;
-	static Matrix Rotate(double angle, axis axis);
-	static Matrix Rotate(double angle, Point axis);
+	static Matrix Rotate(const double angle, const axis axis);
+	static Matrix Rotate(const double angle, Point axis);
 
 private:
 	std::array<Point, 3> lignes;
