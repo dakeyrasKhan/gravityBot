@@ -120,7 +120,10 @@ void Scene::BuildCollisionTree()
 		poly.setIndicesMemory(3, t.data());
 
 		if(n[0] != 0 || n[1] != 1 || n[2] != 0 || p[0][1] != robotBottom)
+		{
 			polygonsBase.add(poly);
+			baseScene.push_back(t);
+		}
 
 	}
 
@@ -141,12 +144,25 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(pos);
 	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(pos);
 
-	return false
-		|| collisionTreeBase->isCollideWithOBB(baseBoxes[0].ToOzcollide())
-		|| collisionTreeBase->isCollideWithOBB(baseBoxes[1].ToOzcollide())
-		|| collisionTreeBase->isCollideWithOBB(armsBoxes[0].ToOzcollide())
-		|| collisionTreeBase->isCollideWithOBB(armsBoxes[1].ToOzcollide())
-		;
+	// Check collision within the robots
+
+	for(const auto& b : baseBoxes)
+		for(const auto& t : baseScene)
+			if(b.Intersect(
+				staticScene.points[t[0]], 
+				staticScene.points[t[1]], 
+				staticScene.points[t[2]]))
+					return true;
+
+	for(const auto& b : armsBoxes)
+		for(const auto& t : staticScene.triangles)
+			if(b.Intersect(
+				staticScene.points[t[0]], 
+				staticScene.points[t[1]], 
+				staticScene.points[t[2]]))
+					return true;
+
+	return false;
 }
 
 

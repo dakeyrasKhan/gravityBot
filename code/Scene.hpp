@@ -34,6 +34,7 @@ private:
 
 	Object staticScene;
 	Robot robot;
+	std::vector<std::array<int, 3>> baseScene;
 
 	ozcollide::AABBTreePoly* collisionTreeBase;
 

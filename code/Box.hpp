@@ -10,7 +10,7 @@ public:
 	Box(const Point& center, const Point& size, const Matrix& rotation = Matrix::Identity)
 		: center(center), size(size), rotation(rotation) { };
 
-	// bool Intersect(const Point& p0, const Point& p1, const Point& p2);
+	bool Intersect(Point p0, Point p1, Point p2) const;
 	ozcollide::OBB ToOzcollide() const;
 
 private:
