@@ -6,7 +6,8 @@
 #define MAX_DEPTH 15
 const double Pi = 3.14159265359;
 const double EPS = (1./double(1<<MAX_DEPTH));
-
+const double INFINITY = std::numeric_limits<double>::infinity();
+enum axis { X=0, Y=1, Z=2 };
 
 #define DIM_CONF	5
 #define NB_ROT		3

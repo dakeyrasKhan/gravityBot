@@ -35,8 +35,7 @@ private:
 	Object staticScene;
 	Robot robot;
 
-	ozcollide::AABBTreePoly* collisionTree;
-
+	ozcollide::AABBTreePoly* collisionTreeBase;
 
 };
 

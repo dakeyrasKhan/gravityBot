@@ -3,8 +3,6 @@
 #include <vector>
 using namespace std;
 
-enum{Y,X,Z};
-
 const int sonFinder[2][2][2]={{{0,6},{2,4}},{{1,7},{3,5}}};
 const double centerCalc[8][3]={{-1,-1,-1},{1,-1,-1},{-1,1,-1},{1,1,-1},
 							{-1,1,1},{1,1,1},{-1,-1,1},{1,-1,1}};

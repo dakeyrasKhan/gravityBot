@@ -39,7 +39,7 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path)
 
 
 Scene::Scene(const char* sceneFile, const Point& robotSize) : 
-	collisionTree(nullptr), 
+	collisionTreeBase(nullptr),
 	robot(robotSize)
 {
 	ReadObjFile(sceneFile);
@@ -49,8 +49,8 @@ Scene::Scene(const char* sceneFile, const Point& robotSize) :
 
 Scene::~Scene()
 {
-	if(collisionTree != nullptr)
-		collisionTree->destroy();
+	if(collisionTreeBase != nullptr)
+		collisionTreeBase->destroy();
 }
 
 
@@ -108,47 +108,45 @@ void Scene::BuildCollisionTree()
 	ozcollide::AABBTreePolyBuilder builder;
 
 	// Build the polygons vector
-	std::vector<ozcollide::Polygon> polygons;
+	ozcollide::Vector<ozcollide::Polygon> polygonsBase;
 	double robotBottom = robot.yPos - robot.baseSize[1]/2;
 	for(auto& t : staticScene.triangles)
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
 
-		if(n[0] == 0 && n[1] == 1 && n[2] == 0 && p[0][1] == robotBottom)
-			continue;
-
 		ozcollide::Polygon poly;
 		poly.setNormal(ozcollide::Vec3f(n[0], n[1], n[2]));
 		poly.setIndicesMemory(3, t.data());
-		polygons.push_back(poly);
+
+		if(n[0] != 0 || n[1] != 1 || n[2] != 0 || p[0][1] != robotBottom)
+			polygonsBase.add(poly);
 
 	}
 
 	// Build the vertices vector
-	std::vector<ozcollide::Vec3f> vertices;
+	ozcollide::Vector<ozcollide::Vec3f> vertices;
 	for(int i=0; i<staticScene.points.size(); i++)
-		vertices.push_back(ozcollide::Vec3f(staticScene.points[i][0], staticScene.points[i][1], staticScene.points[i][2]));
+		vertices.add(ozcollide::Vec3f(staticScene.points[i][0], 
+			staticScene.points[i][1], staticScene.points[i][2]));
 
-	collisionTree = builder.buildFromPolys(polygons.data(), polygons.size(), vertices.data(), vertices.size());
+	collisionTreeBase = builder.buildFromPolys(
+		polygonsBase.mem(), polygonsBase.size(), 
+		vertices.mem(), vertices.size());
 }
 
 
 bool Scene::Collision(Position pos, bool with, Point* object)
 {
-	ozcollide::Matrix3x3 robotRotation;
-	robotRotation.identity();
-	robotRotation.m_[0][0] = cos(pos[ROBOT_ROT]);
-	robotRotation.m_[2][0] = -sin(pos[ROBOT_ROT]);
-	robotRotation.m_[0][2] = sin(pos[ROBOT_ROT]);
-	robotRotation.m_[2][2] = cos(pos[ROBOT_ROT]);
+	std::array<ozcollide::OBB, 2> baseBoxes = robot.GetBaseBoxes(pos);
+	std::array<ozcollide::OBB, 2> armsBoxes = robot.GetArmsBoxes(pos);
 
-	ozcollide::OBB robotBox = robot.GetBox();
-	robotBox.center = ozcollide::Vec3f(pos[ROBOT_X], robot.yPos, pos[ROBOT_Z]);
-	robotBox.matrix = robotRotation;
-
-	return collisionTree->isCollideWithOBB(robotBox);
-
+	return false
+		|| collisionTreeBase->isCollideWithOBB(baseBoxes[0])
+		|| collisionTreeBase->isCollideWithOBB(baseBoxes[1])
+		|| collisionTreeBase->isCollideWithOBB(armsBoxes[0])
+		|| collisionTreeBase->isCollideWithOBB(armsBoxes[1])
+		;
 }
 
 
