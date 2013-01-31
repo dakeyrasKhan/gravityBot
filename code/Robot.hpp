@@ -1,7 +1,7 @@
 #pragma once
-#include <ozcollide/aabbtree_poly.h>
 #include "Vector.hpp"
 #include "Object.hpp"
+#include "Box.hpp"
 
 #define ROBOT_ROT	0
 #define ROBOT_ARM0	1
@@ -14,8 +14,8 @@ class Robot
 public:
 	Robot(Point size);
 	Object GetObject(const Position& pos) const;
-	std::array<ozcollide::OBB, 2> GetBaseBoxes(const Position& pos) const;
-	std::array<ozcollide::OBB, 2> GetArmsBoxes(const Position& pos) const;
+	std::array<Box, 2> GetBaseBoxes(const Position& pos) const;
+	std::array<Box, 2> GetArmsBoxes(const Position& pos) const;
 
 	void printSize() const;
 
@@ -29,4 +29,7 @@ public:
 private:
 	Object baseObject, arm0Object, arm1Object;
 	static Object BuildBox(const Point& size);
+
+	double baseArmY;
+	double baseHeight;
 };

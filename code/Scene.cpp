@@ -138,14 +138,14 @@ void Scene::BuildCollisionTree()
 
 bool Scene::Collision(Position pos, bool with, Point* object)
 {
-	std::array<ozcollide::OBB, 2> baseBoxes = robot.GetBaseBoxes(pos);
-	std::array<ozcollide::OBB, 2> armsBoxes = robot.GetArmsBoxes(pos);
+	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(pos);
+	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(pos);
 
 	return false
-		|| collisionTreeBase->isCollideWithOBB(baseBoxes[0])
-		|| collisionTreeBase->isCollideWithOBB(baseBoxes[1])
-		|| collisionTreeBase->isCollideWithOBB(armsBoxes[0])
-		|| collisionTreeBase->isCollideWithOBB(armsBoxes[1])
+		|| collisionTreeBase->isCollideWithOBB(baseBoxes[0].ToOzcollide())
+		|| collisionTreeBase->isCollideWithOBB(baseBoxes[1].ToOzcollide())
+		|| collisionTreeBase->isCollideWithOBB(armsBoxes[0].ToOzcollide())
+		|| collisionTreeBase->isCollideWithOBB(armsBoxes[1].ToOzcollide())
 		;
 }
 

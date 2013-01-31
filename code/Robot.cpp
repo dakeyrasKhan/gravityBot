@@ -28,6 +28,9 @@ Robot::Robot(Point s):
 	p[1] = arm1Length;
 	arm1Object = BuildBox(p);
 	arm1Object.Translate(-armWidth/2, 0, -armWidth/2);
+
+	baseArmY = yPos + baseSize[1]/2 + baseArmLength/2;
+	baseHeight = baseArmY + baseArmLength/2;
 }
 
 void Robot::printSize() const
@@ -35,71 +38,37 @@ void Robot::printSize() const
 	printf("robot size : %lf %lf %lf \n",baseSize[0],baseSize[1],baseSize[2]);
 }
 
-std::array<ozcollide::OBB, 2> Robot::GetBaseBoxes(const Position& pos) const
+std::array<Box, 2> Robot::GetBaseBoxes(const Position& pos) const
 {
-	std::array<ozcollide::OBB, 2> boxes;
-
-	boxes[0].center = ozcollide::Vec3f(pos[ROBOT_X], yPos, pos[ROBOT_Z]);
-	boxes[0].extent = ozcollide::Vec3f(baseSize[0]/2, baseSize[1]/2, baseSize[2]/2);
-
-	double baseArmY = yPos + baseSize[1]/2 + baseArmLength/2;
-	boxes[1].center = ozcollide::Vec3f(pos[ROBOT_X], baseArmY, pos[ROBOT_Z]);
-	boxes[1].extent = ozcollide::Vec3f(armWidth/2, baseArmLength/2, armWidth/2);
-
-
-	boxes[0].matrix.m_[0][0] = cos(pos[ROBOT_ROT]); 
-	boxes[0].matrix.m_[0][1] = 0; 
-	boxes[0].matrix.m_[0][2] = sin(pos[ROBOT_ROT]);
-	boxes[0].matrix.m_[1][0] = 0;
-	boxes[0].matrix.m_[1][1] = 1;
-	boxes[0].matrix.m_[1][2] = 0;
-	boxes[0].matrix.m_[2][0] = -sin(pos[ROBOT_ROT]); 
-	boxes[0].matrix.m_[2][1] = 0; 
-	boxes[0].matrix.m_[2][2] = cos(pos[ROBOT_ROT]);
-	boxes[1].matrix = boxes[0].matrix;
-
-	return boxes;
+	std::array<double, 3> center0 = { pos[ROBOT_X], yPos, pos[ROBOT_Z] };
+	std::array<double, 3> center1 = { pos[ROBOT_X], baseArmY, pos[ROBOT_Z] };
+	std::array<double, 3> size1 = { armWidth, baseArmLength, armWidth };
+	Matrix rotation = Matrix::Rotate(pos[ROBOT_ROT], Y);
+	
+	std::array<Box, 2> out = { Box(center0, baseSize, rotation), Box(center1, size1, rotation) };
+	return out;
 }
 
-std::array<ozcollide::OBB, 2> Robot::GetArmsBoxes(const Position& pos) const
+std::array<Box, 2> Robot::GetArmsBoxes(const Position& pos) const
 {
-	std::array<ozcollide::OBB, 2> boxes;
-	boxes[0].extent = ozcollide::Vec3f(armWidth/2, arm0Length/2, armWidth/2);
-	boxes[0].center = ozcollide::Vec3f(0, arm0Length/2, 0);
+	std::array<double, 3> center0 = { 0, arm0Length/2, 0 };
+	std::array<double, 3> center1 = { 0, arm1Length/2, 0 };
 
-	boxes[1].extent = ozcollide::Vec3f(armWidth/2, arm1Length/2, armWidth/2);
-	boxes[1].center = ozcollide::Vec3f(0, arm1Length/2, 0);
+	std::array<double, 3> size0 = { armWidth, arm0Length, armWidth };
+	std::array<double, 3> size1 = { armWidth, arm1Length, armWidth };
 
-	boxes[0].matrix.m_[0][0] = cos(pos[ROBOT_ROT])*cos(pos[ROBOT_ARM0]); 
-	boxes[0].matrix.m_[0][1] = -cos(pos[ROBOT_ROT])*sin(pos[ROBOT_ARM0]); 
-	boxes[0].matrix.m_[0][2] = sin(pos[ROBOT_ROT]);
-	boxes[0].matrix.m_[1][0] = sin(pos[ROBOT_ARM0]);
-	boxes[0].matrix.m_[1][1] = cos(pos[ROBOT_ARM0]);
-	boxes[0].matrix.m_[1][2] = 0;
-	boxes[0].matrix.m_[2][0] = -sin(pos[ROBOT_ROT])*cos(pos[ROBOT_ARM0]); 
-	boxes[0].matrix.m_[2][1] = sin(pos[ROBOT_ROT])*sin(pos[ROBOT_ARM0]); 
-	boxes[0].matrix.m_[2][2] = cos(pos[ROBOT_ROT]);
+	Matrix rotation0 = Matrix::Rotate(pos[ROBOT_ROT], Y)*Matrix::Rotate(pos[ROBOT_ARM0], Z);
+	Matrix rotation1 = rotation0*Matrix::Rotate(pos[ROBOT_ARM1], Z);
 
-	double alpha = pos[ROBOT_ARM0] + pos[ROBOT_ARM1];
-	boxes[1].matrix.m_[0][0] = cos(pos[ROBOT_ROT])*cos(alpha); 
-	boxes[1].matrix.m_[0][1] = -cos(pos[ROBOT_ROT])*sin(alpha);
-	boxes[1].matrix.m_[0][2] = sin(pos[ROBOT_ROT]);
-	boxes[1].matrix.m_[1][0] = sin(alpha);
-	boxes[1].matrix.m_[1][1] = cos(alpha);
-	boxes[1].matrix.m_[1][2] = 0;
-	boxes[1].matrix.m_[2][0] = -sin(pos[ROBOT_ROT])*cos(alpha);
-	boxes[1].matrix.m_[2][1] = sin(pos[ROBOT_ROT])*sin(alpha); 
-	boxes[1].matrix.m_[2][2] = cos(pos[ROBOT_ROT]);
-	
-	boxes[0].center = boxes[0].matrix.mul(boxes[0].center);
-	boxes[1].center = boxes[1].matrix.mul(boxes[1].center);
-	boxes[1].center += 2.*boxes[0].center;
+	center0 = rotation0*center0;
+	center1 = rotation1*center1 + 2.*center0;
 
-	ozcollide::Vec3f baseArmTop(pos[ROBOT_X], yPos + baseSize[1]/2 + baseArmLength, pos[ROBOT_Z]);
-	boxes[0].center += baseArmTop;
-	boxes[1].center += baseArmTop;
+	std::array<double, 3> baseArmTop = { pos[ROBOT_X], baseHeight, pos[ROBOT_Z] };
+	center0 += baseArmTop;
+	center1 += baseArmTop;
 
-	return boxes;
+	std::array<Box, 2> out = { Box(center0, size0, rotation0), Box(center1, size1, rotation1) };
+	return out;
 }
 
 Object Robot::GetObject(const Position& pos) const

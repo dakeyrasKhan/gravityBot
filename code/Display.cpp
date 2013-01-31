@@ -38,7 +38,7 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 	for(auto& x : keys)
 		x = false;
 
-	Position p; p[0] = 0; p[1] = 0; p[2] = 0;
+	Position p; p[0] = 0; p[1] = 0; p[2] = 0; p[3] = 0; p[4] = 0;
 	trajectory.push_back(p);
 
 	camPos[0] = -1; camPos[1] = 20; camPos[2] = 5;
