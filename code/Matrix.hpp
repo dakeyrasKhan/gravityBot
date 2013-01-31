@@ -22,3 +22,4 @@ private:
 	std::array<Point, 3> lignes;
 };
 
+Point operator*(const Point& p, const Matrix& m);

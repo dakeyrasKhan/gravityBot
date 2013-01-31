@@ -42,6 +42,15 @@ Point Matrix::operator*(const Point& p) const
 	return out;
 }
 
+Point operator*(const Point& p, const Matrix& m)
+{
+	Point out;
+	for(int i=0; i<3; i++)
+		out[i] = p[0]*m[0][i] + p[1]*m[1][i] + p[2]*m[2][i];
+	return out;
+}
+
+
 Matrix Matrix::Rotate(const double angle, const axis axis)
 {
 	Matrix out = Matrix::Identity;
