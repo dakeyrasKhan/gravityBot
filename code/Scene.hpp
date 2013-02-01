@@ -1,6 +1,5 @@
 #pragma once
 #include <algorithm>
-#include <ozcollide/aabbtree_poly.h>
 #include "Vector.hpp"
 #include "Object.hpp"
 #include "Robot.hpp"
@@ -11,7 +10,6 @@ class Scene
 {
 public:
 	Scene(const char* sceneFile, const Point& robotSize);
-	~Scene();
 
 	bool Collision(Position position, bool, Point*);
 	const Object& StaticScene() const { return staticScene; };
@@ -30,13 +28,11 @@ public:
 
 private:
 	void ReadObjFile(const char* fileName);
-	void BuildCollisionTree();
+	void BuildBaseScene();
 
 	Object staticScene;
 	Robot robot;
 	std::vector<std::array<int, 3>> baseScene;
-
-	ozcollide::AABBTreePoly* collisionTreeBase;
 
 };
 

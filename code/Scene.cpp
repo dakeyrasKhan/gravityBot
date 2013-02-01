@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <ozcollide/aabbtreepoly_builder.h>
 #include "Scene.hpp"
 
 std::vector<Position> Scene::Optimize(std::vector<Position> path)
@@ -39,18 +38,10 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path)
 
 
 Scene::Scene(const char* sceneFile, const Point& robotSize) : 
-	collisionTreeBase(nullptr),
 	robot(robotSize)
 {
 	ReadObjFile(sceneFile);
-	BuildCollisionTree();
-}
-
-
-Scene::~Scene()
-{
-	if(collisionTreeBase != nullptr)
-		collisionTreeBase->destroy();
+	BuildBaseScene();
 }
 
 
@@ -103,39 +94,19 @@ void Scene::ReadObjFile(const char* fileName)
 }
 
 
-void Scene::BuildCollisionTree()
+void Scene::BuildBaseScene()
 {
-	ozcollide::AABBTreePolyBuilder builder;
 
 	// Build the polygons vector
-	ozcollide::Vector<ozcollide::Polygon> polygonsBase;
 	double robotBottom = robot.yPos - robot.baseSize[1]/2;
 	for(auto& t : staticScene.triangles)
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
-		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();
-
-		ozcollide::Polygon poly;
-		poly.setNormal(ozcollide::Vec3f(n[0], n[1], n[2]));
-		poly.setIndicesMemory(3, t.data());
+		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();;
 
 		if(n[0] != 0 || n[1] != 1 || n[2] != 0 || p[0][1] != robotBottom)
-		{
-			polygonsBase.add(poly);
 			baseScene.push_back(t);
-		}
-
 	}
-
-	// Build the vertices vector
-	ozcollide::Vector<ozcollide::Vec3f> vertices;
-	for(int i=0; i<staticScene.points.size(); i++)
-		vertices.add(ozcollide::Vec3f(staticScene.points[i][0], 
-			staticScene.points[i][1], staticScene.points[i][2]));
-
-	collisionTreeBase = builder.buildFromPolys(
-		polygonsBase.mem(), polygonsBase.size(), 
-		vertices.mem(), vertices.size());
 }
 
 

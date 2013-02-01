@@ -35,6 +35,7 @@ public:
 						Array() { };
 	Array<3, 0>			ToPoint() const;
 	double				Norm() const;
+	double				Norm2() const;
 	Array<L, R>			Normalize() const;
 	static Array<L,R>	Random(const std::array<double, L>& neg,const std::array<double, L>& pos);
 };
@@ -66,7 +67,7 @@ inline Point Array<L, R>::ToPoint() const
 }
 
 template<std::size_t L, int R>
-double inline Array<L, R>::Norm() const
+double inline Array<L, R>::Norm2() const
 {
 	double d = 0;
 	for(int i=0; i<R; i++)
@@ -78,7 +79,13 @@ double inline Array<L, R>::Norm() const
 		d += (*this)[i]*(*this)[i];
 
 
-	return sqrt(d);
+	return d;
+}
+
+template<std::size_t L, int R>
+double inline Array<L, R>::Norm() const
+{
+	return sqrt(Norm2());
 }
 
 template<std::size_t L, int R>
@@ -172,6 +179,16 @@ inline std::array<T, L> operator*(const std::array<T, L> v0, const std::array<T,
 	std::array<T, L> out;
 	for(int i=0; i<L; i++)
 		out[i] = v0[i]*v1[i];
+
+	return out;
+}
+
+template<typename T, std::size_t L>
+inline T operator|(const std::array<T, L> v0, const std::array<T, L> v1)
+{
+	double out = 0;
+	for(int i=0; i<L; i++)
+		out += v0[i]*v1[i];
 
 	return out;
 }
