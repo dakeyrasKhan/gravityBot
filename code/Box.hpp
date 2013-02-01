@@ -10,6 +10,7 @@ public:
 		: center(center), size(size), rotation(rotation) { };
 
 	bool Intersect(Point p0, Point p1, Point p2) const;
+	bool Intersect(Box b) const;
 
 private:
 	Point center, size;
@@ -21,6 +22,5 @@ private:
 	static bool CheckLine(const Point& p0, const Point& p1, const int outcode_diff);
 	static bool IntersectPointTriangle(const Point& p, const Point& p0, const Point& p1, const Point& p2);
 	static int SignMask(const Point& p);
-
 };
 

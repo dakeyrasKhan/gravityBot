@@ -4,10 +4,9 @@
 bool Box::Intersect(Point p0, Point p1, Point p2) const
 {
 	// Transforme the triangle to have a unit cube centered on the origin
-	Point shift = -center;
-	p0 = ((p0 + shift)*rotation)/size; 
-	p1 = ((p1 + shift)*rotation)/size; 
-	p2 = ((p2 + shift)*rotation)/size;
+	p0 = ((p0 - center)*rotation)/size; 
+	p1 = ((p1 - center)*rotation)/size; 
+	p2 = ((p2 - center)*rotation)/size;
 
 	// First compare all three vertexes with all face/edge/corne planes
 	// If any vertex is inside the cube, return immediately!
@@ -186,4 +185,9 @@ int Box::SignMask(const Point& p)
 		| p[Y] > -std::numeric_limits<double>::epsilon() ? 1 << 4 : 0 
 		| p[Z] <  std::numeric_limits<double>::epsilon() ? 1 << 0 : 0
 		| p[Z] > -std::numeric_limits<double>::epsilon() ? 1 << 3 : 0;
+}
+
+bool Box::Intersect(Box b) const
+{
+	return false;
 }
