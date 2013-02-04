@@ -2,43 +2,9 @@
 #include <fstream>
 #include "Scene.hpp"
 
-std::vector<Position> Scene::Optimize(std::vector<Position> path)
-{
-	int optimization=0;
-	std::vector<Position> retour = path;
-	for(int essai=0;essai<NB_TRY;essai++){
-		int a = rand()%retour.size()-1;
-		int b = rand()%retour.size()-1;
-		if(a==b)
-			continue;
-		if(a>b){
-			int c=a;
-			a=b;
-			b=c;
-		}
-
-		double c= double(rand())/double(RAND_MAX);
-		double d= double(rand())/double(RAND_MAX);
-
-		Position start = retour[a]+(retour[a+1]-retour[a])*c;
-		Position end = retour[b]+(retour[b+1]-retour[b])*d;
-
-
-		if(validMove(start,end,false,NULL)){
-			retour.erase(retour.begin()+a+1,retour.begin()+b+1);
-			retour.insert(retour.begin()+a+1,end);
-			retour.insert(retour.begin()+a+1,start);
-			optimization++;
-			if(optimization>20)
-				break;
-		}
-	}
-	return retour;
-}
-
 
 Scene::Scene(const char* sceneFile, const Point& robotSize) : 
-	robot(robotSize)
+	robot(robotSize), ballRadius(0.2)
 {
 	ReadObjFile(sceneFile);
 	BuildBaseScene();
@@ -163,4 +129,44 @@ bool Scene::validMove(Position a, Position b, bool with, Point* object)
 		return false;
 
 	return validMove(a, mid, with, object) && validMove(mid, b, with, object);
+}
+
+
+std::vector<Position> Scene::Optimize(std::vector<Position> path)
+{
+	int optimization=0;
+	std::vector<Position> retour = path;
+	for(int essai=0;essai<NB_TRY;essai++){
+		int a = rand()%retour.size()-1;
+		int b = rand()%retour.size()-1;
+		if(a==b)
+			continue;
+		if(a>b){
+			int c=a;
+			a=b;
+			b=c;
+		}
+
+		double c= double(rand())/double(RAND_MAX);
+		double d= double(rand())/double(RAND_MAX);
+
+		Position start = retour[a]+(retour[a+1]-retour[a])*c;
+		Position end = retour[b]+(retour[b+1]-retour[b])*d;
+
+
+		if(validMove(start,end,false,NULL)){
+			retour.erase(retour.begin()+a+1,retour.begin()+b+1);
+			retour.insert(retour.begin()+a+1,end);
+			retour.insert(retour.begin()+a+1,start);
+			optimization++;
+			if(optimization>20)
+				break;
+		}
+	}
+	return retour;
+}
+
+bool Scene::IntersectTriangleSphere(const int triangle, const Point& sphereCenter) const
+{
+	return false;
 }

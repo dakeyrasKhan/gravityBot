@@ -78,15 +78,19 @@ void Display::Render()
 	SetView(timediff);
 
 	DrawAxis();
+
+	// Set the light
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	GLfloat lightpos[] = {10, 30, 20, 0};
 	glLightfv(GL_LIGHT0, GL_POSITION, lightpos);
 
+	// Draw the environment
 	GLfloat color[4] = {0.f, .8f, .8f, 1.f};
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->StaticScene());
 
+	// Draw the robot
 	Position position = UpdatePosition(lastRender, timediff);
 	if(scene->Collision(position, false, nullptr))
 	{
@@ -98,6 +102,12 @@ void Display::Render()
 	}
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->RobotObject(position));
+
+	// Draw the sphere
+	color[0] = 0; color[1] = 0; color[2] = .8;
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+	glTranslated(0.0,2.0,5.0);
+	glutSolidSphere(.3, 100, 100);
 
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();

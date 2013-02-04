@@ -23,12 +23,15 @@ public:
 	bool validMove(Position, Position, bool, Point*);
 	Point Drop(Position);
 
+	const double ballRadius;
+
 	Position posSize, negSize;
 	double maxSize;
 
 private:
 	void ReadObjFile(const char* fileName);
 	void BuildBaseScene();
+	bool IntersectTriangleSphere(const int triangle, const Point& sphereCenter) const;
 
 	Object staticScene;
 	Robot robot;
