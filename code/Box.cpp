@@ -1,6 +1,8 @@
 #include "Box.hpp"
 #include <limits>
 
+// TODO : size could be put into rotation.
+
 bool Box::Intersect(Point p0, Point p1, Point p2) const
 {
 	// Transforme the triangle to have a unit cube centered on the origin
@@ -55,19 +57,19 @@ bool Box::Intersect(Point p0, Point p1, Point p2) const
 
 	Point hit;
 	hit[X] = hit[Y] = hit[Z] = d/(norm[X] + norm[Y] + norm[Z]);
-	if(fabs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
 		return true;
 
 	hit[Z] = -(hit[X] = hit[Y] = d/(norm[X] + norm[Y] - norm[Z]));
-	if(fabs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
 		return true; 
 
 	hit[Y] = -(hit[X] = hit[Z] = d/(norm[X] - norm[Y] + norm[Z]));
-	if(fabs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
 		return true;
 
 	hit[Y] = hit[Z] = -(hit[X] = d / (norm[X] - norm[Y] - norm[Z]));
-	if(fabs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
 		return true;
 
 	return false;
@@ -179,15 +181,74 @@ bool Box::IntersectPointTriangle(const Point& p, const Point& p0, const Point& p
 
 int Box::SignMask(const Point& p)
 {
-	return p[X] < std::numeric_limits<double>::epsilon() ? 1 << 2 : 0 
-		| p[X] > -std::numeric_limits<double>::epsilon() ? 1 << 5 : 0 
-		| p[Y] <  std::numeric_limits<double>::epsilon() ? 1 << 1 : 0 
-		| p[Y] > -std::numeric_limits<double>::epsilon() ? 1 << 4 : 0 
-		| p[Z] <  std::numeric_limits<double>::epsilon() ? 1 << 0 : 0
-		| p[Z] > -std::numeric_limits<double>::epsilon() ? 1 << 3 : 0;
+	return (p[X] < std::numeric_limits<double>::epsilon() ? 1 << 2 : 0)
+		| (p[X] > -std::numeric_limits<double>::epsilon() ? 1 << 5 : 0) 
+		| (p[Y] <  std::numeric_limits<double>::epsilon() ? 1 << 1 : 0) 
+		| (p[Y] > -std::numeric_limits<double>::epsilon() ? 1 << 4 : 0) 
+		| (p[Z] <  std::numeric_limits<double>::epsilon() ? 1 << 0 : 0)
+		| (p[Z] > -std::numeric_limits<double>::epsilon() ? 1 << 3 : 0);
 }
 
 bool Box::Intersect(Box b) const
 {
-	return false;
+	// Intersect against the unit cube centered in the origin
+	b.center = (b.center - center)*rotation;
+	b.rotation = rotation.Transpose()*b.rotation;
+
+	// Get the vertices of b
+	std::array<double, 3>  vertices[] = 
+	{
+		{-0.5, -0.5, -0.5},
+		{-0.5, -0.5, +0.5},
+		{-0.5, +0.5, -0.5},
+		{+0.5, -0.5, -0.5},
+		{-0.5, +0.5, +0.5},
+		{+0.5, -0.5, +0.5},
+		{+0.5, +0.5, -0.5},
+		{+0.5, +0.5, +0.5}
+	};
+
+	for(int i=0; i<8; i++)
+		vertices[i] = b.rotation*(vertices[i]*b.size);
+
+	// Test separation with box0 axis (3)
+	for(int i=0; i<3; i++)
+	{
+		double min = +std::numeric_limits<double>::infinity();
+		double max = -std::numeric_limits<double>::infinity();
+		for(int j=0; j<8; j++)
+		{
+			min = std::min(min, vertices[j][i]);
+			max = std::max(max, vertices[j][i]);
+		}
+
+		if(min > size[i]/2 - b.center[i] || max < - size[i]/2 - b.center[i])
+			return false;
+	}
+		
+	// Test separation with box1 axis (3)
+	for(int i=1; i<=3; i++)
+	{
+		Point axis = vertices[i] - vertices[0];
+		axis = axis.Normalize();
+		
+		double low = vertices[0] | axis;
+		double hight = vertices[i] | axis;
+		double shift = b.center | axis;
+
+		axis = axis*size;
+
+		// min == -max
+		double max = std::max(std::max(abs(axis[0] + axis[1] + axis[2]), abs(axis[0] + axis[1] - axis[2])),
+			std::max(abs(axis[0] - axis[1] + axis[2]), abs(-axis[0] + axis[1] + axis[2])))/2;
+
+		if(max < low + shift || -max > hight + shift)
+			return false;
+	}
+
+	// Test separation with box0^box1 axis (6)
+	// Not needed for now since all boxes have 
+	// at least one axis in common
+
+	return true;
 }

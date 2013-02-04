@@ -132,6 +132,9 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 				staticScene.points[t[1]], 
 				staticScene.points[t[2]]))
 					return true;
+	
+	if(baseBoxes[0].Intersect(armsBoxes[0]) || baseBoxes[0].Intersect(armsBoxes[1]) || baseBoxes[1].Intersect(armsBoxes[1]))
+		return true;
 
 	return false;
 }

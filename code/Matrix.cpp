@@ -98,3 +98,13 @@ Matrix Matrix::Rotate(const double angle, Point axis)
 
 	return m;
 }
+
+Matrix Matrix::Transpose() const
+{
+	Matrix out;
+	for(int i=0; i<3; i++)
+		for(int j=0; j<3; j++)
+			out[i][j] = lignes[j][i];
+
+	return out;
+}
