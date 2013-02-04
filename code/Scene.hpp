@@ -20,7 +20,7 @@ public:
 	double GetMaxSize() const { return maxSize; };
 
 	std::vector<Position> Optimize(std::vector<Position> p);
-	bool validMove(Position, Position, bool, Point*,bool p=false);
+	bool validMove(Position, Position, bool, Point*);
 	Point Drop(Position);
 
 	Position posSize, negSize;

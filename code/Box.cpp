@@ -252,3 +252,18 @@ bool Box::Intersect(Box b) const
 
 	return true;
 }
+
+
+bool Box::Intersect(Point p, const double radius) const
+{
+	p = (p - center)*rotation;
+
+	for(int i=0; i<3; i++)
+	{
+		double s = size[i]/2;
+		p[i] = std::min(p[i], s);
+		p[i] = std::max(p[i], -s);
+	}
+
+	return p.Norm2() <= radius*radius;
+}

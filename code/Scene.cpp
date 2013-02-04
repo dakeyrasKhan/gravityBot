@@ -109,7 +109,7 @@ void Scene::BuildBaseScene()
 	}
 }
 
-
+// TODO : add the test with the ball
 bool Scene::Collision(Position pos, bool with, Point* object)
 {
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(pos);
@@ -133,7 +133,9 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 				staticScene.points[t[2]]))
 					return true;
 	
-	if(baseBoxes[0].Intersect(armsBoxes[0]) || baseBoxes[0].Intersect(armsBoxes[1]) || baseBoxes[1].Intersect(armsBoxes[1]))
+	if(baseBoxes[0].Intersect(armsBoxes[0]) 
+		|| baseBoxes[0].Intersect(armsBoxes[1]) 
+		|| baseBoxes[1].Intersect(armsBoxes[1]))
 		return true;
 
 	return false;
@@ -149,27 +151,16 @@ Point Scene::Drop(Position p)
 	return Point();
 }
 
-bool Scene::validMove(Position a, Position b, bool with, Point* object,bool print)
+bool Scene::validMove(Position a, Position b, bool with, Point* object)
 {
-	double length=Position((b-a)).Norm();
-	if(print){
-		std::cout<<"length : "<<length<<" eps : "<<EPS<<std::endl;
-		for(auto p : a)
-			std::cout<<"---"<<p<<std::endl;
-		for(auto p : b)
-			std::cout<<"---"<<p<<std::endl;
-	}
+	double length = Position((b-a)).Norm();
 	
-	//std::cout<<"length : "<<length<<" eps : "<<EPS<<std::endl;
-	if(length<=0.01){
-		//std::cout<<"return"<<std::endl;
+	if(length<=0.01)
 		return true;
-	}
-	//std::cout<<"continue"<<std::endl;
+
 	Position mid = Position((a+b))/2.;
 	if(Collision(mid,with,object))
 		return false;
-	if(print)
-		std::cout<<"continue"<<std::endl;
-	return validMove(a,mid,with,object,print) && validMove(mid,b,with,object,print);
+
+	return validMove(a, mid, with, object) && validMove(mid, b, with, object);
 }

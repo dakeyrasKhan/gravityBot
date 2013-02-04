@@ -9,8 +9,9 @@ public:
 	Box(const Point& center, const Point& size, const Matrix& rotation = Matrix::Identity)
 		: center(center), size(size), rotation(rotation) { };
 
-	bool Intersect(Point p0, Point p1, Point p2) const;
-	bool Intersect(Box b) const;
+	bool Intersect(Point p0, Point p1, Point p2) const;	// Intersect a triangle
+	bool Intersect(Box b) const;						// Intersect a box
+	bool Intersect(Point p, const double radius) const;	// Intersect a sphere
 
 private:
 	Point center, size;
