@@ -108,6 +108,35 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 }
 
 
+bool Scene::IntersectTriangleSphere(const int triangle, const Point& sphereCenter) const
+{
+	Point p[3], e[3];
+	double radius2 = ballRadius*ballRadius;
+
+	for(int i=0; i<3; i++)
+	{
+		p[i] = staticScene.points[staticScene.triangles[triangle][i]] - sphereCenter;
+
+		if( (p[i]|p[i])  < radius2)
+			return true;
+	}
+                    
+	for(int i=0; i<3;)
+	{
+		e[i] = p[i] - p[(++i)%3];
+		double n2 = e[i].Norm2();
+		double d = -(p[i] | e[i]);
+		if(d > 0 && d < n2 && p[i].Norm2() - d*d/n2 < radius2 )
+			return true;
+	}
+
+	int sign01 = Box::SignMask(e[0]^p[0]); 
+	int sign12 = Box::SignMask(e[1]^p[1]);
+	int sign20 = Box::SignMask(e[2]^p[2]);            
+	return (sign01 & sign12 & sign20) != 0;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////				TODO				////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -164,9 +193,4 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path)
 		}
 	}
 	return retour;
-}
-
-bool Scene::IntersectTriangleSphere(const int triangle, const Point& sphereCenter) const
-{
-	return false;
 }
