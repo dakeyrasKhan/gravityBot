@@ -1,4 +1,5 @@
 #include "Vector.hpp"
+#include "Robot.hpp"
 #include <random>
 
 Position randomCatch(Point p)

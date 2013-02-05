@@ -8,6 +8,9 @@
 #define ROBOT_ARM1	2
 #define ROBOT_X		3
 #define ROBOT_Z		4
+#define BALL_X		5
+#define BALL_Y		6
+#define BALL_Z		7
 
 class Robot
 {

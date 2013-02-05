@@ -76,7 +76,7 @@ void Scene::BuildBaseScene()
 }
 
 // TODO : add the test with the ball
-bool Scene::Collision(Position pos, bool with, Point* object)
+bool Scene::Collision(const Position& pos) const
 {
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(pos);
 	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(pos);
@@ -102,6 +102,14 @@ bool Scene::Collision(Position pos, bool with, Point* object)
 	if(baseBoxes[0].Intersect(armsBoxes[0]) 
 		|| baseBoxes[0].Intersect(armsBoxes[1]) 
 		|| baseBoxes[1].Intersect(armsBoxes[1]))
+		return true;
+
+	Point ballPos;
+	ballPos[X] = pos[BALL_X];
+	ballPos[Y] = pos[BALL_Y];
+	ballPos[Z] = pos[BALL_Z];
+
+	if(baseBoxes[0].Intersect(ballPos, ballRadius))
 		return true;
 
 	return false;
@@ -154,7 +162,7 @@ bool Scene::validMove(Position a, Position b, bool with, Point* object)
 		return true;
 
 	Position mid = Position((a+b))/2.;
-	if(Collision(mid,with,object))
+	if(Collision(mid))
 		return false;
 
 	return validMove(a, mid, with, object) && validMove(mid, b, with, object);

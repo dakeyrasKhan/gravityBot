@@ -9,14 +9,12 @@ const double EPS = (1./double(1<<MAX_DEPTH));
 const double INFINITY = std::numeric_limits<double>::infinity();
 enum axis { X=0, Y=1, Z=2 };
 
-#define DIM_CONF	5
+#define DIM_CONF	8
 #define NB_ROT		3
 #define ARM_LENGTH  42.
 #define ARM1		21.
 #define ARM2		21.
 #define SPACE		10.
-#define ROBOT_X 	3
-#define ROBOT_Z 	4
 
 
 inline double mod(const double d0, const double d1)

@@ -11,7 +11,7 @@ class Scene
 public:
 	Scene(const char* sceneFile, const Point& robotSize);
 
-	bool Collision(Position position, bool, Point*);
+	bool Collision(const Position& position) const;
 	const Object& StaticScene() const { return staticScene; };
 	Object RobotObject(Position pos) const { return robot.GetObject(pos); };
 

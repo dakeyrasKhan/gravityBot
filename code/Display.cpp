@@ -38,7 +38,10 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 	for(auto& x : keys)
 		x = false;
 
-	Position p; p[0] = 0; p[1] = 0; p[2] = 0; p[3] = 0; p[4] = 0;
+	Position p;
+	for(auto& x : p)
+		x = 0;
+
 	trajectory.push_back(p);
 
 	camPos[0] = -1; camPos[1] = 20; camPos[2] = 5;
@@ -92,7 +95,7 @@ void Display::Render()
 
 	// Draw the robot
 	Position position = UpdatePosition(lastRender, timediff);
-	if(scene->Collision(position, false, nullptr))
+	if(scene->Collision(position))
 	{
 		color[0] = .8; color[1] = 0; color[2] = 0;
 	}
@@ -103,10 +106,10 @@ void Display::Render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->RobotObject(position));
 
-	// Draw the sphere
+	// Draw the ball
 	color[0] = 0; color[1] = 0; color[2] = .8;
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-	glTranslated(0.0,2.0,5.0);
+	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
 	glutSolidSphere(.3, 100, 100);
 
 	glDisable(GL_LIGHTING);

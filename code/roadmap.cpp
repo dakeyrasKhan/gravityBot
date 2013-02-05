@@ -107,7 +107,7 @@ void Roadmap::explore(int curNode, int curClasse){
 
 void Roadmap::addNode(FullNode node){
 	
-	if(scene->Collision(node.pos,node.with,NULL)){
+	if(scene->Collision(node.pos)){
 		//std::cout<<"Collision : "<<node.pos[0]<<","<<node.pos[1]<<","<<node.pos[2]<<std::endl;
 		return;
 	}
@@ -151,7 +151,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->negSize.ToPoint(),scene-
 		Point pos=scene->Drop(node.pos);
 		for(int i=0;i<NB_DROP;i++){
 			Position r = randomCatch(pos);
-			if(scene->Collision(r,false,NULL))
+			if(scene->Collision(r))
 				continue;
 			Path p = getPath(node.pos,r,false,&pos);
 			if(!p.empty()){
