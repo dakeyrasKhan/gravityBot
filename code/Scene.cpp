@@ -75,42 +75,62 @@ void Scene::BuildBaseScene()
 	}
 }
 
-// TODO : add the test with the ball
+
 bool Scene::Collision(const Position& pos) const
 {
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(pos);
 	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(pos);
-
-	// Check collision within the robots
-
-	for(const auto& b : baseBoxes)
-		for(const auto& t : baseScene)
-			if(b.Intersect(
-				staticScene.points[t[0]], 
-				staticScene.points[t[1]], 
-				staticScene.points[t[2]]))
-					return true;
-
-	for(const auto& b : armsBoxes)
-		for(const auto& t : staticScene.triangles)
-			if(b.Intersect(
-				staticScene.points[t[0]], 
-				staticScene.points[t[1]], 
-				staticScene.points[t[2]]))
-					return true;
-	
-	if(baseBoxes[0].Intersect(armsBoxes[0]) 
-		|| baseBoxes[0].Intersect(armsBoxes[1]) 
-		|| baseBoxes[1].Intersect(armsBoxes[1]))
-		return true;
 
 	Point ballPos;
 	ballPos[X] = pos[BALL_X];
 	ballPos[Y] = pos[BALL_Y];
 	ballPos[Z] = pos[BALL_Z];
 
-	if(baseBoxes[0].Intersect(ballPos, ballRadius))
-		return true;
+	return RobotCollision(baseBoxes, armsBoxes, ballPos, true)
+		|| GroundCollision(baseBoxes, armsBoxes, ballPos, true);
+}
+
+// Test the intersection of the robot with himself
+bool Scene::RobotCollision(const std::array<Box, 2>& baseBoxes, 
+						   const std::array<Box, 2>& armsBoxes,
+						   const Point& ballPos,
+						   const bool testBallArm1) const
+{
+	return baseBoxes[0].Intersect(armsBoxes[0]) 
+		|| baseBoxes[0].Intersect(armsBoxes[1]) 
+		|| baseBoxes[1].Intersect(armsBoxes[1])
+		|| baseBoxes[0].Intersect(ballPos, ballRadius)
+		|| baseBoxes[1].Intersect(ballPos, ballRadius)
+		|| armsBoxes[0].Intersect(ballPos, ballRadius)
+		|| (testBallArm1 && armsBoxes[1].Intersect(ballPos, ballRadius));
+}
+
+
+bool Scene::GroundCollision(const std::array<Box, 2>& baseBoxes, 
+							const std::array<Box, 2>& armsBoxes,
+							const Point& ballPos,
+							const bool testBall) const
+{
+	for(const auto& t : baseScene)
+		for(const auto& b : baseBoxes)
+			if(b.Intersect(
+				staticScene.points[t[0]], 
+				staticScene.points[t[1]], 
+				staticScene.points[t[2]]))
+					return true;
+
+	for(const auto& t : staticScene.triangles)
+		for(const auto& b : armsBoxes)
+			if(b.Intersect(
+				staticScene.points[t[0]], 
+				staticScene.points[t[1]], 
+				staticScene.points[t[2]]))
+					return true;
+
+	if(testBall)
+		for(int i=0; i<staticScene.triangles.size(); i++)
+			if(IntersectTriangleSphere(i, ballPos))
+				return true;
 
 	return false;
 }
@@ -129,18 +149,27 @@ bool Scene::IntersectTriangleSphere(const int triangle, const Point& sphereCente
 			return true;
 	}
                     
-	for(int i=0; i<3;)
+	for(int i=0; i<3; i++)
 	{
-		e[i] = p[i] - p[(++i)%3];
+		int i2 = (i+1)%3;
+		e[i] = p[i] - p[i2];
 		double n2 = e[i].Norm2();
 		double d = -(p[i] | e[i]);
 		if(d > 0 && d < n2 && p[i].Norm2() - d*d/n2 < radius2 )
 			return true;
 	}
 
-	int sign01 = Box::SignMask(e[0]^p[0]); 
-	int sign12 = Box::SignMask(e[1]^p[1]);
-	int sign20 = Box::SignMask(e[2]^p[2]);            
+	Point n = e[0]^e[1];
+	n = n.Normalize();
+	double d = (p[0]|n);
+	if( abs(d) >= ballRadius)
+		return false;
+
+	n = d*n;
+
+	int sign01 = Box::SignMask(e[0]^(p[0] - n)); 
+	int sign12 = Box::SignMask(e[1]^(p[1] - n));
+	int sign20 = Box::SignMask(e[2]^(p[2] - n));            
 	return (sign01 & sign12 & sign20) != 0;
 }
 

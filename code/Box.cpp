@@ -261,9 +261,13 @@ bool Box::Intersect(Point p, const double radius) const
 	for(int i=0; i<3; i++)
 	{
 		double s = size[i]/2;
-		p[i] = std::min(p[i], s);
-		p[i] = std::max(p[i], -s);
+		if(p[i] > s)
+			p[i] -= s;
+		else if(p[i] < -s)
+			p[i] += s;
+		else
+			p[i] = 0;
 	}
 
-	return p.Norm2() <= radius*radius;
+	return p.Norm2() < radius*radius;
 }

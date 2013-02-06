@@ -6,7 +6,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 	vector<FullNode> neighbours;
 	Path path;
 
-	findNeighbours(start.ToPoint(),scene->maxSize,with,&tree,&neighbours);
+	findNeighbours(start.ToPoint(),scene->MaxSize(), with,&tree,&neighbours);
 	std::cout<<"Found "<<neighbours.size()<<" potential start neighbours"<<std::endl;
 	
 	priority_queue<NodeComp> heap;
@@ -55,7 +55,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 	}
 	std::cout<<"dijkstra ended"<<std::endl;
 	neighbours.clear();
-	findNeighbours(end.ToPoint(),scene->maxSize,with,&tree,&neighbours);
+	findNeighbours(end.ToPoint(),scene->MaxSize(),with,&tree,&neighbours);
 	std::cout<<"found "<<neighbours.size()<<" possible end"<<std::endl;
 	int endPoint=-1;
 	double distToEnd=INFINITY;
@@ -117,7 +117,7 @@ void Roadmap::addNode(FullNode node){
 	adjacency.push_back(vector<FullNode>());		
 
 	vector<FullNode> neighbours;
-	findNeighbours(node.pos.ToPoint(),scene->maxSize,node.with,&tree,&neighbours);
+	findNeighbours(node.pos.ToPoint(),scene->MaxSize(),node.with,&tree,&neighbours);
 	double fail=0;
 	for(auto neighbour : neighbours){
 		if(neighbour.with == node.with && 
@@ -131,11 +131,11 @@ void Roadmap::addNode(FullNode node){
 }
 
 
-Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->negSize.ToPoint(),scene->posSize.ToPoint()){
+Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scene->PosSize().ToPoint()){
 	int prec=0;
 	for(int i=1;i<2;i++){
 		while(waypoints.size()<NB_WAYPOINTS){
-			Position randompos=Position::Random(scene->negSize,scene->posSize);
+			Position randompos=Position::Random(scene->NegSize(),scene->PosSize());
 			FullNode node(randompos,waypoints.size(),(i<1));
 			addNode(node);
 			if(waypoints.size()%100==0 && waypoints.size()!=prec){

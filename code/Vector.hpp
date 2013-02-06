@@ -60,7 +60,7 @@ inline Point Array<L, R>::ToPoint() const
 {
 	Point p;
 	for(int i=0; i<3; i++)
-		p[i] = (*this)[i];
+		p[i] = (*this)[i + R];
 	return p;
 }
 
