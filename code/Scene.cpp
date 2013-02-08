@@ -2,7 +2,6 @@
 #include <fstream>
 #include "Scene.hpp"
 
-
 Scene::Scene(const char* sceneFile, const Point& robotSize) : 
 	robot(robotSize), ballRadius(0.2)
 {
@@ -62,16 +61,25 @@ void Scene::ReadObjFile(const char* fileName)
 
 void Scene::BuildBaseScene()
 {
-
 	// Build the polygons vector
 	double robotBottom = robot.yPos - robot.baseSize[1]/2;
 	for(auto& t : staticScene.triangles)
 	{
 		Point p[3] = { staticScene.points[t[0]], staticScene.points[t[1]], staticScene.points[t[2]] };
 		Point n = ((p[1]-p[0])^(p[2]-p[0])).Normalize();;
+		Triangle trig(p[0], p[1], p[2]);
 
-		if(n[0] != 0 || n[1] != 1 || n[2] != 0 || p[0][1] != robotBottom)
-			baseScene.push_back(t);
+		if(n[0] == 0 && n[1] == 1 && n[2] == 0)
+		{
+			groundTriangles.push_back(trig);
+
+			if(p[0][1] != robotBottom)
+				noBaseGroundTriangles.push_back(t);
+		}
+		else
+			noBaseGroundTriangles.push_back(t);
+
+		triangles.push_back(trig);
 	}
 }
 
@@ -96,13 +104,13 @@ bool Scene::RobotCollision(const std::array<Box, 2>& baseBoxes,
 						   const Point& ballPos,
 						   const bool testBallArm1) const
 {
-	return baseBoxes[0].Intersect(armsBoxes[0]) 
-		|| baseBoxes[0].Intersect(armsBoxes[1]) 
-		|| baseBoxes[1].Intersect(armsBoxes[1])
-		|| baseBoxes[0].Intersect(ballPos, ballRadius)
-		|| baseBoxes[1].Intersect(ballPos, ballRadius)
-		|| armsBoxes[0].Intersect(ballPos, ballRadius)
-		|| (testBallArm1 && armsBoxes[1].Intersect(ballPos, ballRadius));
+	return baseBoxes[0].IntersectBox(armsBoxes[0]) 
+		|| baseBoxes[0].IntersectBox(armsBoxes[1]) 
+		|| baseBoxes[1].IntersectBox(armsBoxes[1])
+		|| baseBoxes[0].IntersectSphere(ballPos, ballRadius)
+		|| baseBoxes[1].IntersectSphere(ballPos, ballRadius)
+		|| armsBoxes[0].IntersectSphere(ballPos, ballRadius)
+		|| (testBallArm1 && armsBoxes[1].IntersectSphere(ballPos, ballRadius));
 }
 
 
@@ -111,7 +119,7 @@ bool Scene::GroundCollision(const std::array<Box, 2>& baseBoxes,
 							const Point& ballPos,
 							const bool testBall) const
 {
-	for(const auto& t : baseScene)
+	for(const auto& t : noBaseGroundTriangles)
 		for(const auto& b : baseBoxes)
 			if(b.Intersect(
 				staticScene.points[t[0]], 
@@ -128,49 +136,58 @@ bool Scene::GroundCollision(const std::array<Box, 2>& baseBoxes,
 					return true;
 
 	if(testBall)
-		for(int i=0; i<staticScene.triangles.size(); i++)
-			if(IntersectTriangleSphere(i, ballPos))
+		for(auto t : staticScene.triangles)
+			if(Triangle(staticScene.points[t[0]], 
+				staticScene.points[t[1]],
+				staticScene.points[t[2]]).IntersectSphere(ballPos, ballRadius))
 				return true;
 
 	return false;
 }
 
 
-bool Scene::IntersectTriangleSphere(const int triangle, const Point& sphereCenter) const
+
+Point Scene::Drop(Position p)
 {
-	Point p[3], e[3];
-	double radius2 = ballRadius*ballRadius;
+	double heigth = -std::numeric_limits<double>::infinity();
 
-	for(int i=0; i<3; i++)
-	{
-		p[i] = staticScene.points[staticScene.triangles[triangle][i]] - sphereCenter;
+	// Find a candidate
+	Point hit;
+	hit[X] = p[BALL_X];
+	hit[Z] = p[BALL_Z];
 
-		if( (p[i]|p[i])  < radius2)
-			return true;
-	}
-                    
-	for(int i=0; i<3; i++)
+	for(auto t : groundTriangles)
 	{
-		int i2 = (i+1)%3;
-		e[i] = p[i] - p[i2];
-		double n2 = e[i].Norm2();
-		double d = -(p[i] | e[i]);
-		if(d > 0 && d < n2 && p[i].Norm2() - d*d/n2 < radius2 )
-			return true;
+		double h = t[0][Y];
+
+		if(h > heigth && h < p[BALL_Y])
+		{
+			hit[Y] = h;
+			if(t.IntersectPoint(hit))
+				heigth = h;
+		}
 	}
 
-	Point n = e[0]^e[1];
-	n = n.Normalize();
-	double d = (p[0]|n);
-	if( abs(d) >= ballRadius)
-		return false;
+	// Check if we have found a candidate
+	if(heigth == -std::numeric_limits<double>::infinity())
+		throw NoDropPointException();
 
-	n = d*n;
+	hit[Y] = heigth + ballRadius;
 
-	int sign01 = Box::SignMask(e[0]^(p[0] - n)); 
-	int sign12 = Box::SignMask(e[1]^(p[1] - n));
-	int sign20 = Box::SignMask(e[2]^(p[2] - n));            
-	return (sign01 & sign12 & sign20) != 0;
+	// Check that the candidate is valid
+	for(auto t : triangles)
+		if(t.IntersectYCylinder(hit, heigth, ballRadius))
+			throw NoDropPointException();
+
+	for(auto b : robot.GetBaseBoxes(p))
+		if(b.IntersectYCylinder(hit, heigth, ballRadius))
+			throw NoDropPointException();
+
+	for(auto b : robot.GetArmsBoxes(p))
+		if(b.IntersectYCylinder(hit, heigth, ballRadius))
+			throw NoDropPointException();
+
+	return hit;
 }
 
 
@@ -178,10 +195,7 @@ bool Scene::IntersectTriangleSphere(const int triangle, const Point& sphereCente
 ///////////////////////////				TODO				////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-Point Scene::Drop(Position p)
-{
-	return Point();
-}
+
 
 bool Scene::validMove(Position a, Position b, bool with, Point* object)
 {

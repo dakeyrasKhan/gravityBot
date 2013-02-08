@@ -1,8 +1,11 @@
 #pragma once
 #include <algorithm>
+#include <exception>
 #include "Vector.hpp"
 #include "Object.hpp"
 #include "Robot.hpp"
+#include "Triangle.hpp"
+
 
 #define NB_TRY 1000
 
@@ -29,7 +32,6 @@ private:
 	void ReadObjFile(const char* fileName);
 	void BuildBaseScene();
 
-	bool IntersectTriangleSphere(const int triangle, const Point& sphereCenter) const;
 	bool RobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
 		const Point& ballPos, const bool testBallArm1) const;
 	bool GroundCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
@@ -37,10 +39,18 @@ private:
 
 	Object staticScene;
 	Robot robot;
-	std::vector<std::array<int, 3>> baseScene;
+	std::vector<std::array<int, 3>> noBaseGroundTriangles;
+	std::vector<Triangle> groundTriangles;
+	std::vector<Triangle> triangles;
 
 	Position posSize, negSize;
 	double maxSize;
+
+};
+
+
+class NoDropPointException : std::exception
+{
 
 };
 

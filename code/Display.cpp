@@ -40,7 +40,9 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 
 	Position p;
 	for(auto& x : p)
-		x = .1;
+		x = 4;
+
+	p[BALL_X] = 0;
 
 	trajectory.push_back(p);
 
@@ -111,6 +113,8 @@ void Display::Render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
 	glutSolidSphere(scene->ballRadius, 100, 100);
+
+	scene->Drop(position);
 
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();

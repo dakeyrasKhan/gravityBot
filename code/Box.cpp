@@ -1,5 +1,6 @@
 #include "Box.hpp"
 #include <limits>
+#include "Triangle.hpp"
 
 // TODO : size could be put into rotation.
 
@@ -56,20 +57,21 @@ bool Box::Intersect(Point p0, Point p1, Point p2) const
 	double d = norm | p0;
 
 	Point hit;
+	Triangle t(p0, p1, p2);
 	hit[X] = hit[Y] = hit[Z] = d/(norm[X] + norm[Y] + norm[Z]);
-	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 && t.IntersectPoint(hit))
 		return true;
 
 	hit[Z] = -(hit[X] = hit[Y] = d/(norm[X] + norm[Y] - norm[Z]));
-	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 &&  t.IntersectPoint(hit))
 		return true; 
 
 	hit[Y] = -(hit[X] = hit[Z] = d/(norm[X] - norm[Y] + norm[Z]));
-	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 &&  t.IntersectPoint(hit))
 		return true;
 
 	hit[Y] = hit[Z] = -(hit[X] = d / (norm[X] - norm[Y] - norm[Z]));
-	if(abs(hit[X]) <= 0.5 && IntersectPointTriangle(hit, p0, p1, p2))
+	if(abs(hit[X]) <= 0.5 &&  t.IntersectPoint(hit))
 		return true;
 
 	return false;
@@ -170,26 +172,7 @@ bool Box::CheckLine(const Point& p0, const Point& p1, const int outcode_diff)
 	return false;
 }
 
-// Test if 3D point is inside 3D triangle
-bool Box::IntersectPointTriangle(const Point& p, const Point& p0, const Point& p1, const Point& p2)
-{                                                   
-	int sign01 = SignMask((p0 - p1)^(p0 - p)); 
-	int sign12 = SignMask((p1 - p2)^(p1 - p));
-	int sign20 = SignMask((p2 - p0)^(p2 - p));            
-	return (sign01 & sign12 & sign20) != 0;
-}
-
-int Box::SignMask(const Point& p)
-{
-	return (p[X] < std::numeric_limits<double>::epsilon() ? 1 << 2 : 0)
-		| (p[X] > -std::numeric_limits<double>::epsilon() ? 1 << 5 : 0) 
-		| (p[Y] <  std::numeric_limits<double>::epsilon() ? 1 << 1 : 0) 
-		| (p[Y] > -std::numeric_limits<double>::epsilon() ? 1 << 4 : 0) 
-		| (p[Z] <  std::numeric_limits<double>::epsilon() ? 1 << 0 : 0)
-		| (p[Z] > -std::numeric_limits<double>::epsilon() ? 1 << 3 : 0);
-}
-
-bool Box::Intersect(Box b) const
+bool Box::IntersectBox(Box b) const
 {
 	// Intersect against the unit cube centered in the origin
 	b.center = (b.center - center)*rotation;
@@ -254,7 +237,7 @@ bool Box::Intersect(Box b) const
 }
 
 
-bool Box::Intersect(Point p, const double radius) const
+bool Box::IntersectSphere(Point p, const double radius) const
 {
 	p = (p - center)*rotation;
 
@@ -270,4 +253,10 @@ bool Box::Intersect(Point p, const double radius) const
 	}
 
 	return p.Norm2() < radius*radius;
+}
+
+
+bool Box::IntersectYCylinder(const Point& base, const double heigth, const double radius) const
+{
+	return false;
 }
