@@ -23,7 +23,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 
 	for(auto neighbour : neighbours){
 
-		if(scene->validMove(start,neighbour.pos,with,pos)){
+		if(scene->ValidMove(start,neighbour.pos)){
 			distances[neighbour.id]=Position(neighbour.pos-start).Norm();
 			heap.push(NodeComp(neighbour,Position(neighbour.pos-start).Norm()));
 		}
@@ -41,7 +41,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		for(auto neighbour : adjacency[current.id]){
 
 			if(pos!=NULL){
-				if(!scene->validMove(current.pos,neighbour.pos,with,pos))
+				if(!scene->ValidMove(current.pos,neighbour.pos))
 					continue;
 			}
 
@@ -63,7 +63,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		//Si on peut l'atteindre depuis le début
 		if(distances[neighbour.id]<INFINITY){
 			//Si on peut atteindre la fin depuis
-			if(scene->validMove(end,neighbour.pos,with,pos)){
+			if(scene->ValidMove(end,neighbour.pos)){
 				//Si c'est mieux
 				if(distances[neighbour.id]+Position(neighbour.pos-end).Norm()<distToEnd){
 					distToEnd=distances[neighbour.id]+Position(neighbour.pos-end).Norm();
@@ -121,7 +121,7 @@ void Roadmap::addNode(FullNode node){
 	double fail=0;
 	for(auto neighbour : neighbours){
 		if(neighbour.with == node.with && 
-		   scene->validMove(neighbour.pos,node.pos,node.with,NULL)){
+		   scene->ValidMove(neighbour.pos,node.pos)){
 				adjacency[neighbour.id].push_back(node);
 		}
 		else

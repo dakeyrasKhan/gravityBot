@@ -23,7 +23,7 @@ public:
 
 	bool Collision(const Position& position) const;
 	std::vector<Position> Optimize(std::vector<Position> p);
-	bool validMove(Position, Position, bool, Point*);
+	bool ValidMove(const Position&, const Position&) const;
 	Point Drop(Position);
 
 	const double ballRadius;

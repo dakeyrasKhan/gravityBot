@@ -114,8 +114,6 @@ void Display::Render()
 	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
 	glutSolidSphere(scene->ballRadius, 100, 100);
 
-	scene->Drop(position);
-
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
 }

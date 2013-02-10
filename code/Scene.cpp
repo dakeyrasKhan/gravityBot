@@ -191,13 +191,7 @@ Point Scene::Drop(Position p)
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////				TODO				////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-bool Scene::validMove(Position a, Position b, bool with, Point* object)
+bool Scene::ValidMove(const Position& a, const Position& b) const
 {
 	double length = Position((b-a)).Norm();
 	
@@ -208,8 +202,14 @@ bool Scene::validMove(Position a, Position b, bool with, Point* object)
 	if(Collision(mid))
 		return false;
 
-	return validMove(a, mid, with, object) && validMove(mid, b, with, object);
+	return ValidMove(a, mid) && ValidMove(mid, b);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////				TODO				////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
 std::vector<Position> Scene::Optimize(std::vector<Position> path)
@@ -234,7 +234,7 @@ std::vector<Position> Scene::Optimize(std::vector<Position> path)
 		Position end = retour[b]+(retour[b+1]-retour[b])*d;
 
 
-		if(validMove(start,end,false,NULL)){
+		if(ValidMove(start,end)){
 			retour.erase(retour.begin()+a+1,retour.begin()+b+1);
 			retour.insert(retour.begin()+a+1,end);
 			retour.insert(retour.begin()+a+1,start);

@@ -228,3 +228,11 @@ inline Point operator^(const Point& p0, const Point& p1)
 
 	return out;
 }
+
+inline double clamp(const double x, const double a, const double b)
+{
+    return x < a ? a : (x > b ? b : x);
+}
+
+double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0, const Point& b1);
+Point SegmentPlaneClosestPoint(const Point& n, const Point& p, const Point& a0, const Point& a1);
