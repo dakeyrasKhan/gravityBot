@@ -84,7 +84,7 @@ void Scene::BuildBaseScene()
 }
 
 
-bool Scene::Collision(const Position& pos) const
+bool Scene::Collision(const Position& pos, const int ballStatus) const
 {
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(pos);
 	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(pos);
@@ -94,8 +94,8 @@ bool Scene::Collision(const Position& pos) const
 	ballPos[Y] = pos[BALL_Y];
 	ballPos[Z] = pos[BALL_Z];
 
-	return RobotCollision(baseBoxes, armsBoxes, ballPos, true)
-		|| GroundCollision(baseBoxes, armsBoxes, ballPos, true);
+	return RobotCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & 0x1) == 0)
+		|| GroundCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & 0x2) == 0);
 }
 
 // Test the intersection of the robot with himself

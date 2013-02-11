@@ -9,6 +9,9 @@
 
 #define NB_TRY 1000
 
+#define BALL_ON_ARM 0x1
+#define BALL_ON_FLOOR 0x2
+
 class Scene
 {
 public:
@@ -21,7 +24,7 @@ public:
 	Position NegSize() const { return negSize; };
 	double MaxSize() const { return maxSize; };
 
-	bool Collision(const Position& position) const;
+	bool Collision(const Position& position, const int ballStatus) const;
 	std::vector<Position> Optimize(std::vector<Position> p);
 	bool ValidMove(const Position&, const Position&) const;
 	Point Drop(Position);
