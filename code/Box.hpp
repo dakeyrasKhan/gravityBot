@@ -12,7 +12,7 @@ public:
 	bool Intersect(Point p0, Point p1, Point p2) const;	
 	bool IntersectBox(Box b) const;						
 	bool IntersectSphere(Point p, const double radius) const;
-	bool IntersectYCylinder(const Point& base, const double heigth, const double radius) const;
+	bool IntersectCylinder(Point c0, Point c1, const double radius) const;
 
 private:
 	Point center, size;

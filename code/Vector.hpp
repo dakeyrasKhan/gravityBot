@@ -116,6 +116,12 @@ inline std::array<T, L> operator+(const std::array<T, L> v0, const std::array<T,
 }
 
 template<typename T, std::size_t L>
+inline std::array<T, L> operator+(const std::array<T, L> v)
+{
+	return v;
+}
+
+template<typename T, std::size_t L>
 inline std::array<T, L> operator-(const std::array<T, L> v0, const std::array<T, L> v1)
 {
 	std::array<T, L> out;

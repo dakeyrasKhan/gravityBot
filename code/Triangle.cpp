@@ -75,7 +75,16 @@ const Point& Triangle::operator[](const int i) const
 	}
 }
 
-bool Triangle::IntersectYCylinder(const Point& base, const double heigth, const double radius) const
+bool Triangle::IntersectCylinder(const Point& c0, const Point& c1, const double radius) const
 {
-	return false;
+	// check intersection with the edges
+	if(SegmentSegmentDistance(p0, p1, c0, c1) < radius)
+		return true;
+	if(SegmentSegmentDistance(p1, p2, c0, c1) < radius)
+		return true;
+	if(SegmentSegmentDistance(p2, p1, c0, c1) < radius)
+		return true;
+
+	// check intersection with the inner triangle
+	return IntersectPoint(SegmentPlaneClosestPoint(((p0-p1)^(p0-p2)).Normalize(), p0, c0, c1));
 }

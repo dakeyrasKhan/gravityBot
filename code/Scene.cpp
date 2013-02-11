@@ -175,16 +175,19 @@ Point Scene::Drop(Position p)
 	hit[Y] = heigth + ballRadius;
 
 	// Check that the candidate is valid
+	Point start = hit;
+	start[Y] = p[BALL_Y];
+
 	for(auto t : triangles)
-		if(t.IntersectYCylinder(hit, heigth, ballRadius))
+		if(t.IntersectCylinder(start, hit, ballRadius))
 			throw NoDropPointException();
 
 	for(auto b : robot.GetBaseBoxes(p))
-		if(b.IntersectYCylinder(hit, heigth, ballRadius))
+		if(b.IntersectCylinder(hit, start, ballRadius))
 			throw NoDropPointException();
 
 	for(auto b : robot.GetArmsBoxes(p))
-		if(b.IntersectYCylinder(hit, heigth, ballRadius))
+		if(b.IntersectCylinder(hit, start, ballRadius))
 			throw NoDropPointException();
 
 	return hit;
