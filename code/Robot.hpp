@@ -20,6 +20,13 @@ public:
 	std::array<Box, 2> GetBaseBoxes(const Position& pos) const;
 	std::array<Box, 2> GetArmsBoxes(const Position& pos) const;
 
+	double armLength(){return arm0Length+arm1Length;};
+	double maxDist(){return sqrt(armLength()*armLength()-
+								 baseArmLength*baseArmLength);};
+	Position SetAngles(double d,Position p);
+	Position RandomCatch(Point p);
+	Position Catch(Position pos,Point p);
+
 	void printSize() const;
 
 	const Point baseSize;
@@ -28,6 +35,7 @@ public:
 	const double arm0Length;
 	const double arm1Length;
 	const double baseArmLength;
+	const double minSpace;
 
 private:
 	Object baseObject, arm0Object, arm1Object;

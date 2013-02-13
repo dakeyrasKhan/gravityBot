@@ -28,7 +28,8 @@ public:
 	std::vector<Position> Optimize(std::vector<Position> p);
 	bool ValidMove(const Position&, const Position&) const;
 	Point Drop(Position);
-
+	Robot robot;
+	
 	const double ballRadius;
 
 private:
@@ -41,7 +42,7 @@ private:
 		const Point& ballPos, const bool testBall) const;
 
 	Object staticScene;
-	Robot robot;
+	
 	std::vector<std::array<int, 3>> noBaseGroundTriangles;
 	std::vector<Triangle> groundTriangles;
 	std::vector<Triangle> triangles;

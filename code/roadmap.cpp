@@ -133,10 +133,12 @@ void Roadmap::addNode(FullNode node){
 
 Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scene->PosSize().ToPoint()){
 	int prec=0;
-	for(int i=1;i<2;i++){
+	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
+	for(int i=0;i<2;i++){
+		std::cout<<"pass #"<<i<<std::endl;
 		while(waypoints.size()<NB_WAYPOINTS){
-			Position randompos=Position::Random(scene->NegSize(),scene->PosSize());
-			FullNode node(randompos,waypoints.size(),(i<1));
+			Position randompos=Position::Random(scene->NegSize(),scene->PosSize(),i,(void*)&scene->robot);
+			FullNode node(randompos,waypoints.size(),(i==1));
 			addNode(node);
 			if(waypoints.size()%100==0 && waypoints.size()!=prec){
 				std::cout<<waypoints.size()<<std::endl;
@@ -144,13 +146,20 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			}
 		}
 	}
-	return;
+
+	// Pour chaque waypoints du robot tenant l'objet
 	for(auto node : waypoints){
 		if(!node.with)
 			continue;
+		//On lache l'objet
 		Point pos=scene->Drop(node.pos);
+		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
+		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos)))
+			continue;
+
 		for(int i=0;i<NB_DROP;i++){
-			Position r = randomCatch(pos);
+			//On essaie de l'attraper
+			Position r = scene->robot.RandomCatch(pos);
 			if(scene->Collision(r))
 				continue;
 			Path p = getPath(node.pos,r,false,&pos);

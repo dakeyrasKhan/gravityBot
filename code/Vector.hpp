@@ -6,7 +6,9 @@
 #define MAX_DEPTH 15
 const double Pi = 3.14159265359;
 const double EPS = (1./double(1<<MAX_DEPTH));
+#ifdef WIN32
 const double INFINITY = std::numeric_limits<double>::infinity();
+#endif
 enum axis { X=0, Y=1, Z=2 };
 
 #define DIM_CONF	8
@@ -14,7 +16,8 @@ enum axis { X=0, Y=1, Z=2 };
 #define ARM_LENGTH  42.
 #define ARM1		21.
 #define ARM2		21.
-#define SPACE		10.
+#define SPACE		1.
+
 
 
 inline double mod(const double d0, const double d1)
@@ -35,7 +38,7 @@ public:
 	double				Norm() const;
 	double				Norm2() const;
 	Array<L, R>			Normalize() const;
-	static Array<L,R>	Random(const std::array<double, L>& neg,const std::array<double, L>& pos);
+	static Array<L,R>	Random(const std::array<double, L>& neg,const std::array<double, L>& pos,bool with, void *robot);
 };
 
 typedef Array<3, 0> Point;
@@ -43,17 +46,7 @@ typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
 
 
-Position randomCatch(Point p);
-
-
-template<std::size_t L, int R>
-Array<L,R> Array<L,R>::Random(const std::array<double, L>& neg,const std::array<double, L>& pos){
-	Array<L,R> toReturn;
-	for(int i=0;i<L;i++)
-		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
-	return toReturn;
-}
-
+Position randomCatch(Point p,double,double);
 
 template<std::size_t L, int R>
 inline Point Array<L, R>::ToPoint() const

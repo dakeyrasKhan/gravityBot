@@ -71,7 +71,10 @@ const Point& Triangle::operator[](const int i) const
 		return p2;
 
 	default:
+#ifdef WIN32
 		throw std::exception("Out of range index in Triangle");
+#endif
+		throw std::exception();	
 	}
 }
 

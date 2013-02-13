@@ -1,12 +1,59 @@
 #include "Robot.hpp"
 #include <cstdio>
 
+Position Robot::SetAngles(double dist,Position p){
+	Position res = p;
+	//Al-Kashi
+	double angle1 = acos((dist*dist+arm0Length*arm0Length-
+						  arm1Length*arm1Length)/
+						(2.*dist*arm0Length));
+
+	double angle2 = acos((arm0Length*arm0Length+arm1Length*arm1Length-
+						  dist*dist)/
+						(2.*arm1Length*arm0Length));
+	
+	//on ajoute l'angle de base à angle1
+	angle1 += acos(baseArmLength/dist);
+
+	res[1]=angle1;res[2]=angle2;
+
+	return res;
+}
+
+Position Robot::Catch(Position currentPos, Point obj){
+	Position res;
+	res[3]=currentPos[3];res[4]=currentPos[4];
+
+	double distZ = obj[Z]-currentPos[ROBOT_Z];
+	double distX = obj[X]-currentPos[ROBOT_X];
+	double angle = atan(distZ/distX);
+	double dist = sqrt(distX*distX+distZ*distZ);
+	return SetAngles(dist,res);
+
+}
+
+Position Robot::RandomCatch(Point p)
+{
+	double length = (maxDist()-minSpace)*(double(rand())/double(RAND_MAX))+minSpace;
+	double angle = 2.*Pi*(double(rand())/double(RAND_MAX));
+
+	double dist = sqrt(length*length+baseArmLength*baseArmLength);
+
+	double x = p[X]-cos(angle)*length;
+	double z = p[Z]-sin(angle)*length;
+	Position res;
+	res[0]=angle;res[3]=x;res[4]=z;
+
+	return SetAngles(dist,res);
+}
+
 Robot::Robot(Point s): 
 	baseSize(s), 
 	yPos(0.25), 
 	armWidth(0.1), 
 	arm0Length(1),
 	arm1Length(1),
+	minSpace(1),
 	baseArmLength(0.2)
 {
 	Point p;
