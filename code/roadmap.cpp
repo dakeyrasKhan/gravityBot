@@ -137,7 +137,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 	for(int i=0;i<2;i++){
 		std::cout<<"pass #"<<i<<std::endl;
 		while(waypoints.size()<NB_WAYPOINTS){
-			Position randompos=Position::Random(scene->NegSize(),scene->PosSize(),i,(void*)&scene->robot);
+			Position randompos=Position::Random(scene->NegSize(),scene->PosSize(),i,scene->robot);
 			FullNode node(randompos,waypoints.size(),(i==1));
 			addNode(node);
 			if(waypoints.size()%100==0 && waypoints.size()!=prec){

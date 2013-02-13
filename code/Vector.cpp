@@ -2,27 +2,6 @@
 #include "Robot.hpp"
 #include <random>
 
-template<std::size_t L, int R>
-Array<L,R> Array<L,R>::Random(const std::array<double, L>& neg,const std::array<double, L>& pos,bool with, void *r){
-	Array<L,R> toReturn;
-	for(int i=0;i<L;i++)
-		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
-	if(!with)
-		return toReturn;
-
-	Robot * robot = (Robot*) r;
-	double dist = cos(toReturn[ROBOT_ARM0])*robot->arm0Length+
-				  cos(toReturn[ROBOT_ARM1])*robot->arm1Length;
-
-	toReturn[BALL_X]=cos(toReturn[ROBOT_ROT])*dist+toReturn[ROBOT_X];
-	toReturn[BALL_Z]=sin(toReturn[ROBOT_ROT])*dist+toReturn[ROBOT_Z];
-
-	double h = sin(toReturn[ROBOT_ARM0])*robot->arm0Length+
-   			   sin(toReturn[ROBOT_ARM1])*robot->arm1Length+robot->baseArmLength;
-	toReturn[BALL_Y] = h;
-	return toReturn;
-}
-
 // n must be noramlized
 Point SegmentPlaneClosestPoint(const Point& n, const Point& p, const Point& a0, const Point& a1)
 {

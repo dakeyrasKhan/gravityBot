@@ -18,7 +18,7 @@ int main(int argc, char * argv[])
 	std::vector<Position> trajectory;
 	bool withRoadmap=true;
 	bool optimize=false;
-	Position start=Position::Random(scene.NegSize(),scene.PosSize(),true,(void*)&scene.robot);
+	Position start=Position::Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
 	/*start[0]=3;start[1]=1;start[2]=-1;
 	start[3]=-3;start[4]=1;
 	start[5]=-2;start[6]=0.25;start[7]=1;*/

@@ -6,9 +6,12 @@
 #define MAX_DEPTH 15
 const double Pi = 3.14159265359;
 const double EPS = (1./double(1<<MAX_DEPTH));
+
 #ifdef WIN32
 const double INFINITY = std::numeric_limits<double>::infinity();
 #endif
+
+extern class Robot;
 enum axis { X=0, Y=1, Z=2 };
 
 #define DIM_CONF	8
@@ -18,7 +21,14 @@ enum axis { X=0, Y=1, Z=2 };
 #define ARM2		21.
 #define SPACE		1.
 
-
+#define ROBOT_ROT	0
+#define ROBOT_ARM0	1
+#define ROBOT_ARM1	2
+#define ROBOT_X		3
+#define ROBOT_Z		4
+#define BALL_X		5
+#define BALL_Y		6
+#define BALL_Z		7
 
 inline double mod(const double d0, const double d1)
 {
@@ -38,7 +48,10 @@ public:
 	double				Norm() const;
 	double				Norm2() const;
 	Array<L, R>			Normalize() const;
-	static Array<L,R>	Random(const std::array<double, L>& neg,const std::array<double, L>& pos,bool with, void *robot);
+	static Array<L,R>	Random(const std::array<double, L>& neg,
+		const std::array<double, L>& pos,
+		bool with, 
+		const Robot& robot);
 };
 
 typedef Array<3, 0> Point;
@@ -231,6 +244,28 @@ inline Point operator^(const Point& p0, const Point& p1)
 inline double clamp(const double x, const double a, const double b)
 {
     return x < a ? a : (x > b ? b : x);
+}
+
+template<std::size_t L, int R>
+Array<L,R> Array<L,R>::Random(const std::array<double, L>& neg,
+							  const std::array<double, L>& pos,
+							  bool with, const Robot& robot){
+	Array<L,R> toReturn;
+	for(int i=0;i<L;i++)
+		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
+	if(!with)
+		return toReturn;
+
+	double dist = cos(toReturn[ROBOT_ARM0])*robot.arm0Length+
+				  cos(toReturn[ROBOT_ARM1])*robot.arm1Length;
+
+	toReturn[BALL_X]=cos(toReturn[ROBOT_ROT])*dist+toReturn[ROBOT_X];
+	toReturn[BALL_Z]=sin(toReturn[ROBOT_ROT])*dist+toReturn[ROBOT_Z];
+
+	double h = sin(toReturn[ROBOT_ARM0])*robot.arm0Length+
+   			   sin(toReturn[ROBOT_ARM1])*robot.arm1Length+robot.baseArmLength;
+	toReturn[BALL_Y] = h;
+	return toReturn;
 }
 
 double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0, const Point& b1);

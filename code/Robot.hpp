@@ -1,16 +1,7 @@
 #pragma once
-#include "Vector.hpp"
 #include "Object.hpp"
 #include "Box.hpp"
-
-#define ROBOT_ROT	0
-#define ROBOT_ARM0	1
-#define ROBOT_ARM1	2
-#define ROBOT_X		3
-#define ROBOT_Z		4
-#define BALL_X		5
-#define BALL_Y		6
-#define BALL_Z		7
+#include "Vector.hpp"
 
 class Robot
 {
