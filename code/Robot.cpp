@@ -173,3 +173,18 @@ Object Robot::BuildBox(const Point& size)
 
 	return object;
 }
+
+Position Robot::CorrectBallPos(Position pos) const
+{
+	double dist = cos(pos[ROBOT_ARM0])*arm0Length+
+				  cos(pos[ROBOT_ARM1])*arm1Length;
+
+	pos[BALL_X]=cos(pos[ROBOT_ROT])*dist+pos[ROBOT_X];
+	pos[BALL_Z]=sin(pos[ROBOT_ROT])*dist+pos[ROBOT_Z];
+
+	double h = sin(pos[ROBOT_ARM0])*arm0Length+
+   			   sin(pos[ROBOT_ARM1])*arm1Length+baseArmLength;
+
+	pos[BALL_Y] = h;
+	return pos;
+}

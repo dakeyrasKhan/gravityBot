@@ -26,7 +26,7 @@ public:
 
 	bool Collision(const Position& position, const int ballStatus = 0) const;
 	std::vector<Position> Optimize(std::vector<Position> p);
-	bool ValidMove(const Position&, const Position&) const;
+	bool ValidMove(const Position&, const Position&, const int ballStatus = 0) const;
 	Point Drop(Position);
 	Robot robot;
 	

@@ -249,23 +249,15 @@ inline double clamp(const double x, const double a, const double b)
 template<std::size_t L, int R>
 Array<L,R> Array<L,R>::Random(const std::array<double, L>& neg,
 							  const std::array<double, L>& pos,
-							  bool with, const Robot& robot){
+							  bool with, const Robot& robot)
+{
 	Array<L,R> toReturn;
 	for(int i=0;i<L;i++)
 		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
 	if(!with)
 		return toReturn;
 
-	double dist = cos(toReturn[ROBOT_ARM0])*robot.arm0Length+
-				  cos(toReturn[ROBOT_ARM1])*robot.arm1Length;
-
-	toReturn[BALL_X]=cos(toReturn[ROBOT_ROT])*dist+toReturn[ROBOT_X];
-	toReturn[BALL_Z]=sin(toReturn[ROBOT_ROT])*dist+toReturn[ROBOT_Z];
-
-	double h = sin(toReturn[ROBOT_ARM0])*robot.arm0Length+
-   			   sin(toReturn[ROBOT_ARM1])*robot.arm1Length+robot.baseArmLength;
-	toReturn[BALL_Y] = h;
-	return toReturn;
+	return robot.CorrectBallPos(toReturn);
 }
 
 double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0, const Point& b1);

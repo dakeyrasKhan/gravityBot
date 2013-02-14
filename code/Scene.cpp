@@ -177,6 +177,7 @@ Point Scene::Drop(Position p)
 	// Check that the candidate is valid
 	Point start = hit;
 	start[Y] = p[BALL_Y];
+
 	/*
 	for(auto t : triangles)
 		if(t.IntersectCylinder(start, hit, ballRadius))
@@ -190,11 +191,12 @@ Point Scene::Drop(Position p)
 		if(b.IntersectCylinder(hit, start, ballRadius))
 			throw NoDropPointException();
 	*/
+
 	return hit;
 }
 
 
-bool Scene::ValidMove(const Position& a, const Position& b) const
+bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus) const
 {
 	double length = Position((b-a)).Norm();
 	
@@ -202,10 +204,13 @@ bool Scene::ValidMove(const Position& a, const Position& b) const
 		return true;
 
 	Position mid = Position((a+b))/2.;
+	if((ballStatus & BALL_ON_ARM) != 0)
+		mid = robot.CorrectBallPos(mid);
+
 	if(Collision(mid))
 		return false;
 
-	return ValidMove(a, mid) && ValidMove(mid, b);
+	return ValidMove(a, mid, ballStatus) && ValidMove(mid, b, ballStatus);
 }
 
 

@@ -17,6 +17,7 @@ public:
 	Position SetAngles(double d,Position p);
 	Position RandomCatch(Point p);
 	Position Catch(Position pos,Point p);
+	Position CorrectBallPos(Position pos) const;
 
 	void printSize() const;
 
