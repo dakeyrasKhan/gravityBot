@@ -63,8 +63,9 @@ template<std::size_t L, int R>
 inline Point Array<L, R>::ToPoint() const
 {
 	Point p;
-	for(int i=0; i<3; i++)
-		p[i] = (*this)[i + R];
+	p[X]=(*this)[ROBOT_X];
+	p[Z]=(*this)[ROBOT_Z];
+	p[Y]=0;
 	return p;
 }
 
