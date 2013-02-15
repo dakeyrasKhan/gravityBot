@@ -195,7 +195,7 @@ Position Robot::CorrectBallPos(Position pos) const
 	pos[BALL_Z]=-sin(pos[ROBOT_ROT])*dist+pos[ROBOT_Z];
 
 	double h = baseArmY+cos(pos[ROBOT_ARM0])*arm0Length+
-   			   cos(pos[ROBOT_ARM0]+pos[ROBOT_ARM1])*arm1Length+baseArmLength;
+   			   cos(pos[ROBOT_ARM0]+pos[ROBOT_ARM1])*arm1Length+baseArmLength/2;
 
 	pos[BALL_Y] = h;
 	return pos;

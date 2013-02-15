@@ -342,6 +342,10 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 		if(keys[DOT])
 			trajectory[lastWaypoint][ROBOT_ARM1] -= timediff;
 
+
+		// DEBUG ONLY
+		// trajectory[lastWaypoint] = scene->robot.CorrectBallPos(trajectory[lastWaypoint]);
+
 		return trajectory[lastWaypoint];
 	}
 
