@@ -2,6 +2,19 @@
 #include "Robot.hpp"
 #include <random>
 
+Position Random(const std::array<double, DIM_CONF>& neg,
+							  const std::array<double, DIM_CONF>& pos,
+							  bool with, const Robot& robot)
+{
+	Position toReturn;
+	for(int i=0;i<DIM_CONF;i++)
+		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
+	if(!with)
+		return toReturn;
+
+	return robot.CorrectBallPos(toReturn);
+}
+
 // n must be noramlized
 Point SegmentPlaneClosestPoint(const Point& n, const Point& p, const Point& a0, const Point& a1)
 {

@@ -1,7 +1,7 @@
 #include "Robot.hpp"
 #include <cstdio>
 
-Position Robot::SetAngles(double dist,Position p){
+Position Robot::SetAngles(double y,double dist,Position p){
 	Position res = p;
 	//Al-Kashi
 	double angle1 = acos((dist*dist+arm0Length*arm0Length-
@@ -13,10 +13,10 @@ Position Robot::SetAngles(double dist,Position p){
 						(2.*arm1Length*arm0Length));
 	
 	//on ajoute l'angle de base à angle1
-	angle1 += acos(baseArmLength/dist);
+	angle1 += asin(y/dist)+Pi/2.;
 
-	res[1]=angle1;res[2]=angle2;
-
+	res[1]=Pi-angle1;res[2]=Pi-angle2;
+	//res[1]=Pi-acos(baseArmY/dist);res[2]=0;
 	return res;
 }
 
@@ -26,25 +26,37 @@ Position Robot::Catch(Position currentPos, Point obj){
 
 	double distZ = obj[Z]-currentPos[ROBOT_Z];
 	double distX = obj[X]-currentPos[ROBOT_X];
-	double angle = atan(distZ/distX);
+	double hyp = sqrt(distZ*distZ+distX*distX);
+	double angle = acos(distZ/hyp);
+	if(distX<0)
+		angle=-angle;
 	double dist = sqrt(distX*distX+distZ*distZ);
-	return SetAngles(dist,res);
+	res[ROBOT_ROT]=3.*Pi/2.-angle;
+	res[BALL_X]=obj[X];res[BALL_Y]=obj[Y];res[BALL_Z]=obj[Z];
+
+	double y = obj[Y]-baseArmY;
+	return SetAngles(y,sqrt(dist*dist+y*y),res);
 
 }
 
 Position Robot::RandomCatch(Point p)
 {
-	double length = (maxDist()-minSpace)*(double(rand())/double(RAND_MAX))+minSpace;
+	double y = p[Y]-baseArmY;
+
+	double length = (maxDist(y)-minSpace)*(double(rand())/double(RAND_MAX))+minSpace;
 	double angle = 2.*Pi*(double(rand())/double(RAND_MAX));
 
-	double dist = sqrt(length*length+baseArmLength*baseArmLength);
+	double x = p[X]+cos(angle)*length;
+	double z = p[Z]+sin(angle)*length;
 
-	double x = p[X]-cos(angle)*length;
-	double z = p[Z]-sin(angle)*length;
+	double dist = length*length + y*y;
+
 	Position res;
 	res[0]=angle;res[3]=x;res[4]=z;
-
-	return SetAngles(dist,res);
+	res[BALL_X]=p[X];res[BALL_Y]=p[Y];res[BALL_Z]=p[Z];
+	
+	
+	return SetAngles(y,sqrt(dist),res);
 }
 
 Robot::Robot(Point s): 
@@ -176,14 +188,14 @@ Object Robot::BuildBox(const Point& size)
 
 Position Robot::CorrectBallPos(Position pos) const
 {
-	double dist = cos(pos[ROBOT_ARM0])*arm0Length+
-				  cos(pos[ROBOT_ARM1])*arm1Length;
+	double dist = sin(pos[ROBOT_ARM0])*arm0Length+
+				  sin(pos[ROBOT_ARM0]+pos[ROBOT_ARM1])*arm1Length;
 
-	pos[BALL_X]=cos(pos[ROBOT_ROT])*dist+pos[ROBOT_X];
-	pos[BALL_Z]=sin(pos[ROBOT_ROT])*dist+pos[ROBOT_Z];
+	pos[BALL_X]=-cos(pos[ROBOT_ROT])*dist+pos[ROBOT_X];
+	pos[BALL_Z]=-sin(pos[ROBOT_ROT])*dist+pos[ROBOT_Z];
 
-	double h = sin(pos[ROBOT_ARM0])*arm0Length+
-   			   sin(pos[ROBOT_ARM1])*arm1Length+baseArmLength;
+	double h = baseArmY+cos(pos[ROBOT_ARM0])*arm0Length+
+   			   cos(pos[ROBOT_ARM0]+pos[ROBOT_ARM1])*arm1Length+baseArmLength;
 
 	pos[BALL_Y] = h;
 	return pos;

@@ -1,6 +1,6 @@
 #include "roadmap.hpp"
 #include <iostream>
-
+#include <exception>
 
 Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 	vector<FullNode> neighbours;
@@ -137,7 +137,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 	for(int i=0;i<2;i++){
 		std::cout<<"pass #"<<i<<std::endl;
 		while(waypoints.size()<NB_WAYPOINTS){
-			Position randompos=Position::Random(scene->NegSize(),scene->PosSize(),i,scene->robot);
+			Position randompos=Random(scene->NegSize(),scene->PosSize(),i,scene->robot);
 			FullNode node(randompos,waypoints.size(),(i==1));
 			addNode(node);
 			if(waypoints.size()%100==0 && waypoints.size()!=prec){
@@ -152,7 +152,13 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 		if(!node.with)
 			continue;
 		//On lache l'objet
-		Point pos=scene->Drop(node.pos);
+		Point pos;
+		try{
+			pos=scene->Drop(node.pos);
+		}
+		catch(std::exception e){
+			continue;
+		}
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
 		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos)))
 			continue;

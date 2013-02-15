@@ -11,7 +11,7 @@ const double EPS = (1./double(1<<MAX_DEPTH));
 const double INFINITY = std::numeric_limits<double>::infinity();
 #endif
 
-extern class Robot;
+class Robot;
 enum axis { X=0, Y=1, Z=2 };
 
 #define DIM_CONF	8
@@ -48,17 +48,15 @@ public:
 	double				Norm() const;
 	double				Norm2() const;
 	Array<L, R>			Normalize() const;
-	static Array<L,R>	Random(const std::array<double, L>& neg,
-		const std::array<double, L>& pos,
-		bool with, 
-		const Robot& robot);
 };
 
 typedef Array<3, 0> Point;
 typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
 
-
+Position Random(const std::array<double, DIM_CONF>& neg,
+							  const std::array<double, DIM_CONF>& pos,
+							  bool with, const Robot& robot);
 Position randomCatch(Point p,double,double);
 
 template<std::size_t L, int R>
@@ -244,20 +242,6 @@ inline Point operator^(const Point& p0, const Point& p1)
 inline double clamp(const double x, const double a, const double b)
 {
     return x < a ? a : (x > b ? b : x);
-}
-
-template<std::size_t L, int R>
-Array<L,R> Array<L,R>::Random(const std::array<double, L>& neg,
-							  const std::array<double, L>& pos,
-							  bool with, const Robot& robot)
-{
-	Array<L,R> toReturn;
-	for(int i=0;i<L;i++)
-		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
-	if(!with)
-		return toReturn;
-
-	return robot.CorrectBallPos(toReturn);
 }
 
 double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0, const Point& b1);

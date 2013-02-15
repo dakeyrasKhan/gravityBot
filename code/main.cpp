@@ -4,11 +4,12 @@
 #include "octree.hpp"
 #include "roadmap.hpp"
 #include <random>
+#include <ctime>
 
 
 int main(int argc, char * argv[])
 {
-	srand(424242);
+	srand(time(NULL));
 
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
@@ -18,15 +19,21 @@ int main(int argc, char * argv[])
 	std::vector<Position> trajectory;
 	bool withRoadmap=true;
 	bool optimize=false;
-	Position start=Position::Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
-	/*start[0]=3;start[1]=1;start[2]=-1;
-	start[3]=-3;start[4]=1;
-	start[5]=-2;start[6]=0.25;start[7]=1;*/
+	Position start;
+	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
+	start[0]=Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
+	start[3]=0;start[4]=0;
+	start = scene.robot.CorrectBallPos(start);
+	Point posDrop = scene.Drop(start);
+	start[5]=posDrop[X];start[6]=posDrop[Y];start[7]=posDrop[Z];
+	start[0]=-Pi/4.;
 
-	/*
+	//Position r = scene.robot.RandomCatch(posDrop);
+	
 	Position end;
-	end[0]=5;end[1]=0;end[2]=0;end[3]=-3;end[4]=-4;
-
+	end[0]=0;end[1]=0;end[2]=0;end[3]=0;end[4]=0;
+	end = scene.robot.CorrectBallPos(end);
+	
 	if(withRoadmap)
 	{
 		std::cout<<"creating roadmap"<<std::endl;
@@ -44,8 +51,8 @@ int main(int argc, char * argv[])
 		trajectory.push_back(start);
 		trajectory.push_back(end);
 	}
-	*/
-	display.SetTrajectory(start);
+	
+	display.SetTrajectory(trajectory);
 
 	display.MainLoop();
 

@@ -12,9 +12,9 @@ public:
 	std::array<Box, 2> GetArmsBoxes(const Position& pos) const;
 
 	double armLength(){return arm0Length+arm1Length;};
-	double maxDist(){return sqrt(armLength()*armLength()-
-								 baseArmLength*baseArmLength);};
-	Position SetAngles(double d,Position p);
+	double maxDist(double y){return sqrt(armLength()*armLength()-
+								 y*y);};
+	Position SetAngles(double y,double d,Position p);
 	Position RandomCatch(Point p);
 	Position Catch(Position pos,Point p);
 	Position CorrectBallPos(Position pos) const;
@@ -28,11 +28,12 @@ public:
 	const double arm1Length;
 	const double baseArmLength;
 	const double minSpace;
+	double baseArmY;
 
 private:
 	Object baseObject, arm0Object, arm1Object;
 	static Object BuildBox(const Point& size);
 
-	double baseArmY;
+	
 	double baseHeight;
 };
