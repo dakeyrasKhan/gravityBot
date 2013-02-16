@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 		trajectory.push_back(end);
 	}
 */
-	std::cout<<"COLLISION ? "<<scene.ValidMove(start,end, BALL_ON_ARM | BALL_ON_FLOOR)<<std::endl;	
+	std::cout<<"COLLISION ? "<<scene.ValidMove(start,end, BALL_ON_FLOOR)<<std::endl;	
 	trajectory.push_back(start);
 	trajectory.push_back(end);
 	display.SetTrajectory(trajectory);
