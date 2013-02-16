@@ -97,7 +97,7 @@ void Display::Render()
 
 	// Draw the robot
 	Position position = UpdatePosition(lastRender, timediff);
-	if(scene->Collision(position))
+	if(scene->Collision(position, IGNORE_BALL_COLLISION))
 	{
 		color[0] = .8; color[1] = 0; color[2] = 0;
 	}
@@ -292,9 +292,11 @@ void Display::MotionFunc(int x, int y)
 }
 
 
-void Display::SetTrajectory(const std::vector<Position>& trajectory)
+void Display::SetTrajectory(const std::vector<Position>& trajectory, const std::vector<bool>& ballOnArm)
 {
 	this->trajectory = trajectory;
+	this->ballOnArm = ballOnArm;
+
 	lastWaypoint = 0;
 
 	if(trajectory.size() > 1)
@@ -308,12 +310,15 @@ void Display::SetTrajectory(const std::vector<Position>& trajectory)
 }
 
 
-void Display::SetTrajectory(const Position& position)
+void Display::SetTrajectory(const Position& position, const bool ballOnArm)
 {
 	trajectory.clear();
 	trajectory.push_back(position);
 	lastWaypoint = 0;
 	isTrajectoryEnded = true;
+
+	this->ballOnArm.clear();
+	this->ballOnArm.push_back(ballOnArm);
 }
 
 
@@ -372,7 +377,11 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 			lastWaypointTime = time;
 		}
 
-		return trajectory[lastWaypoint] + direction*(distanceDone/distance);
+		Position pos = trajectory[lastWaypoint] + direction*(distanceDone/distance);
+		if(ballOnArm[lastWaypoint] && ballOnArm[lastWaypoint+1])
+			pos = scene->robot.CorrectBallPos(pos);
+
+		return pos;
 	}
 }
 

@@ -16,8 +16,8 @@ public:
 	void KeyboardFunc(unsigned char key, bool down);
 	void MouseFunc(int button, bool down, int x, int y);
 	void MotionFunc(int x, int y);
-	void SetTrajectory(const std::vector<Position>& trajectory);
-	void SetTrajectory(const Position& position);
+	void SetTrajectory(const std::vector<Position>& trajectory, const std::vector<bool>& ballOnArm);
+	void SetTrajectory(const Position& position, const bool ballOnArm = false);
 
 private:
 	typedef std::chrono::high_resolution_clock clock;
@@ -40,6 +40,8 @@ private:
 	Pixel oldMousePos;
 
 	std::vector<Position> trajectory;
+	std::vector<bool> ballOnArm;
+
 	bool isTrajectoryEnded;
 	clock::time_point lastWaypointTime;
 	int lastWaypoint;
