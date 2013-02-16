@@ -75,7 +75,12 @@ int main(int argc, char * argv[])
 	std::cout<<"COLLISION ? "<<scene.ValidMove(start,end, BALL_ON_FLOOR)<<std::endl;	
 	trajectory.push_back(start);
 	trajectory.push_back(end);
-	display.SetTrajectory(trajectory);
+
+	std::vector<bool> ballOnArm;
+	for(auto x : trajectory)
+		ballOnArm.push_back(false);
+
+	display.SetTrajectory(trajectory, ballOnArm);
 
 	display.MainLoop();
 
