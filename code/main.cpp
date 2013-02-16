@@ -19,18 +19,29 @@ int main(int argc, char * argv[])
 	std::vector<Position> trajectory;
 	bool withRoadmap=true;
 	bool optimize=false;
+
 	Position start;
-	start[0]=4.29731;
-	start[1]=1.4429;
-	start[2]=0.683601;
-	start[3]=3.04187;
-	start[4]=-2.60427;
-	start[5]=3.78442;
-	start[6]=0.2;
-	start[7]=-0.919267;
+	start[0]=-0.785398;
+	start[1]=0.785398;
+	start[2]=0.785398;
+	start[3]=0;
+	start[4]=0;
+	start[5]=-1.20711;
+	start[6]=1.5738;
+	start[7]=-1.20711;
+
+	Position end;
+	end[0]=5.03704;
+	end[1]=0.587834;
+	end[2]=0.164472;
+	end[3]=1;
+	end[4]=1;
+	end[5]=20;
+	end[6]=20;
+	end[7]=20;
 
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
-	/*start[0]=Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
+/*	start[0]=Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
 	start[3]=0;start[4]=0;
 	start = scene.robot.CorrectBallPos(start);
 	Point posDrop = scene.Drop(start);
@@ -59,10 +70,11 @@ int main(int argc, char * argv[])
 	{
 		trajectory.push_back(start);
 		trajectory.push_back(end);
-	}*/
-
-	std::cout<<"COLLISION ? "<<scene.Collision(start,BALL_ON_ARM)<<std::endl;	
+	}
+*/
+	std::cout<<"COLLISION ? "<<scene.ValidMove(start,end, BALL_ON_ARM | BALL_ON_FLOOR)<<std::endl;	
 	trajectory.push_back(start);
+	trajectory.push_back(end);
 	display.SetTrajectory(trajectory);
 
 	display.MainLoop();

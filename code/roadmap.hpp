@@ -5,7 +5,7 @@
 #include <queue>
 #include <stack>
 #define NB_WAYPOINTS 100
-#define NB_DROP 15
+#define NB_DROP 5
 
 class Roadmap{
 public:

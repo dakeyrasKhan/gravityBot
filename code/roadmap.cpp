@@ -23,9 +23,14 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 
 	for(auto neighbour : neighbours){
 
-		if(scene->ValidMove(start,neighbour.pos)){
+		if(scene->ValidMove(start,neighbour.pos, BALL_ON_ARM | BALL_ON_FLOOR)){
 			distances[neighbour.id]=Position(neighbour.pos-start).Norm();
 			heap.push(NodeComp(neighbour,Position(neighbour.pos-start).Norm()));
+		}
+		else{
+			std::cout<<"Not Valid !"<<std::endl;
+			std::cout<<"Start : "<<start[0]<<","<<start[1]<<","<<start[2]<<","<<start[3]<<","<<start[4]<<","<<start[5]<<","<<start[6]<<","<<start[7]<<std::endl;
+			std::cout<<"End : "<<neighbour.pos[0]<<","<<neighbour.pos[1]<<","<<neighbour.pos[2]<<","<<neighbour.pos[3]<<","<<neighbour.pos[4]<<","<<neighbour.pos[5]<<","<<neighbour.pos[6]<<","<<neighbour.pos[7]<<std::endl;
 		}
 	}
 	
@@ -171,7 +176,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			continue;
 		}
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
-		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos),BALL_ON_ARM)){
+		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos),BALL_ON_ARM | BALL_ON_FLOOR)){
 			std::cout<<"not interesting"<<std::endl;
 			continue;
 		}
@@ -179,9 +184,8 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 		for(int i=0;i<NB_DROP;i++){
 			//On essaie de l'attraper
 			Position r = scene->robot.RandomCatch(pos);
-			if(scene->Collision(r,BALL_ON_ARM)){
-				std::cout<<"failed catch "<<std::endl;
-				std::cout<<"Collision : "<<r[0]<<","<<r[1]<<","<<r[2]<<","<<r[3]<<","<<r[4]<<","<<r[5]<<","<<r[6]<<","<<r[7]<<std::endl;
+			if(scene->Collision(r,BALL_ON_ARM | BALL_ON_FLOOR)){
+				//std::cout<<"failed catch "<<std::endl;
 				continue;
 			}
 
@@ -191,7 +195,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			if(!p.empty()){
 				std::cout<<"CHOPPE"<<std::endl;
 				drop[node.id]=p;
-				addNode(FullNode(r,waypoints.size(),true),BALL_ON_ARM);
+				addNode(FullNode(r,waypoints.size(),true),BALL_ON_ARM | BALL_ON_FLOOR);
 				adjacency[node.id].push_back(FullNode(r,waypoints.size()-1,true));
 				break;
 			}
