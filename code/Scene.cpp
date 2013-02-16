@@ -94,8 +94,9 @@ bool Scene::Collision(const Position& pos, const int ballStatus) const
 	ballPos[Y] = pos[BALL_Y];
 	ballPos[Z] = pos[BALL_Z];
 
-	return RobotCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0, (ballStatus & TAKING_BALL) == 0)
-		|| GroundCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & IGNORE_BALL_ENVIRONMENT_COLLISION) == 0);
+	return RobotCollision(baseBoxes, armsBoxes, ballPos, 
+		(ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0, (ballStatus & (TAKING_BALL | TRANSPORTING_BALL)) == 0)
+		|| GroundCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & (IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL)) == 0);
 }
 
 // Test the intersection of the robot with himself
