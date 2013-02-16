@@ -200,7 +200,7 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 {
 	double length = Position((b-a)).Norm();
 	
-	if(length<=0.01)
+	if(length<=0.1)
 		return true;
 
 	Position mid = Position((a+b))/2.;

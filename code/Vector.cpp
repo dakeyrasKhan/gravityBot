@@ -9,6 +9,7 @@ Position Random(const std::array<double, DIM_CONF>& neg,
 	Position toReturn;
 	for(int i=0;i<DIM_CONF;i++)
 		toReturn[i]=mod(rand(),pos[i]-neg[i])+neg[i];
+	toReturn[5]=toReturn[6]=toReturn[7]=20;
 	if(!with)
 		return toReturn;
 

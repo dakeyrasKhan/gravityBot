@@ -105,28 +105,34 @@ void Roadmap::explore(int curNode, int curClasse){
 		explore(neighbour.id,curClasse);
 }
 
-void Roadmap::addNode(FullNode node){
+void Roadmap::addNode(FullNode node, int flags){
 	
-	if(scene->Collision(node.pos)){
-		//std::cout<<"Collision : "<<node.pos[0]<<","<<node.pos[1]<<","<<node.pos[2]<<std::endl;
-		std::cout<<"collision"<<std::endl;
+	if(scene->Collision(node.pos,flags)){
+		//std::cout<<"Collision : "<<node.pos[0]<<","<<node.pos[1]<<","<<node.pos[2]<<","<<node.pos[3]<<","<<node.pos[4]<<","<<node.pos[5]<<","<<node.pos[6]<<","<<node.pos[7]<<std::endl;
+		//std::cout<<"collision"<<std::endl;
 		return;
 	}
-	
+	//std::cout<<"adding pos in tree"<<std::endl;
 	addPos(node,&tree);	
+	//std::cout<< "pos added"<<std::endl;
+
 	waypoints.push_back(node);
 	adjacency.push_back(vector<FullNode>());		
 
 	vector<FullNode> neighbours;
+	//std::cout<<"finding neighbours"<<std::endl;
 	findNeighbours(node.pos.ToPoint(),scene->MaxSize(),node.with,&tree,&neighbours);
+	//std::cout<< "found "<<neighbours.size()<<" neighbours"<<std::endl;
 	double fail=0;
 	for(auto neighbour : neighbours){
+		//std::cout<<"Cheking validMove"<<std::endl;
 		if(neighbour.with == node.with && 
 		   scene->ValidMove(neighbour.pos,node.pos)){
 				adjacency[neighbour.id].push_back(node);
 		}
 		else
 			fail++;
+		//std::cout<<"done"<<std::endl;
 	}
 	failRate.push_back(fail/double(neighbours.size()));
 }
@@ -137,12 +143,13 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
 	for(int i=0;i<2;i++){
 		std::cout<<"pass #"<<i<<std::endl;
-		while(waypoints.size()<NB_WAYPOINTS){
+		while(waypoints.size()<NB_WAYPOINTS/(2-i)){
 			Position randompos=Random(scene->NegSize(),scene->PosSize(),i,scene->robot);
 			FullNode node(randompos,waypoints.size(),(i==1));
-			std::cout<<"adding node"<<std::endl;
-			addNode(node);
-			std::cout<<"node added"<<std::endl;
+			//std::cout<<"adding node"<<std::endl;
+			// Lors de la deuxième passe, on ajoute le flag BALL_ON_ARM
+			addNode(node,i*BALL_ON_ARM);
+			//std::cout<<"node added\n"<<std::endl;
 			if(waypoints.size()%100==0 && waypoints.size()!=prec){
 				std::cout<<waypoints.size()<<std::endl;
 				prec=waypoints.size();
@@ -159,22 +166,32 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 		try{
 			pos=scene->Drop(node.pos);
 		}
-		catch(std::exception e){
+		catch(NoDropPointException e){
+			std::cout<<"no drop"<<std::endl;
 			continue;
 		}
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
-		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos)))
+		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos),BALL_ON_ARM)){
+			std::cout<<"not interesting"<<std::endl;
 			continue;
+		}
 
 		for(int i=0;i<NB_DROP;i++){
 			//On essaie de l'attraper
 			Position r = scene->robot.RandomCatch(pos);
-			if(scene->Collision(r))
+			if(scene->Collision(r,BALL_ON_ARM)){
+				std::cout<<"failed catch "<<std::endl;
+				std::cout<<"Collision : "<<r[0]<<","<<r[1]<<","<<r[2]<<","<<r[3]<<","<<r[4]<<","<<r[5]<<","<<r[6]<<","<<r[7]<<std::endl;
 				continue;
+			}
+
+			//// A VERIFIER ! C'est là qu'on local plan
 			Path p = getPath(node.pos,r,false,&pos);
+			
 			if(!p.empty()){
+				std::cout<<"CHOPPE"<<std::endl;
 				drop[node.id]=p;
-				addNode(FullNode(r,waypoints.size(),true));
+				addNode(FullNode(r,waypoints.size(),true),BALL_ON_ARM);
 				adjacency[node.id].push_back(FullNode(r,waypoints.size()-1,true));
 				break;
 			}

@@ -131,5 +131,5 @@ double findSizeCube(double begin, double end, Point center, int nbValues, bool w
 }
 void findNeighbours(Point centerP,double size, bool with,Octree* tree,vector<FullNode>* vect)
 {
-	addToVect(centerP,findSizeCube(0,size,centerP,10,with,tree), with,tree,vect);
+	addToVect(centerP,findSizeCube(0,size,centerP,NB_NEIGHBOURS,with,tree), with,tree,vect);
 }
