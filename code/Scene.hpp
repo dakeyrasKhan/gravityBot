@@ -9,8 +9,12 @@
 
 #define NB_TRY 1000
 
-#define BALL_ON_ARM 0x1
-#define BALL_ON_FLOOR 0x2
+#define IGNORE_BALL_ROBOT_COLLISION 0x1
+#define IGNORE_BALL_ENVIRONMENT_COLLISION 0x2
+#define IGNORE_BALL_COLLISION 0x3
+
+#define TRANSPORTING_BALL 0x4
+#define TAKING_BALL 0x8
 
 class Scene
 {
@@ -37,7 +41,7 @@ private:
 	void BuildBaseScene();
 
 	bool RobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
-		const Point& ballPos, const bool testBallArm1) const;
+		const Point& ballPos, const bool testBall, const bool testBallArm1) const;
 	bool GroundCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
 		const Point& ballPos, const bool testBall) const;
 
