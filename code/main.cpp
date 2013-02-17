@@ -17,11 +17,11 @@ int main(int argc, char * argv[])
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
-	bool withRoadmap=true;
+	bool withRoadmap=false;
 	bool optimize=false;
 
 	Position start,end;
-	/*start[0]=5.44703;
+	start[0]=5.44703;
 	start[1]=0.994772;
 	start[2]=-0.175478;
 	start[3]=1;
@@ -36,12 +36,12 @@ int main(int argc, char * argv[])
 	end[4]=-3.17048;
 	end[5]=-0.0519309;
 	end[6]=0.2;
-	end[7]=-2.83547;*/
-
+	end[7]=-2.83547;
+	
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
-	start[0]=-Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
+	/*start[0]=-Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
 	start[3]=0;start[4]=0;
-	start = scene.robot.CorrectBallPos(start);
+	start = scene.robot.CorrectBallPos(start);*/
 	/*Point posDrop;
 	try{
 		posDrop = scene.Drop(start);
@@ -52,9 +52,9 @@ int main(int argc, char * argv[])
 	start[5]=posDrop[X];start[6]=posDrop[Y];start[7]=posDrop[Z];
 	start[0]=-Pi/4.;*/
 	//Position r = scene.robot.RandomCatch(posDrop);
-	
+	/*
 	end[0]=0;end[1]=0;end[2]=0;end[3]=0;end[4]=0;
-	end = scene.robot.CorrectBallPos(end);
+	end = scene.robot.CorrectBallPos(end);*/
 	
 	if(withRoadmap)
 	{
@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
 	for(auto x : trajectory)
 		ballOnArm.push_back(true);
 
-	//display.SetTrajectory(trajectory, ballOnArm);
+	display.SetTrajectory(trajectory, ballOnArm);
 
 	display.MainLoop();
 
