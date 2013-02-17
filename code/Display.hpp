@@ -42,6 +42,7 @@ private:
 	std::vector<Position> trajectory;
 	std::vector<bool> ballOnArm;
 
+	bool displayPos;
 	bool isTrajectoryEnded;
 	clock::time_point lastWaypointTime;
 	int lastWaypoint;

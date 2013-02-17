@@ -183,7 +183,7 @@ Point Scene::Drop(Position p)
 	Point start = hit;
 	start[Y] = p[BALL_Y];
 
-	/*
+	
 	for(auto t : triangles)
 		if(t.IntersectCylinder(start, hit, ballRadius))
 			throw NoDropPointException();
@@ -194,7 +194,7 @@ Point Scene::Drop(Position p)
 
 	if(robot.GetArmsBoxes(p)[0].IntersectCylinder(hit, start, ballRadius))
 		throw NoDropPointException();
-	*/
+	
 
 	return hit;
 }

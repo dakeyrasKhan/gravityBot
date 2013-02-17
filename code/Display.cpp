@@ -33,6 +33,7 @@ void MotionFunc(int x, int y)
 
 Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(800), height(800)
 {
+	displayPos = false;
 	display = this;
 	isTrajectoryEnded = true;
 	lastWaypoint = 0;
@@ -279,6 +280,9 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 		break;
 	case '.':
 		keys[DOT] = down;
+		break;
+	case ' ':
+		displayPos = true;
 		break;
 	}
 }
