@@ -88,6 +88,37 @@ bool Triangle::IntersectCylinder(const Point& c0, const Point& c1, const double 
 	if(SegmentSegmentDistance(p2, p1, c0, c1) < radius)
 		return true;
 
-	// check intersection with the inner triangle
-	return IntersectPoint(SegmentPlaneClosestPoint(((p0-p1)^(p0-p2)).Normalize(), p0, c0, c1));
+	// check intersection with the inner 
+	Point n = ((p0-p1)^(p0-p2)).Normalize();
+	Point intersect;
+
+	double origin = n|p0;
+	double nC0 = (n|c0) - origin;
+	double nC1 = (n|c1) - origin;
+
+	if(nC0*nC1 > 0)
+	{
+
+		if(abs(nC0) < abs(nC1))
+		{
+			if(abs(nC0) >= radius)
+				return false;
+
+			intersect = c0 - n*nC0;
+		}
+		else
+		{
+			if(abs(nC1) >= radius)
+				return false;
+
+			intersect = c1 - n*nC1;
+		}
+	}
+	else
+	{
+		Point dir = c1 - c0;
+		intersect = c0 + (nC0/(dir|n))*dir.Normalize();
+	}
+
+	return IntersectPoint(intersect);
 }

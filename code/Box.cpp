@@ -262,9 +262,9 @@ bool Box::IntersectCylinder(Point c0, Point c1, const double radius) const
 	c1 = (c1 - center)*rotation;
 
 	// intersect with edges
-	std::array<double, 3> e0 = {size[0]/2, 0, 0};
-	std::array<double, 3> e1 = {0, size[1]/2, 0};
-	std::array<double, 3> e2 = {0, 0, size[2]/2};
+	std::array<double, 3> e0 = {size[X]/2, 0, 0};
+	std::array<double, 3> e1 = {0, size[Y]/2, 0};
+	std::array<double, 3> e2 = {0, 0, size[Z]/2};
 
 	if(SegmentSegmentDistance(c0, c1,  -e0 -e1 -e2, -e0 -e1 +e2) < radius)
 		return true;
@@ -303,28 +303,29 @@ bool Box::IntersectCylinder(Point c0, Point c1, const double radius) const
 
 	Point p;
 
+
 	p = SegmentPlaneClosestPoint(axis[X], -e0, c0, c1);
-	if(abs(p[Y]) < size[Y]/2 && abs(p[Z]) < size[Z]/2)
+	if(abs(p[X]+e0[X]) < radius && abs(p[Y]) < size[Y]/2 && abs(p[Z]) < size[Z]/2)
 		return true;
 
 	p = SegmentPlaneClosestPoint(axis[X], +e0, c0, c1);
-	if(abs(p[Y]) < size[Y]/2 && abs(p[Z]) < size[Z]/2)
+	if(abs(p[X]-e0[X]) < radius &&  abs(p[Y]) < size[Y]/2 && abs(p[Z]) < size[Z]/2)
 		return true;
 
 	p = SegmentPlaneClosestPoint(axis[Y], -e1, c0, c1);
-	if(abs(p[X]) < size[X]/2 && abs(p[Z]) < size[Z]/2)
+	if(abs(p[Y]+e1[Y]) < radius && abs(p[X]) < size[X]/2 && abs(p[Z]) < size[Z]/2)
 		return true;
 
 	p = SegmentPlaneClosestPoint(axis[Y], +e1, c0, c1);
-	if(abs(p[X]) < size[X]/2 && abs(p[Z]) < size[Z]/2)
+	if(abs(p[Y]-e1[Y]) < radius && abs(p[X]) < size[X]/2 && abs(p[Z]) < size[Z]/2)
 		return true;
 
 	p = SegmentPlaneClosestPoint(axis[Z], -e2, c0, c1);
-	if(abs(p[Y]) < size[Y]/2 && abs(p[X]) < size[X]/2)
+	if(abs(p[Z]+e2[Z]) < radius && abs(p[Y]) < size[Y]/2 && abs(p[X]) < size[X]/2)
 		return true;
 
 	p = SegmentPlaneClosestPoint(axis[Z], +e2, c0, c1);
-	if(abs(p[Y]) < size[Y]/2 && abs(p[X]) < size[X]/2)
+	if(abs(p[Z]-e2[Z]) < radius && abs(p[Y]) < size[Y]/2 && abs(p[X]) < size[X]/2)
 		return true;
 
 	return false;

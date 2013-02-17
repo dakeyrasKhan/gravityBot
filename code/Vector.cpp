@@ -55,8 +55,8 @@ double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0,
     }
     else
 	{   
-		xA = length2B*(dirAdirB*xA0overB + length2A*xB0overA)/delta;
-        xB = length2A*(length2B*xA0overB + dirAdirB*xB0overA)/delta;
+		xA = -length2B*(dirAdirB*xA0overB + length2A*xB0overA)/delta;
+        xB = -length2A*(length2B*xA0overB + dirAdirB*xB0overA)/delta;
 
         if (xA < 0) 
 		{
@@ -81,6 +81,6 @@ double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0,
 		xA = clamp(xB0overA + dirAdirB/length2A, 0, 1);
     }
 
-	return Point(a0b0 + (xA*dirA) - (xB*dirB)).Norm();
+	return Point(a0b0 - (xA*dirA) + (xB*dirB)).Norm();
 }
 
