@@ -290,7 +290,8 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 		keys[DOT] = down;
 		break;
 	case ' ':
-		displayPos = true;
+		if(down)
+			displayPos = true;
 		break;
 	}
 }
