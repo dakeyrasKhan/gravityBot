@@ -186,7 +186,8 @@ void Roadmap::addNode(FullNode node, int flags){
 	//std::cout<< "pos added"<<std::endl;
 
 	waypoints.push_back(node);
-	adjacency.push_back(vector<FullNode>());		
+	adjacency.push_back(vector<FullNode>());
+	drop.push_back(Path());		
 
 	vector<FullNode> neighbours;
 	//std::cout<<"finding neighbours"<<std::endl;
@@ -238,7 +239,6 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			}
 		}
 	}
-	return;
 	// Pour chaque waypoints du robot tenant l'objet
 	for(auto node : waypoints){
 		if(!node.with)
@@ -255,6 +255,16 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
 		if(scene->ValidMove(node.setBall(&pos),scene->robot.Catch(node.pos,pos), TAKING_BALL)){
 			std::cout<<"not interesting"<<std::endl;
+			
+			FullNode newNode = FullNode(scene->robot.Catch(node.pos,pos),waypoints.size(),true);
+
+			Path p;
+			p.add(FullNode(node.setBall(&pos),-1,false));
+			p.add(newNode);
+			drop[node.id]=p;
+
+			addNode(newNode, IGNORE_BALL_COLLISION);
+			adjacency[node.id].push_back(newNode);
 			continue;
 		}
 
