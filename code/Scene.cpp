@@ -96,7 +96,7 @@ bool Scene::Collision(const Position& pos, const int ballStatus) const
 
 	return RobotCollision(baseBoxes, armsBoxes, ballPos, 
 		(ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0, (ballStatus & (TAKING_BALL | TRANSPORTING_BALL)) == 0)
-		|| GroundCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & (IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL)) == 0);
+		|| EnvironmentCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & (IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL)) == 0);
 }
 
 // Test the intersection of the robot with himself
@@ -119,7 +119,7 @@ bool Scene::RobotCollision(const std::array<Box, 2>& baseBoxes,
 }
 
 
-bool Scene::GroundCollision(const std::array<Box, 2>& baseBoxes, 
+bool Scene::EnvironmentCollision(const std::array<Box, 2>& baseBoxes, 
 							const std::array<Box, 2>& armsBoxes,
 							const Point& ballPos,
 							const bool testBall) const

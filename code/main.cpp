@@ -79,7 +79,7 @@ int main(int argc, char * argv[])
 	for(auto x : trajectory)
 		ballOnArm.push_back(true);
 
-	display.SetTrajectory(trajectory, ballOnArm);
+	//display.SetTrajectory(trajectory, ballOnArm);
 
 	display.MainLoop();
 

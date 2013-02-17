@@ -46,7 +46,7 @@ private:
 
 	bool RobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
 		const Point& ballPos, const bool testBall, const bool testBallArm1) const;
-	bool GroundCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
+	bool EnvironmentCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
 		const Point& ballPos, const bool testBall) const;
 
 	Object staticScene;

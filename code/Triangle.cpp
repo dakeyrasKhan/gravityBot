@@ -8,12 +8,12 @@ Triangle::Triangle(const Point& p0, const Point& p1, const Point& p2)
 
 int Triangle::SignMask(const Point& p)
 {
-	return (p[X] > std::numeric_limits<double>::epsilon() ? 1 << 2 : 0)
-		| (p[X] < -std::numeric_limits<double>::epsilon() ? 1 << 5 : 0) 
-		| (p[Y] >  std::numeric_limits<double>::epsilon() ? 1 << 1 : 0) 
-		| (p[Y] < -std::numeric_limits<double>::epsilon() ? 1 << 4 : 0) 
-		| (p[Z] >  std::numeric_limits<double>::epsilon() ? 1 << 0 : 0)
-		| (p[Z] < -std::numeric_limits<double>::epsilon() ? 1 << 3 : 0);
+	return (p[X] > 100.*std::numeric_limits<double>::epsilon() ? 1 << 2 : 0)
+		| (p[X] < -100.*std::numeric_limits<double>::epsilon() ? 1 << 5 : 0) 
+		| (p[Y] >  100.*std::numeric_limits<double>::epsilon() ? 1 << 1 : 0) 
+		| (p[Y] < -100.*std::numeric_limits<double>::epsilon() ? 1 << 4 : 0) 
+		| (p[Z] >  100.*std::numeric_limits<double>::epsilon() ? 1 << 0 : 0)
+		| (p[Z] < -100.*std::numeric_limits<double>::epsilon() ? 1 << 3 : 0);
 }
 
 bool Triangle::IntersectSphere(const Point& center, const double radius) const
@@ -52,10 +52,21 @@ bool Triangle::IntersectSphere(const Point& center, const double radius) const
 }
 
 bool Triangle::IntersectPoint(const Point& p) const
-{                                                   
+{                 
+#ifdef _DEBUG
+	double test = (p0 - p) | ((p0-p1)^(p1-p2));
+	Point t01 = (p0 - p1)^(p0 - p);
+	Point t12 = (p1 - p2)^(p1 - p);
+	Point t20 = (p2 - p0)^(p2 - p);
+	int sign01 = SignMask(t01); 
+	int sign12 = SignMask(t12);
+	int sign20 = SignMask(t20); 
+#else
 	int sign01 = SignMask((p0 - p1)^(p0 - p)); 
 	int sign12 = SignMask((p1 - p2)^(p1 - p));
-	int sign20 = SignMask((p2 - p0)^(p2 - p));            
+	int sign20 = SignMask((p2 - p0)^(p2 - p));  
+#endif
+
 	return (sign01 & sign12 & sign20) != 0;
 }
 
