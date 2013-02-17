@@ -87,7 +87,7 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 	if(ballMove && !_end.with){
 		Point ballpos;
 		ballpos[X]=_end.pos[BALL_X];ballpos[Y]=_end.pos[BALL_Y];ballpos[Z]=_end.pos[BALL_Z];
-		for(int _try=0;_try<NB_TRY;_try++){
+		for(int blah=0;blah<NB_TRY;blah++){
 			Position r = scene->robot.RandomDrop(ballpos);
 			Path p = OkCatch(r,_end.pos,&ballpos);
 			if(!p.empty()){
