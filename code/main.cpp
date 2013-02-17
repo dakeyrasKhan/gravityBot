@@ -21,14 +21,15 @@ int main(int argc, char * argv[])
 	bool optimize=false;
 
 	Position start,end;
-	start[0]=5.44703;
-	start[1]=0.994772;
-	start[2]=-0.175478;
-	start[3]=1;
-	start[4]=-4;
+	start[0]=5.44703   ;
+	start[1]=1.53704   ;
+	start[2]=-0.175478 ;
+	start[3]=0.548019  ;
+	start[4]=-3.63848  ;
 	start[5]=-0.0519309;
-	start[6]=1.92743;
-	start[7]=-2.83547;
+	start[6]=1.92743   ;
+	start[7]=-2.83547  ;
+
 	end[0]=3.44801;
 	end[1]=0.977036;
 	end[2]=1.87892;
