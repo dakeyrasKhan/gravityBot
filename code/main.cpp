@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
-	bool withRoadmap=false;
+	bool withRoadmap=true;
 	bool optimize=false;
 
 	Position start,end;
@@ -39,10 +39,10 @@ int main(int argc, char * argv[])
 	end[7]=-2.83547;*/
 
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
-	start[0]=-3*Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
+	start[0]=-Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
 	start[3]=0;start[4]=0;
 	start = scene.robot.CorrectBallPos(start);
-	Point posDrop;
+	/*Point posDrop;
 	try{
 		posDrop = scene.Drop(start);
 	}
@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
 		std::cout<<"oops"<<std::endl;
 	}
 	start[5]=posDrop[X];start[6]=posDrop[Y];start[7]=posDrop[Z];
-
+	start[0]=-Pi/4.;*/
 	//Position r = scene.robot.RandomCatch(posDrop);
 	
 	end[0]=0;end[1]=0;end[2]=0;end[3]=0;end[4]=0;
@@ -61,7 +61,7 @@ int main(int argc, char * argv[])
 		std::cout<<"creating roadmap"<<std::endl;
 		Roadmap roadmap(&scene);
 		std::cout<<"roadmap created"<<std::endl;	
-		Path p = roadmap.getPath(FullNode(start,-1,false),FullNode(end,-1,false),NULL);
+		Path p = roadmap.getPath(FullNode(start,-1,true),FullNode(end,-1,true),NULL);
 		if(optimize)
 			trajectory = scene.Optimize(p.waypoints);
 		else{
@@ -77,7 +77,7 @@ int main(int argc, char * argv[])
 
 	std::vector<bool> ballOnArm;
 	for(auto x : trajectory)
-		ballOnArm.push_back(false);
+		ballOnArm.push_back(true);
 
 	display.SetTrajectory(trajectory, ballOnArm);
 

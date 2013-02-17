@@ -12,7 +12,7 @@ public:
 	Roadmap(Scene*);
 	void explore(int,int);
 	Path getPath(FullNode,FullNode,Point*);
-
+	Path OkCatch(Position start,Position end,Point* ball);
 private:
 	void addNode(FullNode,int);
 	Scene* scene;

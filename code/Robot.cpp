@@ -59,6 +59,15 @@ Position Robot::RandomCatch(Point p)
 	return SetAngles(y,sqrt(dist),res);
 }
 
+
+Position Robot::RandomDrop(Point p)
+{
+	double newY = (maxY()-minY)*(double(rand())/double(RAND_MAX))+minY;
+	Point n = p;
+	n[Y] = newY;
+	return RandomCatch(n);
+}
+
 Robot::Robot(Point s): 
 	baseSize(s), 
 	yPos(0.25), 
@@ -66,7 +75,8 @@ Robot::Robot(Point s):
 	arm0Length(1),
 	arm1Length(1),
 	minSpace(1),
-	baseArmLength(0.2)
+	baseArmLength(0.2),
+	minY(0.2)
 {
 	Point p;
 	p[0] = p[2] = armWidth;

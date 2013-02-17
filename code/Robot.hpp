@@ -14,8 +14,11 @@ public:
 	double armLength(){return arm0Length+arm1Length;};
 	double maxDist(double y){return sqrt(armLength()*armLength()-
 								 y*y);};
+	double maxY(){ return armLength()+baseArmY;};
+
 	Position SetAngles(double y,double d,Position p);
 	Position RandomCatch(Point p);
+	Position RandomDrop(Point p);
 	Position Catch(Position pos,Point p);
 	Position CorrectBallPos(Position pos) const;
 
@@ -28,6 +31,7 @@ public:
 	const double arm1Length;
 	const double baseArmLength;
 	const double minSpace;
+	const double minY;
 	double baseArmY;
 
 private:
