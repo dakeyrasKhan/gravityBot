@@ -185,7 +185,7 @@ Point Scene::Drop(Position p)
 
 	
 	for(auto t : triangles)
-		if(t.IntersectCylinder(start, hit, ballRadius-10*LDBL_EPSILON))
+		if(t.IntersectCylinder(start, hit, ballRadius))
 			throw NoDropPointException();
 
 	for(auto b : robot.GetBaseBoxes(p))
