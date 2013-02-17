@@ -46,8 +46,8 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 
 	trajectory.push_back(p);
 
-	camPos[0] = -10; camPos[1] = 5; camPos[2] = 10;
-	direction[0] = 1; direction[1] = -0.5; direction[2] = -1;
+	camPos[0] = 10; camPos[1] = 5; camPos[2] = -10;
+	direction[0] = -1; direction[1] = -0.5; direction[2] = 1;
 	direction = direction.Normalize();
 	up[0] = 0; up[1] = 1; up[2] = 0;
 

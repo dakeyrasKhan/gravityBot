@@ -46,8 +46,9 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		for(auto neighbour : adjacency[current.id]){
 
 			if(pos!=NULL){
-				if(!scene->ValidMove(current.pos,neighbour.pos))
+				if(!scene->ValidMove(current.pos,neighbour.pos)){
 					continue;
+				}
 			}
 
 			double dist = Position(current.pos-neighbour.pos).Norm();
@@ -198,6 +199,15 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 				addNode(FullNode(r,waypoints.size(),true), IGNORE_BALL_COLLISION);
 				adjacency[node.id].push_back(FullNode(r,waypoints.size()-1,true));
 				break;
+			}
+			else{
+				std::cout<<"Path not found :("<<std::endl;
+				for(auto p: node.pos){
+					std::cout<<"start[]="<<p<<";"<<endl;
+				}
+				for(auto p: r){
+					std::cout<<"end[]="<<p<<";"<<endl;
+				}
 			}
 		}
 

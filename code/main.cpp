@@ -21,27 +21,25 @@ int main(int argc, char * argv[])
 	bool optimize=false;
 
 	Position start,end;
-	/*start[0]=-0.785398;
-	start[1]=0.785398;
-	start[2]=0.785398;
-	start[3]=0;
-	start[4]=0;
-	start[5]=-1.20711;
-	start[6]=1.5738;
-	start[7]=-1.20711;
-
-
-	end[0]=5.03704;
-	end[1]=0.587834;
-	end[2]=0.164472;
-	end[3]=1;
-	end[4]=1;
-	end[5]=20;
-	end[6]=20;
-	end[7]=20;*/
+	start[0]=5.44703;
+	start[1]=0.994772;
+	start[2]=-0.175478;
+	start[3]=1;
+	start[4]=-4;
+	start[5]=-0.0519309;
+	start[6]=1.92743;
+	start[7]=-2.83547;
+	end[0]=3.44801;
+	end[1]=0.977036;
+	end[2]=1.87892;
+	end[3]=-1.11081;
+	end[4]=-3.17048;
+	end[5]=-0.0519309;
+	end[6]=0.2;
+	end[7]=-2.83547;
 
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
-	start[0]=Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
+	/*start[0]=Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
 	start[3]=0;start[4]=0;
 	start = scene.robot.CorrectBallPos(start);
 	Point posDrop = scene.Drop(start);
@@ -51,7 +49,7 @@ int main(int argc, char * argv[])
 	//Position r = scene.robot.RandomCatch(posDrop);
 	
 	end[0]=0;end[1]=0;end[2]=0;end[3]=0;end[4]=0;
-	end = scene.robot.CorrectBallPos(end);
+	end = scene.robot.CorrectBallPos(end);*/
 	
 	if(withRoadmap)
 	{
@@ -68,7 +66,7 @@ int main(int argc, char * argv[])
 	else
 	{
 		trajectory.push_back(start);
-		//trajectory.push_back(end);
+		trajectory.push_back(end);
 	}
 
 	std::vector<bool> ballOnArm;
