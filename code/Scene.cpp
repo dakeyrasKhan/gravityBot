@@ -212,7 +212,7 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 	if((ballStatus & TRANSPORTING_BALL) != 0)
 		mid = robot.CorrectBallPos(mid);
 
-	if(Collision(mid))
+	if(Collision(mid,ballStatus))
 		return false;
 
 	return ValidMove(a, mid, ballStatus) && ValidMove(mid, b, ballStatus);
