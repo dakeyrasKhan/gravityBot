@@ -3,6 +3,7 @@
 #include "Display.hpp"
 
 Display* display;
+//#define DEBUG_DROP
 
 void Render()
 {
@@ -114,13 +115,14 @@ void Display::Render()
 	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
 	glutSolidSphere(scene->ballRadius, 100, 100);
 
-	// DEBUG ONLY
-	/*try{
+#ifdef DEBUG_DROP
+	try{
 		Point dropPos = scene->Drop(position);
 		glTranslated(0, dropPos[Y] - position[BALL_Y], 0);
 		glutSolidSphere(scene->ballRadius, 100, 10);
 	}
-	catch(NoDropPointException) {}*/
+	catch(NoDropPointException) {}
+#endif
 
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
@@ -356,9 +358,9 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 			trajectory[lastWaypoint][ROBOT_ARM1] -= timediff;
 
 
-		// DEBUG ONLY
-		// trajectory[lastWaypoint] = scene->robot.CorrectBallPos(trajectory[lastWaypoint]);
-
+#ifdef DEBUG_DROP
+		 trajectory[lastWaypoint] = scene->robot.CorrectBallPos(trajectory[lastWaypoint]);
+#endif
 		return trajectory[lastWaypoint];
 	}
 
