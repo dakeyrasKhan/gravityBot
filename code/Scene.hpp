@@ -4,6 +4,7 @@
 #include "Vector.hpp"
 #include "Object.hpp"
 #include "Robot.hpp"
+#include "octree.hpp"
 #include "Triangle.hpp"
 
 
@@ -15,6 +16,8 @@
 
 #define TAKING_BALL 0x4
 #define TRANSPORTING_BALL 0x8
+
+#define LDBL_EPSILON 1E-9
 
 
 class Scene
@@ -30,7 +33,7 @@ public:
 	double MaxSize() const { return maxSize; };
 
 	bool Collision(const Position& position, const int ballStatus = 0) const;
-	std::vector<Position> Optimize(std::vector<Position> p);
+	std::vector<Position> Optimize(std::vector<FullNode> p);
 	bool ValidMove(const Position&, const Position&, const int ballStatus = 0) const;
 	Point Drop(Position);
 	Robot robot;

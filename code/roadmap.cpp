@@ -2,11 +2,11 @@
 #include <iostream>
 #include <exception>
 
-Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
+Path Roadmap::getPath(FullNode start, FullNode end,Point *pos=NULL){
 	vector<FullNode> neighbours;
 	Path path;
 
-	findNeighbours(start.ToPoint(),scene->MaxSize(), with,&tree,&neighbours);
+	findNeighbours(start.pos.ToPoint(),scene->MaxSize(), start.with,&tree,&neighbours);
 	std::cout<<"Found "<<neighbours.size()<<" potential start neighbours"<<std::endl;
 	
 	priority_queue<NodeComp> heap;
@@ -23,13 +23,13 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 
 	for(auto neighbour : neighbours){
 
-		if(scene->ValidMove(start,neighbour.pos, IGNORE_BALL_COLLISION)){
-			distances[neighbour.id]=Position(neighbour.pos-start).Norm();
-			heap.push(NodeComp(neighbour,Position(neighbour.pos-start).Norm()));
+		if(scene->ValidMove(start.pos,neighbour.pos, IGNORE_BALL_COLLISION)){
+			distances[neighbour.id]=Position(neighbour.pos-start.pos).Norm();
+			heap.push(NodeComp(neighbour,Position(neighbour.pos-start.pos).Norm()));
 		}
 		else{
 			std::cout<<"Not Valid !"<<std::endl;
-			std::cout<<"Start : "<<start[0]<<","<<start[1]<<","<<start[2]<<","<<start[3]<<","<<start[4]<<","<<start[5]<<","<<start[6]<<","<<start[7]<<std::endl;
+			std::cout<<"Start : "<<start.pos[0]<<","<<start.pos[1]<<","<<start.pos[2]<<","<<start.pos[3]<<","<<start.pos[4]<<","<<start.pos[5]<<","<<start.pos[6]<<","<<start.pos[7]<<std::endl;
 			std::cout<<"End : "<<neighbour.pos[0]<<","<<neighbour.pos[1]<<","<<neighbour.pos[2]<<","<<neighbour.pos[3]<<","<<neighbour.pos[4]<<","<<neighbour.pos[5]<<","<<neighbour.pos[6]<<","<<neighbour.pos[7]<<std::endl;
 		}
 	}
@@ -46,7 +46,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		for(auto neighbour : adjacency[current.id]){
 
 			if(pos!=NULL){
-				if(!scene->ValidMove(current.pos,neighbour.pos)){
+				if(!scene->ValidMove(current.setBall(pos),neighbour.setBall(pos),TAKING_BALL)){
 					continue;
 				}
 			}
@@ -61,7 +61,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 	}
 	std::cout<<"dijkstra ended"<<std::endl;
 	neighbours.clear();
-	findNeighbours(end.ToPoint(),scene->MaxSize(),with,&tree,&neighbours);
+	findNeighbours(end.pos.ToPoint(),scene->MaxSize(),end.with,&tree,&neighbours);
 	std::cout<<"found "<<neighbours.size()<<" possible end"<<std::endl;
 	int endPoint=-1;
 	double distToEnd=INFINITY;
@@ -69,10 +69,10 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 		//Si on peut l'atteindre depuis le début
 		if(distances[neighbour.id]<INFINITY){
 			//Si on peut atteindre la fin depuis
-			if(scene->ValidMove(end,neighbour.pos)){
+			if(end.with==neighbour.with && scene->ValidMove(end.pos,neighbour.pos)){
 				//Si c'est mieux
-				if(distances[neighbour.id]+Position(neighbour.pos-end).Norm()<distToEnd){
-					distToEnd=distances[neighbour.id]+Position(neighbour.pos-end).Norm();
+				if(distances[neighbour.id]+Position(neighbour.pos-end.pos).Norm()<distToEnd){
+					distToEnd=distances[neighbour.id]+Position(neighbour.pos-end.pos).Norm();
 					endPoint=neighbour.id;
 				}
 			}
@@ -93,7 +93,7 @@ Path Roadmap::getPath(Position start, Position end, bool with,Point *pos=NULL){
 	}
 	path.add(start);
 	while(!idPathStack.empty()){
-		path.add(waypoints[idPathStack.top()].pos);
+		path.add(waypoints[idPathStack.top()]);
 		idPathStack.pop();
 	}
 	path.add(end);
@@ -133,7 +133,7 @@ void Roadmap::addNode(FullNode node, int flags){
 	for(auto neighbour : neighbours){
 		//std::cout<<"Cheking validMove"<<std::endl;
 		if(neighbour.with == node.with && 
-		   scene->ValidMove(neighbour.pos,node.pos)){
+		   scene->ValidMove(neighbour.pos,node.pos,flags)){
 				adjacency[neighbour.id].push_back(node);
 		}
 		else
@@ -162,7 +162,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			}
 		}
 	}
-
+	return;
 	// Pour chaque waypoints du robot tenant l'objet
 	for(auto node : waypoints){
 		if(!node.with)
@@ -177,7 +177,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			continue;
 		}
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
-		if(scene->ValidMove(node.pos,scene->robot.Catch(node.pos,pos), TAKING_BALL)){
+		if(scene->ValidMove(node.setBall(&pos),scene->robot.Catch(node.pos,pos), TAKING_BALL)){
 			std::cout<<"not interesting"<<std::endl;
 			continue;
 		}
@@ -191,7 +191,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			}
 
 			//// A VERIFIER ! C'est là qu'on local plan
-			Path p = getPath(node.pos,r,false,&pos);
+			Path p = getPath(FullNode(node.pos,-1,false),FullNode(r,-1,false),&pos);
 			
 			if(!p.empty()){
 				std::cout<<"CHOPPE"<<std::endl;

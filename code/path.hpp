@@ -1,19 +1,20 @@
 #pragma once
 #include <vector>
 #include "Vector.hpp"
+#include "octree.hpp"
 
 class Path
 {
 public:
 	Path(){};
-	Path(std::vector<Position>& w) : waypoints(w), current(1), currentPos(w[0]) { };
-	Position getNextPosition(Vector speed, double deltaT);
+	Path(std::vector<FullNode>& w) : waypoints(w), current(1), currentPos(w[0]) { };
+	FullNode getNextPosition(Vector speed, double deltaT);
 	bool isDone(){ return current==waypoints.size()-1; };
-	void add(Position a){ waypoints.push_back(a);};
+	void add(FullNode a){ waypoints.push_back(a);};
 	bool empty(){ return waypoints.empty();};
-	std::vector<Position> waypoints;
+	std::vector<FullNode> waypoints;
 private:
 
-	Position currentPos;
+	FullNode currentPos;
 	int current;
 };

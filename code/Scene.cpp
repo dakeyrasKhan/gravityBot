@@ -183,7 +183,7 @@ Point Scene::Drop(Position p)
 	Point start = hit;
 	start[Y] = p[BALL_Y];
 
-	
+	/*
 	for(auto t : triangles)
 		if(t.IntersectCylinder(start, hit, ballRadius))
 			throw NoDropPointException();
@@ -194,7 +194,7 @@ Point Scene::Drop(Position p)
 
 	if(robot.GetArmsBoxes(p)[0].IntersectCylinder(hit, start, ballRadius))
 		throw NoDropPointException();
-	
+	*/
 
 	return hit;
 }
@@ -224,10 +224,13 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 
 
 
-std::vector<Position> Scene::Optimize(std::vector<Position> path)
+std::vector<Position> Scene::Optimize(std::vector<FullNode> path)
 {
 	int optimization=0;
-	std::vector<Position> retour = path;
+	std::vector<Position> retour;
+	for(auto p : path)
+		retour.push_back(p.pos);
+
 	for(int essai=0;essai<NB_TRY;essai++){
 		int a = rand()%retour.size()-1;
 		int b = rand()%retour.size()-1;

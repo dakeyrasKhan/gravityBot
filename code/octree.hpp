@@ -11,8 +11,16 @@ const int NB_NEIGHBOURS = 5;
 
 class FullNode{
 public:
+	FullNode(){}
 	FullNode(Position p,int i,bool w):pos(p),id(i),with(w){}
 	Position pos;
+	Position setBall(Point *b){
+		Position res=pos;
+		res[BALL_X]=(*b)[X];
+		res[BALL_Y]=(*b)[Y];
+		res[BALL_Z]=(*b)[Z];
+		return res;
+	};
 	int id;
 	bool with;
 };

@@ -11,7 +11,7 @@ class Roadmap{
 public:
 	Roadmap(Scene*);
 	void explore(int,int);
-	Path getPath(Position,Position,bool,Point*);
+	Path getPath(FullNode,FullNode,Point*);
 
 private:
 	void addNode(FullNode,int);
