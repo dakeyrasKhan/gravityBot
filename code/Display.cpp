@@ -40,7 +40,7 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 
 	Position p;
 	for(auto& x : p)
-		x = 4;
+		x = 0;
 
 	p[BALL_X] = 0;
 
@@ -113,6 +113,14 @@ void Display::Render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
 	glutSolidSphere(scene->ballRadius, 100, 100);
+
+	// DEBUG ONLY
+	/*try{
+		Point dropPos = scene->Drop(position);
+		glTranslated(0, dropPos[Y] - position[BALL_Y], 0);
+		glutSolidSphere(scene->ballRadius, 100, 10);
+	}
+	catch(NoDropPointException) {}*/
 
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
