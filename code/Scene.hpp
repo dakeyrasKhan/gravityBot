@@ -17,8 +17,6 @@
 #define TAKING_BALL 0x4
 #define TRANSPORTING_BALL 0x8
 
-#define LDBL_EPSILON 1E-9
-
 
 class Scene
 {

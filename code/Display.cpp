@@ -125,6 +125,14 @@ void Display::Render()
 	catch(NoDropPointException) {}
 #endif
 
+	if(displayPos)
+	{
+		displayPos = false;
+		std::cout << "Current position :" << std::endl;
+		for(auto x : position)
+			std::cout << x << std::endl;
+	}
+
 	glDisable(GL_LIGHTING);
 	glutSwapBuffers();
 }
