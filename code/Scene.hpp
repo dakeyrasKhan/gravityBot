@@ -51,8 +51,8 @@ private:
 
 	bool ValidMoveBallEnvironment(const Position& a, const Position& b) const;
 	bool ValidMoveRobotRobot(const Position& a, const Position& b) const;
-	bool ValidMoveRobotBallEnvironment(const Position& a, const Position& b, 
-		const int ballStatus) const;
+	bool ValidMoveRobotEnvironment(const Position& a, const Position& b) const;
+	bool ValidMoveMovingBallRobot(const Position& a, const Position& b) const;
 
 	Object staticScene;
 	

@@ -212,8 +212,16 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 		&& !ValidMoveBallEnvironment(a, b))
 		return false;
 
+	if((IGNORE_BALL_ROBOT_COLLISION & ballStatus) == 0)
+	{
+		if((TRANSPORTING_BALL & ballStatus) != 0 && 
+			!ValidMoveMovingBallRobot(a, b))
+			return false;
+	}
+		
+
 	return ValidMoveRobotRobot(a, b)
-		|| ValidMoveRobotBallEnvironment(a, b, ballStatus);
+		|| ValidMoveRobotEnvironment(a, b);
 }
 
 bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
@@ -284,9 +292,8 @@ bool Scene::ValidMoveRobotRobot(const Position& a, const Position& b) const
 	return ValidMoveRobotRobot(a, mid) && ValidMoveRobotRobot(mid, b);
 }
 
-bool Scene::ValidMoveRobotBallEnvironment(const Position& a, 
-										  const Position& b, 
-										  const int ballStatus) const
+bool Scene::ValidMoveRobotEnvironment(const Position& a, 
+										  const Position& b) const
 {
 	double length = Position((b-a)).Norm();
 	if(length<=0.1)
@@ -315,19 +322,19 @@ bool Scene::ValidMoveRobotBallEnvironment(const Position& a,
 				break;
 			}
 
-	if(isOk && ((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0) && (
+	/*if(isOk && ((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0) && (
 		bb[0].IntersectSphere(ballPos, ballRadius)
 		|| bb[1].IntersectSphere(ballPos, ballRadius)
 		|| bb[2].IntersectSphere(ballPos, ballRadius)
 		|| ((ballStatus & TAKING_BALL) == 0 && bb[3].IntersectSphere(ballPos, ballRadius))))
-		isOk = false;
+		isOk = false;*/
 
 	if(isOk)
 		return true;
 
 	Position mid = Position((a+b))/2.;
-	if((ballStatus & TRANSPORTING_BALL) != 0)
-		mid = robot.CorrectBallPos(mid);
+	/*if((ballStatus & TRANSPORTING_BALL) != 0)
+		mid = robot.CorrectBallPos(mid);*/
 
 	auto baseBoxes = robot.GetBaseBoxes(mid);
 	auto armsBoxes = robot.GetArmsBoxes(mid);
@@ -335,12 +342,34 @@ bool Scene::ValidMoveRobotBallEnvironment(const Position& a,
 	if(EnvironmentCollision(baseBoxes, armsBoxes, Point(), false))
 		return false;
 
-	if((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0
+	/*if((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0
 		&& BallRobotCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & TAKING_BALL) == 0))
+		return false;*/
+
+	return ValidMoveRobotEnvironment(a, mid) 
+		&& ValidMoveRobotEnvironment(mid, b);
+}
+
+bool Scene::ValidMoveMovingBallRobot(const Position& a, const Position& b) const
+{
+	double length = Position((b-a)).Norm();
+	if(length<=0.1)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+
+	Point ballPos;
+	ballPos[X] = mid[BALL_X];
+	ballPos[Y] = mid[BALL_Y];
+	ballPos[Z] = mid[BALL_Z];
+
+	auto baseBoxes = robot.GetBaseBoxes(mid);
+	auto armsBoxes = robot.GetArmsBoxes(mid);
+
+	if(BallRobotCollision(baseBoxes , armsBoxes, ballPos, false))
 		return false;
 
-	return ValidMoveRobotBallEnvironment(a, mid, ballStatus) 
-		&& ValidMoveRobotBallEnvironment(mid, b, ballStatus);
+	return ValidMoveMovingBallRobot(a, mid) && ValidMoveMovingBallRobot(mid, b);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
