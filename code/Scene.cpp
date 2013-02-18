@@ -253,7 +253,7 @@ bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 	Position mid = Position((a+b))/2.;
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(mid);
 	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(mid);
-	if(BallRobotCollision(baseBoxes, armsBoxes, ballPos, true))
+	if(BallRobotCollision(baseBoxes, armsBoxes, ballPos, false))
 		return false;
 
 	return ValidMoveBallRobot(a, mid) && ValidMoveBallRobot(mid, b);
