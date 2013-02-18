@@ -26,6 +26,12 @@ void Object::Rotate(const double angle, const axis axis)
 		x = m*x;
 }
 
+void Object::Rotate(const Matrix& m)
+{
+	for(auto& x : points)
+		x = m*x;
+}
+
 
 void Object::operator+=(const Object& obj)
 {

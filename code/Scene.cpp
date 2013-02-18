@@ -3,7 +3,7 @@
 #include "Scene.hpp"
 
 Scene::Scene(const char* sceneFile, const Point& robotSize) : 
-	robot(robotSize), ballRadius(0.2)
+	robot(robotSize), ballRadius(.5)
 {
 	ReadObjFile(sceneFile);
 	BuildBaseScene();

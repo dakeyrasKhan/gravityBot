@@ -73,7 +73,7 @@ Robot::Robot(Point s):
 	yPos(0.25), 
 	armWidth(0.1), 
 	arm0Length(1),
-	arm1Length(1),
+	arm1Length(1.5),
 	minSpace(1),
 	baseArmLength(0.2),
 	minY(0.2)
@@ -220,22 +220,32 @@ std::array<Box, 4> Robot::GetBoundingBoxes(const Position& start, const Position
 	std::array<Box, 2> armsBoxesEnd	  = GetArmsBoxes(end);
 
 	std::array<Box, 4> out;
+
+	Point sizeInflate = baseBoxesStart[0].Center() - baseBoxesEnd[0].Center();
+
 	for(int i=0; i<2; i++)
 	{
 		Box boundingBox = Box::GetRotationBoundingBox(baseBoxesStart[i].Size(), 
 			baseBoxesStart[i].Rotation(), baseBoxesEnd[i].Rotation());
 
-		Point sizeInflate = baseBoxesStart[i].Center() - baseBoxesEnd[i].Center();
-		for(auto& x : sizeInflate)
-			x = abs(x);
-
-		out[i] = Box(baseBoxesStart[i].Center() + baseBoxesEnd[i].Center(), 
-			boundingBox.Size() + sizeInflate, boundingBox.Rotation());
+		out[i] = Box((baseBoxesStart[i].Center() + baseBoxesEnd[i].Center())/2, 
+			boundingBox.Size() + abs(sizeInflate*boundingBox.Rotation()), 
+			boundingBox.Rotation());
 	}
 
 	Box boundingBox = Box::GetRotationBoundingBox(armsBoxesStart[0].Size(), 
-		armsBoxesStart[0].Rotation(), armsBoxesStart[0].Rotation(), 2);
+		armsBoxesStart[0].Rotation(), armsBoxesStart[0].Rotation(), arm0Length/2);
 
+	out[2] = Box((armsBoxesStart[0].Center() + armsBoxesEnd[0].Center())/2,
+		boundingBox.Size() + sizeInflate,
+		boundingBox.Rotation());
+	
+	boundingBox = Box::GetRotationBoundingBox(armsBoxesStart[1].Size(), 
+		armsBoxesStart[1].Rotation(), armsBoxesStart[1].Rotation(), arm0Length + arm1Length/2);
+
+	out[3] = Box((armsBoxesStart[1].Center() + armsBoxesEnd[1].Center())/2,
+		boundingBox.Size() + sizeInflate,
+		boundingBox.Rotation());
 	return out;
 
 }
