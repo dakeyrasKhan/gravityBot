@@ -13,7 +13,7 @@ int main(int argc, char * argv[])
 
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
-	Scene scene("../scenes/scene2.obj", robotSize);
+	Scene scene("../scenes/scene3.obj", robotSize);
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
@@ -42,7 +42,7 @@ int main(int argc, char * argv[])
 	
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
 	start[0] = -Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
-	start[3] = 3;start[4]=2;
+	start[3] = 5;start[4]=2;
 	start = scene.robot.CorrectBallPos(start);
 	Point posDrop;
 	try{
@@ -51,8 +51,8 @@ int main(int argc, char * argv[])
 	catch(NoDropPointException e){
 		std::cout<<"oops"<<std::endl;
 	}
-	start.setBall(&posDrop);
-	start[0]=-Pi/4.;
+	//start.setBall(&posDrop);
+	//start[0]=-Pi/4.;
 	//Position r = scene.robot.RandomCatch(posDrop);
 	
 	end[0]=0;end[1]=Pi/4.;end[2]=Pi/4.;end[3]=-2;end[4]=-3;
@@ -65,16 +65,17 @@ int main(int argc, char * argv[])
 	}
 
 	//end.setBall(&posDrop);
-
+	Roadmap roadmap;
+	display.roadmap=NULL;
 	std::vector<bool> ballOnArm;
 	if(withRoadmap)
 	{
 		std::cout<<"creating roadmap"<<std::endl;
-		Roadmap roadmap=Roadmap(&scene);
+		roadmap=Roadmap(&scene);
 		display.roadmap=&roadmap;
-		std::cout<<"roadmap created"<<std::endl;	
+		std::cout<<"roadmap created with "<<roadmap.waypoints.size()<<" waypoints"<<std::endl;	
 		//return 0;
-		Path p = roadmap.getPath(FullNode(start,-1,false),FullNode(end,-1,true),NULL,true);
+		Path p = roadmap.getPath(FullNode(start,-1,true),FullNode(end,-1,true),NULL,true);
 
 		if(optimize)
 			trajectory = scene.Optimize(p.waypoints);
@@ -98,12 +99,12 @@ int main(int argc, char * argv[])
 			}
 		}
 	}
-	if(trajectory.empty()){
+	if(!withRoadmap || trajectory.empty()){
 		std::cout << "empty trajectory" << std::endl;
 		trajectory.push_back(start);
 		ballOnArm.push_back(false);
-		trajectory.push_back(end);
-		ballOnArm.push_back(false);
+		//trajectory.push_back(end);
+		//ballOnArm.push_back(false);
 	}
 
 	display.SetTrajectory(trajectory, ballOnArm);

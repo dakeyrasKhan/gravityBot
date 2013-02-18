@@ -5,7 +5,7 @@
 #include <queue>
 #include <stack>
 
-#define NB_WAYPOINTS 100
+#define NB_WAYPOINTS 600
 
 #define NB_DROP 1
 

@@ -300,14 +300,14 @@ Roadmap::Roadmap(Scene* scene) :
 		}
 		catch(NoDropPointException e)
 		{
-			std::cout<<"no drop"<<std::endl;
+			//std::cout<<"no drop"<<std::endl;
 			continue;
 		}
 
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
 		if(scene->ValidMove(node.setBall(&pos), scene->robot.Catch(node.pos,pos), TAKING_BALL))
 		{
-			std::cout<<"not interesting"<<std::endl;
+			//std::cout<<"not interesting"<<std::endl;
 			/*
 			FullNode newNode = FullNode(scene->robot.Catch(node.pos,pos),waypoints.size(),true);
 
@@ -327,7 +327,7 @@ Roadmap::Roadmap(Scene* scene) :
 			Path p=OkCatch(node.pos,r,&pos);
 			if(!p.empty())
 			{
-				std::cout<<"CHOPPE"<<std::endl;
+				//std::cout<<"CHOPPE"<<std::endl;
 				addNode(FullNode(r,waypoints.size(),true), IGNORE_BALL_COLLISION);
 				adjacency[node.id].push_back(Adj(FullNode(r,waypoints.size()-1,true),p));
 				break;
