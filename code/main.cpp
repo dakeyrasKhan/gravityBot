@@ -74,7 +74,7 @@ int main(int argc, char * argv[])
 		roadmap=Roadmap(&scene);
 		display.roadmap=&roadmap;
 		std::cout<<"roadmap created"<<std::endl;	
-
+		//return 0;
 		Path p = roadmap.getPath(FullNode(start,-1,false),FullNode(end,-1,true),NULL,true);
 
 		if(optimize)
@@ -99,8 +99,7 @@ int main(int argc, char * argv[])
 			}
 		}
 	}
-	else
-	{
+	if(trajectory.empty()){
 		trajectory.push_back(start);
 		ballOnArm.push_back(false);
 		trajectory.push_back(end);

@@ -275,7 +275,8 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 	}
 	//return;
 	// Pour chaque waypoints du robot tenant l'objet
-	for(int j=0;j<waypoints.size();j++){
+	int nbIter = waypoints.size();
+	for(int j=0;j<nbIter;j++){
 		FullNode& node = waypoints[j];
 		if(!node.with)
 			continue;
@@ -288,6 +289,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			std::cout<<"no drop"<<std::endl;
 			continue;
 		}
+
 		//si on peut l'attraper directement sans se prendre d'obstacle, c'est pas intéressant
 		if(scene->ValidMove(node.setBall(&pos),scene->robot.Catch(node.pos,pos), TAKING_BALL)){
 			std::cout<<"not interesting"<<std::endl;
@@ -299,7 +301,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			p.add(newNode);
 
 			addNode(newNode, IGNORE_BALL_COLLISION);
-			adjacency[node.id].push_back(Adj(newNode,p));
+			adjacency[waypoints[j].id].push_back(Adj(newNode,p));
 			continue;
 		}
 		else{
