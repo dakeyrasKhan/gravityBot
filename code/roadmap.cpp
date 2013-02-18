@@ -2,6 +2,14 @@
 #include <iostream>
 #include <exception>
 
+
+Path findPath(std::vector<Adj>& neighbours,int cible){
+	for(auto n : neighbours){
+		if(n.node.id==cible)
+			return n.drop;
+	}
+}
+
 Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=false)
 {
 	bool ballMove = (_start.pos[BALL_X]!=_end.pos[BALL_X]) || (_start.pos[BALL_Y]!=_end.pos[BALL_Y]) || (_start.pos[BALL_Z]!=_end.pos[BALL_Z]);
@@ -168,9 +176,14 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 	while(!idPathStack.empty())
 	{
 		int curId = idPathStack.top();
-		if(lastId!=-1 && !adjacency[lastId][curId].drop.empty()){
-			for(auto p : adjacency[lastId][curId].drop.waypoints)
-				path.add(p);
+		if(lastId!=-1){
+			Path toAdd = findPath(adjacency[lastId],curId);
+			if(!toAdd.empty()){
+				for(auto p : toAdd.waypoints)
+					path.add(p);
+			}
+			else
+				path.add(waypoints[curId]);
 		}
 		else
 			path.add(waypoints[curId]);
@@ -295,7 +308,7 @@ Roadmap::Roadmap(Scene* scene) :
 		if(scene->ValidMove(node.setBall(&pos), scene->robot.Catch(node.pos,pos), TAKING_BALL))
 		{
 			std::cout<<"not interesting"<<std::endl;
-			
+			/*
 			FullNode newNode = FullNode(scene->robot.Catch(node.pos,pos),waypoints.size(),true);
 
 			Path p;
@@ -303,7 +316,7 @@ Roadmap::Roadmap(Scene* scene) :
 			p.add(newNode);
 
 			addNode(newNode, IGNORE_BALL_COLLISION);
-			adjacency[waypoints[j].id].push_back(Adj(newNode,p));
+			adjacency[waypoints[j].id].push_back(Adj(newNode,p));*/
 			continue;
 		}
 
