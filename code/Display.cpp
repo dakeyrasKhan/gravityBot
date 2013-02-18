@@ -112,9 +112,9 @@ void Display::Render()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->RobotObject(position));
 
-/*	for(auto p : roadmap->waypoints){
+	for(auto p : roadmap->waypoints){
 		DrawObject(scene->RobotObject(p.pos));
-	}*/
+	}
 
 
 	// Draw the ball

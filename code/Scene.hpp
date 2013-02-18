@@ -4,8 +4,8 @@
 #include "Vector.hpp"
 #include "Object.hpp"
 #include "Robot.hpp"
-#include "octree.hpp"
 #include "Triangle.hpp"
+#include "QuadTree.hpp"
 
 
 #define NB_TRY 200

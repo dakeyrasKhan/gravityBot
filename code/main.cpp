@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Display.hpp"
 #include "Scene.hpp"
-#include "octree.hpp"
+#include "QuadTree.hpp"
 #include "roadmap.hpp"
 #include <random>
 #include <ctime>
@@ -65,13 +65,12 @@ int main(int argc, char * argv[])
 	}
 
 	//end.setBall(&posDrop);
-	Roadmap roadmap;
 
 	std::vector<bool> ballOnArm;
 	if(withRoadmap)
 	{
 		std::cout<<"creating roadmap"<<std::endl;
-		roadmap=Roadmap(&scene);
+		Roadmap roadmap=Roadmap(&scene);
 		display.roadmap=&roadmap;
 		std::cout<<"roadmap created"<<std::endl;	
 		//return 0;
@@ -100,6 +99,7 @@ int main(int argc, char * argv[])
 		}
 	}
 	if(trajectory.empty()){
+		std::cout << "empty trajectory" << std::endl;
 		trajectory.push_back(start);
 		ballOnArm.push_back(false);
 		trajectory.push_back(end);

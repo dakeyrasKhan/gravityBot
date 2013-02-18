@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Vector.hpp"
-#include "octree.hpp"
+#include "QuadTree.hpp"
 
 class Path
 {

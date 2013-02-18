@@ -1,5 +1,5 @@
 #pragma once
-#include "octree.hpp"
+#include "QuadTree.hpp"
 #include "Scene.hpp"
 #include "path.hpp"
 #include <queue>
@@ -24,14 +24,14 @@ public:
 	void explore(int,int);
 	Path getPath(FullNode,FullNode,Point*,bool);
 	Path OkCatch(Position start,Position end,Point* ball);
-	vector<FullNode> waypoints;
+	std::vector<FullNode> waypoints;
 private:
 	void addNode(FullNode,int);
 	Scene* scene;
-	Octree tree;
+	QuadTree tree;
 	int nbClasses;
-	vector<int> classes;
+	std::vector<int> classes;
 
-	vector<vector<Adj>> adjacency;
-	vector<double> failRate;
+	std::vector<std::vector<Adj>> adjacency;
+	std::vector<double> failRate;
 };

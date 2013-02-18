@@ -24,6 +24,7 @@ public:
 	int id;
 	bool with;
 };
+
 class NodeComp{
 public:
 	NodeComp(FullNode n, double d):node(n),dist(d){}
@@ -74,9 +75,9 @@ int findSon(FullNode, Octree*);
 bool excluded(Point,double, Octree*);
 bool included(Point,double, Octree*);
 Point calculateCenter(int, Octree*);
-void addPos(FullNode, Octree*);
-
 int countInCube(Point, double, bool, Octree*);
 void addToVect(Point, double, bool, Octree*, vector<FullNode>*);
 double findSizeCube(double, double, Point, int, bool, Octree*);
+
+void addPos(FullNode, Octree*);
 void findNeighbours(Point,double,bool,Octree*,vector<FullNode>*);

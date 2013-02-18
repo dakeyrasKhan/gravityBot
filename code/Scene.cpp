@@ -17,6 +17,8 @@ void Scene::ReadObjFile(const char* fileName)
 	negSize[ROBOT_ROT] = 0;
 	negSize[ROBOT_ARM0] = negSize[ROBOT_ARM1] = -Pi/2.;
 	posSize[ROBOT_X] = posSize[ROBOT_Z] = negSize[ROBOT_X] = negSize[ROBOT_Z] = 0;
+	posSize[BALL_X] = posSize[BALL_Y] = posSize[BALL_Z] = 0;
+	negSize[BALL_X] = negSize[BALL_Y] = negSize[BALL_Z] = 0;
 
 	std::ifstream sceneFile(fileName);
 	while(!sceneFile.eof())
@@ -51,6 +53,7 @@ void Scene::ReadObjFile(const char* fileName)
 			sceneFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		}
 	}
+
 	maxSize=0;
 	for(auto x : posSize)
 		maxSize = std::max(maxSize, x);
@@ -205,7 +208,8 @@ Point Scene::Drop(Position p)
 
 bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus) const
 {
-	if((IGNORE_BALL_ENVIRONMENT_COLLISION & ballStatus) == 0 && !ValidMoveBallEnvironment(a, b))
+	if(((IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL) & ballStatus) == 0
+		&& !ValidMoveBallEnvironment(a, b))
 		return false;
 
 	return ValidMoveRobotRobot(a, b)
@@ -263,6 +267,8 @@ bool Scene::ValidMoveBallEnvironment(const Position& a, const Position& b) const
 	for(auto t : triangles)
 		if(t.IntersectSphere(ball, ballRadius - 100*std::numeric_limits<double>::epsilon()))
 			return false;
+
+	return ValidMoveBallEnvironment(a, mid) && ValidMoveBallEnvironment(mid, b);
 }
 
 bool Scene::ValidMoveRobotRobot(const Position& a, const Position& b) const

@@ -46,6 +46,7 @@ public:
 						Array() { };
 						Array(const double d) { for(auto& x : *this) x = d; };
 	Array<3, 0>			ToPoint() const;
+	Array<2, 0>			ToCoord() const;
 	double				Norm() const;
 	double				Norm2() const;
 	Array<L, R>			Normalize() const;
@@ -67,6 +68,7 @@ public:
 typedef Array<3, 0> Point;
 typedef Array<DIM_CONF, NB_ROT> Vector;
 typedef Array<DIM_CONF, NB_ROT> Position;
+typedef Array<2, 0> Coord;
 
 Position Random(const std::array<double, DIM_CONF>& neg,
 							  const std::array<double, DIM_CONF>& pos,
@@ -81,6 +83,15 @@ inline Point Array<L, R>::ToPoint() const
 	p[Z]=(*this)[ROBOT_Z];
 	p[Y]=0;
 	return p;
+}
+
+template<std::size_t L, int R>
+inline Coord Array<L, R>::ToCoord() const
+{
+	Coord c;
+	c[0]=(*this)[ROBOT_X];
+	c[1]=(*this)[ROBOT_Z];
+	return c;
 }
 
 template<std::size_t L, int R>
