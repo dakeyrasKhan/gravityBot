@@ -338,7 +338,8 @@ bool Box::IntersectCylinder(Point c0, Point c1, const double radius) const
 Box Box::GetRotationBoundingBox(const Point& size, 
 								const Matrix& start, 
 								const Matrix& end,
-								const double externRadius)
+								const double externRadius,
+								double* alpha2)
 {
 	Matrix rotation = end*start.Transpose();
 
@@ -347,6 +348,9 @@ Box Box::GetRotationBoundingBox(const Point& size,
 	// the diameter of the circle the points are rotating on
 	double d = size.Norm() + externRadius; 
 	double inflate = alpha > Pi/2 ? d : sin(alpha)*d; // sin(alpha) > 0
+
+	if(alpha2 != nullptr)
+		*alpha2 = alpha;
 
 	return Box(Point(0), size + inflate, start);
 }

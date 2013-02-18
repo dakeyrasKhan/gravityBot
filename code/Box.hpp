@@ -16,8 +16,8 @@ public:
 	bool IntersectSphere(Point p, const double radius) const;
 	bool IntersectCylinder(Point c0, Point c1, const double radius) const;
 
-	static Box GetRotationBoundingBox(const Point& size, 
-		const Matrix& start, const Matrix& end, const double externRadius = 0);
+	static Box GetRotationBoundingBox(const Point& size, const Matrix& start, 
+		const Matrix& end, const double externRadius = 0, double* alpha = nullptr);
 	const Matrix& Rotation() const { return rotation; };
 	const Point& Center() const { return center; };
 	const Point& Size() const { return size; };

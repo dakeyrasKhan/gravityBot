@@ -233,18 +233,21 @@ std::array<Box, 4> Robot::GetBoundingBoxes(const Position& start, const Position
 			boundingBox.Rotation());
 	}
 
+	double alpha;
 	Box boundingBox = Box::GetRotationBoundingBox(armsBoxesStart[0].Size(), 
-		armsBoxesStart[0].Rotation(), armsBoxesStart[0].Rotation(), arm0Length/2);
+		armsBoxesStart[0].Rotation(), armsBoxesEnd[0].Rotation(), arm0Length/2, &alpha);
 
 	out[2] = Box((armsBoxesStart[0].Center() + armsBoxesEnd[0].Center())/2,
-		boundingBox.Size() + sizeInflate,
+		boundingBox.Size() + abs(sizeInflate*boundingBox.Rotation()),
 		boundingBox.Rotation());
 	
 	boundingBox = Box::GetRotationBoundingBox(armsBoxesStart[1].Size(), 
-		armsBoxesStart[1].Rotation(), armsBoxesStart[1].Rotation(), arm0Length + arm1Length/2);
+		armsBoxesStart[1].Rotation(), armsBoxesEnd[1].Rotation(), arm1Length/2);
 
+	// Can be improved a lot
 	out[3] = Box((armsBoxesStart[1].Center() + armsBoxesEnd[1].Center())/2,
-		boundingBox.Size() + sizeInflate,
+		boundingBox.Size() + abs(sizeInflate*boundingBox.Rotation()) + 
+		2.5*(arm0Length + arm1Length)*alpha,
 		boundingBox.Rotation());
 	return out;
 
