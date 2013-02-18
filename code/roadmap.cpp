@@ -255,8 +255,6 @@ Roadmap::Roadmap(Scene* scene) :
 	scene(scene),
 	tree(Coord(0), scene->MaxSize()*2)
 {
-	int prec=0;
-
 	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
 	for(int i=0;i<2;i++)
 	{
