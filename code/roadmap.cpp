@@ -39,6 +39,7 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 	}
 
 	tree.AddNeighbors(start.pos.ToCoord(), NB_NEIGHBOURS, start.with, neighbours);
+
 	if(main)
 		std::cout<<"Found "<<neighbours.size()<<" potential start neighbours"<<std::endl;
 	
