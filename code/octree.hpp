@@ -44,7 +44,7 @@ public:
 		depth=0;
 	};
 	Octree(Point neg, Point pos){
-		for(int i=0;i<neg.size();i++){
+		for(unsigned int i=0;i<neg.size();i++){
 			size[i]=pos[i]-neg[i];
 			center[i]=(pos[i]+neg[i])/2.;
 		}

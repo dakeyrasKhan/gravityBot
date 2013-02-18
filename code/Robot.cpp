@@ -72,8 +72,8 @@ Robot::Robot(Point s):
 	baseSize(s), 
 	yPos(0.25), 
 	armWidth(0.1), 
-	arm0Length(1),
-	arm1Length(1),
+	arm0Length(2),
+	arm1Length(3),
 	minSpace(1),
 	baseArmLength(0.2),
 	minY(0.2)
@@ -209,4 +209,33 @@ Position Robot::CorrectBallPos(Position pos) const
 
 	pos[BALL_Y] = h;
 	return pos;
+}
+
+std::array<Box, 4> Robot::GetBoundingBoxes(const Position& start, const Position& end) const
+{
+	std::array<Box, 2> baseBoxesStart = GetBaseBoxes(start);
+	std::array<Box, 2> baseBoxesEnd	  = GetBaseBoxes(end);
+
+	std::array<Box, 2> armsBoxesStart = GetArmsBoxes(start);
+	std::array<Box, 2> armsBoxesEnd	  = GetArmsBoxes(end);
+
+	std::array<Box, 4> out;
+	for(int i=0; i<2; i++)
+	{
+		Box boundingBox = Box::GetRotationBoundingBox(baseBoxesStart[i].Size(), 
+			baseBoxesStart[i].Rotation(), baseBoxesEnd[i].Rotation());
+
+		Point sizeInflate = baseBoxesStart[i].Center() - baseBoxesEnd[i].Center();
+		for(auto& x : sizeInflate)
+			x = abs(x);
+
+		out[i] = Box(baseBoxesStart[i].Center() + baseBoxesEnd[i].Center(), 
+			boundingBox.Size() + sizeInflate, boundingBox.Rotation());
+	}
+
+	Box boundingBox = Box::GetRotationBoundingBox(armsBoxesStart[0].Size(), 
+		armsBoxesStart[0].Rotation(), armsBoxesStart[0].Rotation(), 2);
+
+	return out;
+
 }

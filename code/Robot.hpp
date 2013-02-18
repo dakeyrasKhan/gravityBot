@@ -21,6 +21,7 @@ public:
 	Position RandomDrop(Point p);
 	Position Catch(Position pos,Point p);
 	Position CorrectBallPos(Position pos) const;
+	std::array<Box, 4> GetBoundingBoxes(const Position& start, const Position& end) const;
 
 	void printSize() const;
 

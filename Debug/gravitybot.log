@@ -1,0 +1,34 @@
+﻿Build started 18/02/2013 00:54:58.
+     1>Project "C:\Users\Dakeyras\Desktop\gravityBot\gravitybot.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         S:\Programs\Visual Studio 2012\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /Gy- /fp:strict /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Box.cpp Display.cpp main.cpp Matrix.cpp Object.cpp octree.cpp path.cpp roadmap.cpp Robot.cpp Scene.cpp Triangle.cpp Vector.cpp
+         Vector.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Vector.cpp': No such file or directory
+         Triangle.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Triangle.cpp': No such file or directory
+         Scene.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Scene.cpp': No such file or directory
+         Robot.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Robot.cpp': No such file or directory
+         roadmap.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'roadmap.cpp': No such file or directory
+         path.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'path.cpp': No such file or directory
+         octree.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'octree.cpp': No such file or directory
+         Object.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Object.cpp': No such file or directory
+         Matrix.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Matrix.cpp': No such file or directory
+         main.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'main.cpp': No such file or directory
+         Display.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Display.cpp': No such file or directory
+         Box.cpp
+     1>c1xx : fatal error C1083: Cannot open source file: 'Box.cpp': No such file or directory
+         Generating Code...
+     1>Done Building Project "C:\Users\Dakeyras\Desktop\gravityBot\gravitybot.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.95

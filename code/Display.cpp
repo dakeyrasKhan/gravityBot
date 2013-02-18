@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Display.hpp"
 
+
 Display* display;
 //#define DEBUG_DROP
 
@@ -99,7 +100,7 @@ void Display::Render()
 
 	// Draw the robot
 	Position position = UpdatePosition(lastRender, timediff);
-	if(scene->Collision(position, IGNORE_BALL_COLLISION))
+	if(scene->Collision(position, TAKING_BALL))
 	{
 		color[0] = .8; color[1] = 0; color[2] = 0;
 	}
@@ -109,6 +110,11 @@ void Display::Render()
 	}
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
 	DrawObject(scene->RobotObject(position));
+
+/*	for(auto p : roadmap->waypoints){
+		DrawObject(scene->RobotObject(p.pos));
+	}*/
+
 
 	// Draw the ball
 	color[0] = 0; color[1] = 0; color[2] = .8;
@@ -293,6 +299,9 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 		if(down)
 			displayPos = true;
 		break;
+	case '5':
+		if(down)
+			keys[N_5] = !keys[N_5];
 	}
 }
 
@@ -369,6 +378,8 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 			trajectory[lastWaypoint][ROBOT_ARM1] += timediff;
 		if(keys[DOT])
 			trajectory[lastWaypoint][ROBOT_ARM1] -= timediff;
+		if(keys[N_5])
+			trajectory[lastWaypoint] = scene->robot.CorrectBallPos(trajectory[lastWaypoint]);
 
 
 #ifdef DEBUG_DROP
@@ -401,7 +412,7 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 		}
 
 		Position pos = trajectory[lastWaypoint] + direction*(distanceDone/distance);
-		if(ballOnArm[lastWaypoint] && ballOnArm[lastWaypoint+1])
+		if(ballOnArm[lastWaypoint] || ballOnArm[lastWaypoint+1]) //si ça merde il faudra reflechir ici
 			pos = scene->robot.CorrectBallPos(pos);
 
 		return pos;

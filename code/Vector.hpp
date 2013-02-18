@@ -44,10 +44,24 @@ class Array : public std::array<double, L>
 public:
 						Array(const std::array<double, L>& a) : std::array<double, L>(a) { };
 						Array() { };
+						Array(const double d) { for(auto& x : *this) x = d; };
 	Array<3, 0>			ToPoint() const;
 	double				Norm() const;
 	double				Norm2() const;
 	Array<L, R>			Normalize() const;
+	Array<L, R>			setBall(Array<3,0>* ball) {
+		(*this)[BALL_X]=(*ball)[X];
+		(*this)[BALL_Y]=(*ball)[Y];
+		(*this)[BALL_Z]=(*ball)[Z];
+		return (*this);
+	};
+	Array<3, 0>			getBall() const {
+		Array<3, 0> res;
+		res[X]=(*this)[BALL_X];
+		res[Y]=(*this)[BALL_Y];
+		res[Z]=(*this)[BALL_Z];
+		return res;
+	};
 };
 
 typedef Array<3, 0> Point;
@@ -116,6 +130,16 @@ inline std::array<T, L> operator+(const std::array<T, L> v0, const std::array<T,
 	std::array<T, L> out;
 	for(int i=0; i<L; i++)
 		out[i] = v0[i]+v1[i];
+
+	return out;
+}
+
+template<typename T, std::size_t L>
+inline std::array<T, L> operator+(const std::array<T, L> v, const double d)
+{
+	std::array<T, L> out;
+	for(int i=0; i<L; i++)
+		out[i] = v[i]+d;
 
 	return out;
 }

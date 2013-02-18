@@ -2,7 +2,7 @@
 #include <iostream>
 #include <exception>
 
-Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
+Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=false){
 
 	bool ballMove = (_start.pos[BALL_X]!=_end.pos[BALL_X]) || (_start.pos[BALL_Y]!=_end.pos[BALL_Y]) || (_start.pos[BALL_Z]!=_end.pos[BALL_Z]);
 	vector<FullNode> neighbours;
@@ -12,22 +12,26 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 	FullNode start=_start;
 	Path startPath,endPath;
 	if(ballMove && !_start.with){
-		Point ballpos;
-		ballpos[X]=_start.pos[BALL_X];ballpos[Y]=_start.pos[BALL_Y];ballpos[Z]=_start.pos[BALL_Z];
+		Point ballpos=start.pos.getBall();
 		for(int blah=0;blah<NB_TRY;blah++){
 			Position r = scene->robot.RandomCatch(ballpos);
 			Path p=OkCatch(_start.pos,r,&ballpos);
 			if(!p.empty()){
 				start=FullNode(r,-1,true);
 				startPath=p;
+				std::cout<<"TOOK ball from start"<<std::endl;
 				break;
+			}
+			else{
+				std::cout<<"Cannot take ball from start"<<std::endl;
 			}
 		}
 	}
 
 
 	findNeighbours(start.pos.ToPoint(),scene->MaxSize(), start.with,&tree,&neighbours);
-	std::cout<<"Found "<<neighbours.size()<<" potential start neighbours"<<std::endl;
+	if(main)
+		std::cout<<"Found "<<neighbours.size()<<" potential start neighbours"<<std::endl;
 	
 	priority_queue<NodeComp> heap;
 	bool *seen = new bool[waypoints.size()];
@@ -42,8 +46,9 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 	
 
 	for(auto neighbour : neighbours){
-
-		if(scene->ValidMove(start.pos,neighbour.pos, IGNORE_BALL_COLLISION)){
+		//if(!start.with)
+			//neighbour.pos=neighbour.setBall(&start.pos.getBall());
+		if(scene->ValidMove(start.pos,neighbour.pos, TAKING_BALL)){
 			distances[neighbour.id]=Position(neighbour.pos-start.pos).Norm();
 			heap.push(NodeComp(neighbour,Position(neighbour.pos-start.pos).Norm()));
 		}
@@ -56,7 +61,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 	}
 	
 	
-	std::cout<<"starting dijkstra with "<<heap.size()<<" nodes"<<std::endl;
+	if(main)
+		std::cout<<"starting dijkstra with "<<heap.size()<<" nodes"<<std::endl;
 
 	while(!heap.empty()){
 		FullNode current = heap.top().node;
@@ -67,40 +73,45 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 		for(auto neighbour : adjacency[current.id]){
 
 			if(pos!=NULL){
-				if(!scene->ValidMove(current.setBall(pos),neighbour.setBall(pos),TAKING_BALL)){
+				if(!scene->ValidMove(current.setBall(pos),neighbour.node.setBall(pos),TAKING_BALL)){
 					continue;
 				}
 			}
 
-			double dist = Position(current.pos-neighbour.pos).Norm();
-			if(distances[current.id] + dist < distances[neighbour.id]){
-				distances[neighbour.id] = distances[current.id] + dist;
-				father[neighbour.id] = current.id;
-				heap.push(NodeComp(neighbour,dist));
+			double dist = Position(current.pos-neighbour.node.pos).Norm();
+			if(distances[current.id] + dist < distances[neighbour.node.id]){
+				distances[neighbour.node.id] = distances[current.id] + dist;
+				father[neighbour.node.id] = current.id;
+				heap.push(NodeComp(neighbour.node,dist));
 			}
 		}
 	}
-	std::cout<<"dijkstra ended"<<std::endl;
+	if(main)
+		std::cout<<"dijkstra ended"<<std::endl;
 
 	FullNode end=_end;
 
 	if(ballMove && !_end.with){
-		Point ballpos;
-		ballpos[X]=_end.pos[BALL_X];ballpos[Y]=_end.pos[BALL_Y];ballpos[Z]=_end.pos[BALL_Z];
+		Point ballpos=_end.pos.getBall();
 		for(int blah=0;blah<NB_TRY;blah++){
 			Position r = scene->robot.RandomDrop(ballpos);
 			Path p = OkCatch(r,_end.pos,&ballpos);
 			if(!p.empty()){
+				std::cout<<"FOUND drop point "<<std::endl;
 				endPath=p;
 				end=FullNode(r,-1,true);
 				break;
+			}
+			else{
+				std::cout<<"Cannot find drop point "<<std::endl;
 			}
 		}
 	}
 
 	neighbours.clear();
 	findNeighbours(end.pos.ToPoint(),scene->MaxSize(),end.with,&tree,&neighbours);
-	std::cout<<"found "<<neighbours.size()<<" possible end"<<std::endl;
+	if(main)
+		std::cout<<"found "<<neighbours.size()<<" possible end"<<std::endl;
 	int endPoint=-1;
 	double distToEnd=INFINITY;
 	for(auto neighbour : neighbours){
@@ -109,8 +120,10 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 		if(distances[neighbour.id]<INFINITY){
 			//std::cout<<"--atteignable"<<std::endl;
 			//Si on peut atteindre la fin depuis
-			if(end.with==neighbour.with && scene->ValidMove(end.pos,neighbour.pos,IGNORE_BALL_COLLISION)){
-				//std::cout<<"---atteignant"<<std::endl;
+			//if(!end.with)
+				//neighbour.pos=neighbour.pos.setBall(&end.pos.getBall());
+			if(end.with==neighbour.with && scene->ValidMove(end.pos,neighbour.pos,TAKING_BALL)){
+				std::cout<<"---atteignant neighbour id "<<neighbour.id<<std::endl;
 				//Si c'est mieux
 				if(distances[neighbour.id]+Position(neighbour.pos-end.pos).Norm()<distToEnd){
 					distToEnd=distances[neighbour.id]+Position(neighbour.pos-end.pos).Norm();
@@ -125,7 +138,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 		delete[] seen;
 		return path;
 	}
-	std::cout<<"found end"<<std::endl;
+	if(main)
+		std::cout<<"found end"<<std::endl;
 	std::stack<int> idPathStack;
 	int current = endPoint;
 	while(current!=-1){
@@ -145,13 +159,23 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 		path.add(_start);		
 	}
 
+	int lastId=-1;;
 	while(!idPathStack.empty()){
-		path.add(waypoints[idPathStack.top()]);
+		int curId = idPathStack.top();
+		if(lastId!=-1 && !adjacency[lastId][curId].drop.empty()){
+			for(auto p : adjacency[lastId][curId].drop.waypoints)
+				path.add(p);
+		}
+		else{
+			path.add(waypoints[curId]);
+		}
 		idPathStack.pop();
+		lastId=curId;
 	}
 
 	if(ballMove && !_end.with){
 		for(auto pos : endPath.waypoints){
+			pos.with=false;
 			path.add(pos);
 		}
 		//path.add(start);
@@ -163,6 +187,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL){
 	delete[] father;
 	delete[] distances;
 	delete[] seen;
+
+	//std::cout<<"SIZE :"<<path.waypoints.size()<<std::endl;
 	return path;
 }
 
@@ -171,7 +197,7 @@ void Roadmap::explore(int curNode, int curClasse){
 		return;
 	classes[curNode]=curClasse;
 	for(auto neighbour : adjacency[curNode])
-		explore(neighbour.id,curClasse);
+		explore(neighbour.node.id,curClasse);
 }
 
 void Roadmap::addNode(FullNode node, int flags){
@@ -186,8 +212,7 @@ void Roadmap::addNode(FullNode node, int flags){
 	//std::cout<< "pos added"<<std::endl;
 
 	waypoints.push_back(node);
-	adjacency.push_back(vector<FullNode>());
-	drop.push_back(Path());		
+	adjacency.push_back(vector<Adj>());
 
 	vector<FullNode> neighbours;
 	//std::cout<<"finding neighbours"<<std::endl;
@@ -198,7 +223,8 @@ void Roadmap::addNode(FullNode node, int flags){
 		//std::cout<<"Cheking validMove"<<std::endl;
 		if(neighbour.with == node.with && 
 		   scene->ValidMove(neighbour.pos,node.pos,flags)){
-				adjacency[neighbour.id].push_back(node);
+				adjacency[neighbour.id].push_back(Adj(node));
+				adjacency[node.id].push_back(Adj(neighbour));
 		}
 		else
 			fail++;
@@ -208,13 +234,15 @@ void Roadmap::addNode(FullNode node, int flags){
 }
 
 Path Roadmap::OkCatch(Position start,Position end,Point* ball){
-	if(scene->Collision(end,IGNORE_BALL_COLLISION)){
+	if(scene->Collision(end,TAKING_BALL)){
 		//std::cout<<"failed catch "<<std::endl;
 		return Path();
 	}
 
 	//// A VERIFIER ! C'est là qu'on local plan
-	Path p = getPath(FullNode(start,-1,false),FullNode(end,-1,false),ball);
+	FullNode s(start.setBall(ball),-1,false);
+	FullNode e(end.setBall(ball),-1,false);
+	Path p = getPath(s,e,ball);
 	
 	return p;
 	
@@ -239,6 +267,7 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			}
 		}
 	}
+	//return;
 	// Pour chaque waypoints du robot tenant l'objet
 	for(auto node : waypoints){
 		if(!node.with)
@@ -261,11 +290,19 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			Path p;
 			p.add(FullNode(node.setBall(&pos),-1,false));
 			p.add(newNode);
-			drop[node.id]=p;
 
 			addNode(newNode, IGNORE_BALL_COLLISION);
-			adjacency[node.id].push_back(newNode);
+			adjacency[node.id].push_back(Adj(newNode,p));
 			continue;
+		}
+		else{
+			/*
+			std::cout<<"Not Valid Move ! "<<std::endl;
+			for(auto p : node.setBall(&pos))
+				std::cout<<"start[]="<<p<<";"<<std::endl;
+			for(auto p : scene->robot.Catch(node.pos,pos))
+				std::cout<<"end[]="<<p<<";"<<std::endl;
+				*/
 		}
 
 		for(int i=0;i<NB_DROP;i++){
@@ -273,9 +310,9 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 			Position r = scene->robot.RandomCatch(pos);
 			Path p=OkCatch(node.pos,r,&pos);
 			if(!p.empty()){
-				drop[node.id]=p;
+				std::cout<<"CHOPPE"<<std::endl;
 				addNode(FullNode(r,waypoints.size(),true), IGNORE_BALL_COLLISION);
-				adjacency[node.id].push_back(FullNode(r,waypoints.size()-1,true));		
+				adjacency[node.id].push_back(Adj(FullNode(r,waypoints.size()-1,true),p));
 				break;
 			}			
 		}

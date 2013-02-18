@@ -1,5 +1,6 @@
 #include "Triangle.hpp"
 #include <exception>
+#include <iostream>
 
 Triangle::Triangle(const Point& p0, const Point& p1, const Point& p2) 
 	: p0(p0), p1(p1), p2(p2)
@@ -112,14 +113,14 @@ bool Triangle::IntersectCylinder(const Point& c0, const Point& c1, const double 
 
 		if(abs(nC0) < abs(nC1))
 		{
-			if(abs(nC0) >= radius)
+			if(abs(nC0) > radius)
 				return false;
 
 			intersect = c0 - n*nC0;
 		}
 		else
 		{
-			if(abs(nC1) >= radius)
+			if(abs(nC1) > radius)
 				return false;
 
 			intersect = c1 - n*nC1;

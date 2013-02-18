@@ -108,3 +108,8 @@ Matrix Matrix::Transpose() const
 
 	return out;
 }
+
+double Matrix::Trace() const
+{
+	return lignes[0][0] + lignes[1][1] + lignes[2][2];
+}

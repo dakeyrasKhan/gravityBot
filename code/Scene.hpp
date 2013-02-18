@@ -8,7 +8,7 @@
 #include "Triangle.hpp"
 
 
-#define NB_TRY 1000
+#define NB_TRY 200
 
 #define IGNORE_BALL_ROBOT_COLLISION 0x1
 #define IGNORE_BALL_ENVIRONMENT_COLLISION 0x2
@@ -33,6 +33,7 @@ public:
 	bool Collision(const Position& position, const int ballStatus = 0) const;
 	std::vector<Position> Optimize(std::vector<FullNode> p);
 	bool ValidMove(const Position&, const Position&, const int ballStatus = 0) const;
+	bool ValidMoveBallRobot(const Position&, const Position&) const;
 	Point Drop(Position);
 	Robot robot;
 	
@@ -42,10 +43,11 @@ private:
 	void ReadObjFile(const char* fileName);
 	void BuildBaseScene();
 
-	bool RobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
-		const Point& ballPos, const bool testBall, const bool testBallArm1) const;
+	bool RobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes) const;
 	bool EnvironmentCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
 		const Point& ballPos, const bool testBall) const;
+	bool BallRobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
+		const Point& ballPos, const bool testBallArm1) const;
 
 	Object staticScene;
 	

@@ -14,6 +14,7 @@ public:
 	Matrix operator*(const Matrix& m) const;
 	Point operator*(const Point& p) const;
 	Matrix Transpose() const;
+	double Trace() const;
 
 	const static Matrix Identity;
 	static Matrix Rotate(const double angle, const axis axis);
