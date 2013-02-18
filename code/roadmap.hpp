@@ -4,11 +4,9 @@
 #include "path.hpp"
 #include <queue>
 #include <stack>
-<<<<<<< HEAD
+
 #define NB_WAYPOINTS 200
-=======
-#define NB_WAYPOINTS 100
->>>>>>> 4f4505b3de2d2d9ce97a5629b8b580ce3a70d09c
+
 #define NB_DROP 1
 
 struct Adj{

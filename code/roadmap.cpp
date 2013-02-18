@@ -45,7 +45,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 	}
 	
 
-	for(auto neighbour : neighbours){
+	for(int n=0;n<neighbours.size();n++){
+		FullNode& neighbour = neighbours[n];
 		//if(!start.with)
 			//neighbour.pos=neighbour.setBall(&start.pos.getBall());
 
@@ -71,8 +72,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 		if(seen[current.id])
 			continue;
 		seen[current.id]=true;
-		for(auto neighbour : adjacency[current.id]){
-
+		for(int n=0;n<adjacency[current.id].size();n++){
+			Adj& neighbour = adjacency[current.id][n];
 			if(pos!=NULL){
 				if(!scene->ValidMove(current.setBall(pos),neighbour.node.setBall(pos),TAKING_BALL)){
 					continue;
@@ -115,7 +116,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 		std::cout<<"found "<<neighbours.size()<<" possible end"<<std::endl;
 	int endPoint=-1;
 	double distToEnd=INFINITY;
-	for(auto neighbour : neighbours){
+	for(int n=0;n<neighbours.size();n++){
+		FullNode &neighbour = neighbours[n];
 		//std::cout<<"test neighbour"<<std::endl;
 		//Si on peut l'atteindre depuis le début
 		if(distances[neighbour.id]<INFINITY){
@@ -222,7 +224,8 @@ void Roadmap::addNode(FullNode node, int flags){
 	findNeighbours(node.pos.ToPoint(),scene->MaxSize(),node.with,&tree,&neighbours);
 	//std::cout<< "found "<<neighbours.size()<<" neighbours"<<std::endl;
 	double fail=0;
-	for(auto neighbour : neighbours){
+	for(int n=0;n<neighbours.size();n++){
+		FullNode& neighbour = neighbours[n];
 		//std::cout<<"Cheking validMove"<<std::endl;
 		if(neighbour.with == node.with && 
 		   scene->ValidMove(neighbour.pos,node.pos,flags)){
@@ -272,7 +275,8 @@ Roadmap::Roadmap(Scene* scene):scene(scene),tree(scene->NegSize().ToPoint(),scen
 	}
 	//return;
 	// Pour chaque waypoints du robot tenant l'objet
-	for(auto node : waypoints){
+	for(int j=0;j<waypoints.size();j++){
+		FullNode& node = waypoints[j];
 		if(!node.with)
 			continue;
 		//On lache l'objet
