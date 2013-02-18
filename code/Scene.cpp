@@ -94,30 +94,25 @@ bool Scene::Collision(const Position& pos, const int ballStatus) const
 	ballPos[Y] = pos[BALL_Y];
 	ballPos[Z] = pos[BALL_Z];
 
-	return RobotCollision(baseBoxes, armsBoxes, ballPos, 
-		(ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0, (ballStatus & (TAKING_BALL | TRANSPORTING_BALL)) == 0)
-		|| EnvironmentCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & (IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL)) == 0);
+	bool testBallArm1 = (ballStatus & (TAKING_BALL | TRANSPORTING_BALL)) == 0;
+	bool testBallRobot = (ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0;
+	bool testBallEnvironment =  (ballStatus & (IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL)) == 0;
+
+	if(testBallRobot && BallRobotCollision(baseBoxes, armsBoxes, ballPos, testBallArm1))
+		return true;
+
+	return RobotCollision(baseBoxes, armsBoxes) 
+		|| EnvironmentCollision(baseBoxes, armsBoxes, ballPos, testBallEnvironment);
 }
 
 // Test the intersection of the robot with himself
 bool Scene::RobotCollision(const std::array<Box, 2>& baseBoxes, 
-						   const std::array<Box, 2>& armsBoxes,
-						   const Point& ballPos,
-						   const bool testBall,
-						   const bool testBallArm1) const
+						   const std::array<Box, 2>& armsBoxes) const
 {
-	if(baseBoxes[0].IntersectBox(armsBoxes[0]) 
+	return baseBoxes[0].IntersectBox(armsBoxes[0]) 
 		|| baseBoxes[0].IntersectBox(armsBoxes[1]) 
-		|| baseBoxes[1].IntersectBox(armsBoxes[1]))
-		return true;
-
-	return(testBall && (
-		baseBoxes[0].IntersectSphere(ballPos, ballRadius)
-		|| baseBoxes[1].IntersectSphere(ballPos, ballRadius)
-		|| armsBoxes[0].IntersectSphere(ballPos, ballRadius)
-		|| (testBallArm1 && armsBoxes[1].IntersectSphere(ballPos, ballRadius))));
+		|| baseBoxes[1].IntersectBox(armsBoxes[1]);
 }
-
 
 bool Scene::EnvironmentCollision(const std::array<Box, 2>& baseBoxes, 
 							const std::array<Box, 2>& armsBoxes,
@@ -150,7 +145,16 @@ bool Scene::EnvironmentCollision(const std::array<Box, 2>& baseBoxes,
 	return false;
 }
 
-
+bool Scene::BallRobotCollision(const std::array<Box, 2>& baseBoxes, 
+						const std::array<Box, 2>& armsBoxes, 
+						const Point& ballPos, 
+						const bool testBallArm1) const
+{
+	return(baseBoxes[0].IntersectSphere(ballPos, ballRadius)
+		|| baseBoxes[1].IntersectSphere(ballPos, ballRadius)
+		|| armsBoxes[0].IntersectSphere(ballPos, ballRadius)
+		|| (testBallArm1 && armsBoxes[1].IntersectSphere(ballPos, ballRadius)));
+}
 
 Point Scene::Drop(Position p)
 {
@@ -215,6 +219,27 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 		return false;
 
 	return ValidMove(a, mid, ballStatus) && ValidMove(mid, b, ballStatus);
+}
+
+bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
+{
+	double length = Position((b-a)).Norm();
+	
+	if(length<=0.1)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(mid);
+	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(mid);
+
+	Point ballPos;
+	ballPos[X] = mid[BALL_X];
+	ballPos[Y] = mid[BALL_Y];
+	ballPos[Z] = mid[BALL_Z];
+	if(BallRobotCollision(baseBoxes, armsBoxes, ballPos, true))
+		return false;
+
+	return ValidMoveBallRobot(a, mid) && ValidMoveBallRobot(mid, b);
 }
 
 
