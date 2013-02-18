@@ -48,7 +48,7 @@ double SegmentSegmentDistance(const Point& a0, const Point& a1, const Point& b0,
 
 	double xA, xB; 
 
-	if(delta == 0) 
+	if(abs(delta) < std::numeric_limits<double>::epsilon()) 
 	{
         xA = 0;
         xB = xA0overB;

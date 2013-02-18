@@ -99,7 +99,7 @@ void Display::Render()
 
 	// Draw the robot
 	Position position = UpdatePosition(lastRender, timediff);
-	if(scene->Collision(position, IGNORE_BALL_COLLISION))
+	if(scene->Collision(position, TAKING_BALL))
 	{
 		color[0] = .8; color[1] = 0; color[2] = 0;
 	}
@@ -293,6 +293,9 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 		if(down)
 			displayPos = true;
 		break;
+	case '5':
+		if(down)
+			keys[N_5] = !keys[N_5];
 	}
 }
 
@@ -369,6 +372,8 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 			trajectory[lastWaypoint][ROBOT_ARM1] += timediff;
 		if(keys[DOT])
 			trajectory[lastWaypoint][ROBOT_ARM1] -= timediff;
+		if(keys[N_5])
+			trajectory[lastWaypoint] = scene->robot.CorrectBallPos(trajectory[lastWaypoint]);
 
 
 #ifdef DEBUG_DROP
