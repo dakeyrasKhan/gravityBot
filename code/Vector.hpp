@@ -48,6 +48,19 @@ public:
 	double				Norm() const;
 	double				Norm2() const;
 	Array<L, R>			Normalize() const;
+	Array<L, R>				setBall(Array<3,0>* ball) {
+		(*this)[BALL_X]=(*ball)[X];
+		(*this)[BALL_Y]=(*ball)[Y];
+		(*this)[BALL_Z]=(*ball)[Z];
+		return (*this);
+	};
+	Array<3, 0>			getBall() const {
+		Array<3, 0> res;
+		res[X]=(*this)[BALL_X];
+		res[Y]=(*this)[BALL_Y];
+		res[Z]=(*this)[BALL_Z];
+		return res;
+	};
 };
 
 typedef Array<3, 0> Point;

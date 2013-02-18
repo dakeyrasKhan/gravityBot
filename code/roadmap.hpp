@@ -4,7 +4,7 @@
 #include "path.hpp"
 #include <queue>
 #include <stack>
-#define NB_WAYPOINTS 100
+#define NB_WAYPOINTS 200
 #define NB_DROP 1
 
 class Roadmap{
@@ -18,6 +18,7 @@ private:
 	Scene* scene;
 	Octree tree;
 	int nbClasses;
+	bool isDrop[2*NB_WAYPOINTS+1][2*NB_WAYPOINTS+1];
 	vector<int> classes;
 	vector<FullNode> waypoints;
 	vector<vector<FullNode>> adjacency;

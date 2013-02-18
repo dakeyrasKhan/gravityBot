@@ -1,5 +1,6 @@
 #include "Triangle.hpp"
 #include <exception>
+#include <iostream>
 
 Triangle::Triangle(const Point& p0, const Point& p1, const Point& p2) 
 	: p0(p0), p1(p1), p2(p2)

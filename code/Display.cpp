@@ -401,7 +401,7 @@ Position Display::UpdatePosition(clock::time_point time, double timediff)
 		}
 
 		Position pos = trajectory[lastWaypoint] + direction*(distanceDone/distance);
-		if(ballOnArm[lastWaypoint] && ballOnArm[lastWaypoint+1])
+		if(ballOnArm[lastWaypoint] || ballOnArm[lastWaypoint+1]) //si ça merde il faudra reflechir ici
 			pos = scene->robot.CorrectBallPos(pos);
 
 		return pos;
