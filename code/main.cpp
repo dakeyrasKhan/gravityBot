@@ -63,8 +63,10 @@ int main(int argc, char * argv[])
 	catch(NoDropPointException e){
 		std::cout<<"oops"<<std::endl;
 	}
+
 	//end.setBall(&posDrop);
 	Roadmap roadmap;
+
 	std::vector<bool> ballOnArm;
 	if(withRoadmap)
 	{
@@ -72,7 +74,9 @@ int main(int argc, char * argv[])
 		roadmap=Roadmap(&scene);
 		display.roadmap=&roadmap;
 		std::cout<<"roadmap created"<<std::endl;	
+
 		Path p = roadmap.getPath(FullNode(start,-1,false),FullNode(end,-1,true),NULL,true);
+
 		if(optimize)
 			trajectory = scene.Optimize(p.waypoints);
 		else{
@@ -104,6 +108,7 @@ int main(int argc, char * argv[])
 	}
 
 	display.SetTrajectory(trajectory, ballOnArm);
+
 
 	display.MainLoop();
 

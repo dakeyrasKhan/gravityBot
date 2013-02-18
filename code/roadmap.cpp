@@ -48,6 +48,7 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 	for(auto neighbour : neighbours){
 		//if(!start.with)
 			//neighbour.pos=neighbour.setBall(&start.pos.getBall());
+
 		if(scene->ValidMove(start.pos,neighbour.pos, TAKING_BALL)){
 			distances[neighbour.id]=Position(neighbour.pos-start.pos).Norm();
 			heap.push(NodeComp(neighbour,Position(neighbour.pos-start.pos).Norm()));
@@ -189,6 +190,7 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 	delete[] seen;
 
 	//std::cout<<"SIZE :"<<path.waypoints.size()<<std::endl;
+
 	return path;
 }
 

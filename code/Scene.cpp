@@ -30,15 +30,15 @@ void Scene::ReadObjFile(const char* fileName)
 			sceneFile >> p[0] >> p[1] >> p[2];
 			staticScene.points.push_back(p);
 
-			if(p[0] > posSize[ROBOT_X])
-				posSize[ROBOT_X] = p[0];
-			else if(p[0] < negSize[ROBOT_X])
-				negSize[ROBOT_X] = p[0];
+			if(p[X] > posSize[ROBOT_X])
+				posSize[ROBOT_X] = p[X];
+			else if(p[X] < negSize[ROBOT_X])
+				negSize[ROBOT_X] = p[X];
 
-			if(p[2] > posSize[ROBOT_Z])
-				posSize[ROBOT_Z] = p[2];
-			else if(p[2] < negSize[ROBOT_Z])
-				negSize[ROBOT_Z] = p[2];
+			if(p[Z] > posSize[ROBOT_Z])
+				posSize[ROBOT_Z] = p[Z];
+			else if(p[Z] < negSize[ROBOT_Z])
+				negSize[ROBOT_Z] = p[Z];
 			break;
 		case 'f':
 			sceneFile >> triangle[0] >> triangle[1] >> triangle[2];

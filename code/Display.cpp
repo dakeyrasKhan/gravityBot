@@ -5,6 +5,7 @@
 
 Display* display;
 //#define DEBUG_DROP
+#define DEBUG_BB
 
 void Render()
 {
@@ -119,6 +120,13 @@ void Display::Render()
 	// Draw the ball
 	color[0] = 0; color[1] = 0; color[2] = .8;
 	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
+
+#ifdef DEBUG_BB
+	DrawObject(scene->RobotObject(Position(0)));
+	auto bb = scene->robot.GetBoundingBoxes(position, Position(0));
+	DrawObject(bb[3].GetObject());
+#endif
+
 	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
 	glutSolidSphere(scene->ballRadius, 100, 100);
 
