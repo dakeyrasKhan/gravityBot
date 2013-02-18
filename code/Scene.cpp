@@ -136,10 +136,8 @@ bool Scene::EnvironmentCollision(const std::array<Box, 2>& baseBoxes,
 					return true;
 
 	if(testBall)
-		for(auto t : staticScene.triangles)
-			if(Triangle(staticScene.points[t[0]], 
-				staticScene.points[t[1]],
-				staticScene.points[t[2]]).IntersectSphere(ballPos, ballRadius))
+		for(auto t : triangles)
+			if(t.IntersectSphere(ballPos, ballRadius - 100*std::numeric_limits<double>::epsilon()))
 				return true;
 
 	return false;
@@ -258,6 +256,17 @@ bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 	return ValidMoveBallRobot(a, mid) && ValidMoveBallRobot(mid, b);
 }
 
+bool Scene::ValidMoveBallEnvironment(const Point& a, const Point& b) const
+{
+	double length = Point((b-a)).Norm();
+	if(length<=0.1)
+		return true;
+
+	Point mid = (a+b)/2.;
+	for(auto t : triangles)
+		if(t.IntersectSphere(mid, ballRadius - 100*std::numeric_limits<double>::epsilon()))
+			return false;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////				TODO				////////////////////////////////////
