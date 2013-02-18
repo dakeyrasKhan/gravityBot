@@ -1,8 +1,8 @@
 #include "Box.hpp"
 #include <limits>
+#include <cmath>
 #include "Triangle.hpp"
 
-// TODO : size could be put into rotation.
 
 bool Box::Intersect(Point p0, Point p1, Point p2) const
 {
@@ -236,7 +236,6 @@ bool Box::IntersectBox(Box b) const
 	return true;
 }
 
-
 bool Box::IntersectSphere(Point p, const double radius) const
 {
 	p = (p - center)*rotation;
@@ -254,7 +253,6 @@ bool Box::IntersectSphere(Point p, const double radius) const
 
 	return p.Norm2() < radius*radius;
 }
-
 
 bool Box::IntersectCylinder(Point c0, Point c1, const double radius) const
 {
@@ -329,4 +327,24 @@ bool Box::IntersectCylinder(Point c0, Point c1, const double radius) const
 		return true;
 
 	return false;
+}
+
+// trace = 1+2cos(alpha) so alpha = arccos((trace - 1)/2);
+// For the axis :
+// http://math.stackexchange.com/questions/178830/cross-product-technique-to-find-the-eigenspaces-of-a-3x3-matrix
+// can be improved using the axis to get the exact angle so we can take the middle
+// as the box to inflate
+// by projecting on planes
+Box Box::GetRotationBoundingBox(const Point& size, 
+								const Matrix& start, 
+								const Matrix& end,
+								const double multiplier)
+{
+	Matrix rotation = end*start.Transpose();
+
+	double alpha = std::acos((rotation.Trace()-1)/2); // the angle of the rotation
+	double d = multiplier*size.Norm(); // the diameter of the circle the points are rotating on
+	double inflate = alpha > Pi/2 ? d : sin(alpha)*d; // sin(alpha) > 0
+
+	return Box(Point(0), size + inflate, start);
 }

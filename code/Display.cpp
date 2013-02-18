@@ -3,7 +3,7 @@
 #include "Display.hpp"
 
 Display* display;
-//#define DEBUG_DROP
+#define DEBUG_DROP
 
 void Render()
 {

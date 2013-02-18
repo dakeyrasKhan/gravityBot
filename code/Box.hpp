@@ -6,6 +6,7 @@
 class Box
 {
 public:
+	Box() { };
 	Box(const Point& center, const Point& size, const Matrix& rotation = Matrix::Identity)
 		: center(center), size(size), rotation(rotation) { };
 
@@ -13,6 +14,12 @@ public:
 	bool IntersectBox(Box b) const;						
 	bool IntersectSphere(Point p, const double radius) const;
 	bool IntersectCylinder(Point c0, Point c1, const double radius) const;
+
+	static Box GetRotationBoundingBox(const Point& size, 
+		const Matrix& start, const Matrix& end, const double multiplier = 1);
+	const Matrix& Rotation() const { return rotation; };
+	const Point& Center() const { return center; };
+	const Point& Size() const { return size; };
 
 private:
 	Point center, size;
