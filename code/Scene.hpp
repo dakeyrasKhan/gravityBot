@@ -49,10 +49,10 @@ private:
 	bool BallRobotCollision(const std::array<Box, 2>& baseBoxes, const std::array<Box, 2>& armsBoxes, 
 		const Point& ballPos, const bool testBallArm1) const;
 
-	bool ValidMoveBallEnvironment(const Point& a, const Point& b) const;
+	bool ValidMoveBallEnvironment(const Position& a, const Position& b) const;
 	bool ValidMoveRobotRobot(const Position& a, const Position& b) const;
 	bool ValidMoveRobotBallEnvironment(const Position& a, const Position& b, 
-		const int ballStatus);
+		const int ballStatus) const;
 
 	Object staticScene;
 	

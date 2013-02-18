@@ -205,19 +205,11 @@ Point Scene::Drop(Position p)
 
 bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus) const
 {
-	double length = Position((b-a)).Norm();
-	
-	if(length<=0.1)
-		return true;
-
-	Position mid = Position((a+b))/2.;
-	if((ballStatus & TRANSPORTING_BALL) != 0)
-		mid = robot.CorrectBallPos(mid);
-
-	if(Collision(mid,ballStatus))
+	if((IGNORE_BALL_ENVIRONMENT_COLLISION & ballStatus) == 0 && !ValidMoveBallEnvironment(a, b))
 		return false;
 
-	return ValidMove(a, mid, ballStatus) && ValidMove(mid, b, ballStatus);
+	return ValidMoveRobotRobot(a, b)
+		|| ValidMoveRobotBallEnvironment(a, b, ballStatus);
 }
 
 bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
@@ -233,7 +225,7 @@ bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 
 	bool isOk = true;
 	auto bb = robot.GetBoundingBoxes(a, b);
-	for(auto t : noBaseGroundTriangles)
+	for(auto t : triangles)
 	{
 		if(bb[0].IntersectSphere(ballPos, ballRadius)
 			|| bb[1].IntersectSphere(ballPos, ballRadius)
@@ -256,16 +248,93 @@ bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 	return ValidMoveBallRobot(a, mid) && ValidMoveBallRobot(mid, b);
 }
 
-bool Scene::ValidMoveBallEnvironment(const Point& a, const Point& b) const
+bool Scene::ValidMoveBallEnvironment(const Position& a, const Position& b) const
 {
-	double length = Point((b-a)).Norm();
+	double length = Position((a-b)).Norm();
 	if(length<=0.1)
 		return true;
 
-	Point mid = (a+b)/2.;
+	Position mid = robot.CorrectBallPos(Position((a+b)/2.));
+	Point ball;
+	ball[X] = mid[BALL_X];
+	ball[Y] = mid[BALL_Y];
+	ball[Z] = mid[BALL_Z];
+
 	for(auto t : triangles)
-		if(t.IntersectSphere(mid, ballRadius - 100*std::numeric_limits<double>::epsilon()))
+		if(t.IntersectSphere(ball, ballRadius - 100*std::numeric_limits<double>::epsilon()))
 			return false;
+}
+
+bool Scene::ValidMoveRobotRobot(const Position& a, const Position& b) const
+{
+	double length = Position((b-a)).Norm();
+	if(length<=0.1)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+	if(RobotCollision(robot.GetBaseBoxes(mid), robot.GetArmsBoxes(mid)))
+		return false;
+
+	return ValidMoveRobotRobot(a, mid) && ValidMoveRobotRobot(mid, b);
+}
+
+bool Scene::ValidMoveRobotBallEnvironment(const Position& a, 
+										  const Position& b, 
+										  const int ballStatus) const
+{
+	double length = Position((b-a)).Norm();
+	if(length<=0.1)
+		return true;
+
+	Point ballPos;
+	ballPos[X] = a[BALL_X];
+	ballPos[Y] = a[BALL_Y];
+	ballPos[Z] = a[BALL_Z];
+
+	bool isOk = true;
+	auto bb = robot.GetBoundingBoxes(a, b);
+
+	for(auto t : noBaseGroundTriangles)
+		if(bb[0].Intersect(t[0], t[1], t[2]) || bb[1].Intersect(t[0], t[1], t[2]))
+		{
+			isOk = false;
+			break;
+		}
+
+	if(isOk)
+		for(auto t : triangles)
+			if(bb[2].Intersect(t[0], t[1], t[2]) || bb[3].Intersect(t[0], t[1], t[2]))
+			{
+				isOk = false;
+				break;
+			}
+
+	if(isOk && ((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0) && (
+		bb[0].IntersectSphere(ballPos, ballRadius)
+		|| bb[1].IntersectSphere(ballPos, ballRadius)
+		|| bb[2].IntersectSphere(ballPos, ballRadius)
+		|| ((ballStatus & TAKING_BALL) == 0 && bb[3].IntersectSphere(ballPos, ballRadius))))
+		isOk = false;
+
+	if(isOk)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+	if((ballStatus & TRANSPORTING_BALL) != 0)
+		mid = robot.CorrectBallPos(mid);
+
+	auto baseBoxes = robot.GetBaseBoxes(mid);
+	auto armsBoxes = robot.GetArmsBoxes(mid);
+
+	if(EnvironmentCollision(baseBoxes, armsBoxes, Point(), false))
+		return false;
+
+	if((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0
+		&& BallRobotCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & TAKING_BALL) == 0))
+		return false;
+
+	return ValidMoveRobotBallEnvironment(a, mid, ballStatus) 
+		&& ValidMoveRobotBallEnvironment(mid, b, ballStatus);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
