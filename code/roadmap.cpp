@@ -160,16 +160,17 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 		path.add(_start);		
 	}
 
-	int lastId=-1;;
-	while(!idPathStack.empty()){
+	int lastId=-1;
+	while(!idPathStack.empty())
+	{
 		int curId = idPathStack.top();
 		if(lastId!=-1 && !adjacency[lastId][curId].drop.empty()){
 			for(auto p : adjacency[lastId][curId].drop.waypoints)
 				path.add(p);
 		}
-		else{
+		else
 			path.add(waypoints[curId]);
-		}
+
 		idPathStack.pop();
 		lastId=curId;
 	}

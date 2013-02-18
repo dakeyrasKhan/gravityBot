@@ -225,19 +225,35 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 {
 	double length = Position((b-a)).Norm();
-	
 	if(length<=0.1)
+		return true;
+
+	Point ballPos;
+	ballPos[X] = a[BALL_X];
+	ballPos[Y] = a[BALL_Y];
+	ballPos[Z] = a[BALL_Z];
+
+	bool isOk = true;
+	auto bb = robot.GetBoundingBoxes(a, b);
+	for(auto t : noBaseGroundTriangles)
+	{
+		if(bb[0].IntersectSphere(ballPos, ballRadius)
+			|| bb[1].IntersectSphere(ballPos, ballRadius)
+			|| bb[2].IntersectSphere(ballPos, ballRadius)
+			|| bb[3].IntersectSphere(ballPos, ballRadius))
+		{
+			isOk = false;
+			break;
+		}
+	}
+
+	if(isOk)
 		return true;
 
 	Position mid = Position((a+b))/2.;
 	std::array<Box, 2> baseBoxes = robot.GetBaseBoxes(mid);
 	std::array<Box, 2> armsBoxes = robot.GetArmsBoxes(mid);
-
-	Point ballPos;
-	ballPos[X] = mid[BALL_X];
-	ballPos[Y] = mid[BALL_Y];
-	ballPos[Z] = mid[BALL_Z];
-	if(BallRobotCollision(baseBoxes, armsBoxes, ballPos, true))
+	if(BallRobotCollision(baseBoxes, armsBoxes, ballPos, false))
 		return false;
 
 	return ValidMoveBallRobot(a, mid) && ValidMoveBallRobot(mid, b);
