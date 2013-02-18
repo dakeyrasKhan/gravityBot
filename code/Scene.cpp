@@ -322,29 +322,16 @@ bool Scene::ValidMoveRobotEnvironment(const Position& a,
 				break;
 			}
 
-	/*if(isOk && ((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0) && (
-		bb[0].IntersectSphere(ballPos, ballRadius)
-		|| bb[1].IntersectSphere(ballPos, ballRadius)
-		|| bb[2].IntersectSphere(ballPos, ballRadius)
-		|| ((ballStatus & TAKING_BALL) == 0 && bb[3].IntersectSphere(ballPos, ballRadius))))
-		isOk = false;*/
-
 	if(isOk)
 		return true;
 
 	Position mid = Position((a+b))/2.;
-	/*if((ballStatus & TRANSPORTING_BALL) != 0)
-		mid = robot.CorrectBallPos(mid);*/
 
 	auto baseBoxes = robot.GetBaseBoxes(mid);
 	auto armsBoxes = robot.GetArmsBoxes(mid);
 
 	if(EnvironmentCollision(baseBoxes, armsBoxes, Point(), false))
 		return false;
-
-	/*if((ballStatus & IGNORE_BALL_ROBOT_COLLISION) == 0
-		&& BallRobotCollision(baseBoxes, armsBoxes, ballPos, (ballStatus & TAKING_BALL) == 0))
-		return false;*/
 
 	return ValidMoveRobotEnvironment(a, mid) 
 		&& ValidMoveRobotEnvironment(mid, b);

@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
-	bool withRoadmap=true;
+	bool withRoadmap=false;
 	bool optimize=false;
 
 	Position start,end;

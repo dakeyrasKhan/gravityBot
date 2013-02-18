@@ -5,7 +5,7 @@
 
 Display* display;
 //#define DEBUG_DROP
-//#define DEBUG_BB
+#define DEBUG_BB
 
 void Render()
 {
@@ -126,7 +126,7 @@ void Display::Render()
 #ifdef DEBUG_BB
 	DrawObject(scene->RobotObject(Position(0)));
 	auto bb = scene->robot.GetBoundingBoxes(position, Position(0));
-	DrawObject(bb[3].GetObject());
+	DrawObject(bb[2].GetObject());
 #endif
 
 	glTranslated(position[BALL_X], position[BALL_Y], position[BALL_Z]);
