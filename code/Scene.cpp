@@ -239,8 +239,7 @@ bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 	{
 		if(bb[0].IntersectSphere(ballPos, ballRadius)
 			|| bb[1].IntersectSphere(ballPos, ballRadius)
-			|| bb[2].IntersectSphere(ballPos, ballRadius)
-			|| bb[3].IntersectSphere(ballPos, ballRadius))
+			|| bb[2].IntersectSphere(ballPos, ballRadius))
 		{
 			isOk = false;
 			break;
