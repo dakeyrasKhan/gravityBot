@@ -13,7 +13,7 @@ int main(int argc, char * argv[])
 
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
-	Scene scene("../scenes/scene3.obj", robotSize);
+	Scene scene("../scenes/scene2.obj", robotSize);
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
