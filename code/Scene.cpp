@@ -208,7 +208,20 @@ Point Scene::Drop(Position p)
 
 bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus) const
 {
-	if(((IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL) & ballStatus) == 0
+
+	double length = Position((b-a)).Norm();
+	if(length<=0.1)
+		return true;
+
+	Position mid = Position((a+b))/2.;
+	if((ballStatus & TRANSPORTING_BALL) != 0)
+		mid = robot.CorrectBallPos(mid);
+
+	if(Collision(mid, ballStatus))
+		return false;
+
+	return ValidMove(a, mid, ballStatus) && ValidMove(mid, b, ballStatus);
+	/*if(((IGNORE_BALL_ENVIRONMENT_COLLISION | TAKING_BALL) & ballStatus) == 0
 		&& !ValidMoveBallEnvironment(a, b))
 		return false;
 
@@ -221,7 +234,9 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 		
 
 	return ValidMoveRobotRobot(a, b)
-		&& ValidMoveRobotEnvironment(a, b);
+		&& ValidMoveRobotEnvironment(a, b);*/
+
+
 }
 
 bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const

@@ -9,6 +9,8 @@ Path findPath(std::vector<Adj>& neighbours,int cible){
 		if(n.node.id==cible)
 			return n.drop;
 	}
+
+	_CrtDbgBreak();
 }
 
 Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=false)
