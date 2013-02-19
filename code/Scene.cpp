@@ -263,7 +263,7 @@ bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
 bool Scene::ValidMoveBallEnvironment(const Position& a, const Position& b) const
 {
 	double length = Position((a-b)).Norm();
-	if(length<=0.1)
+	if(length<=0.01)
 		return true;
 
 	Position mid = robot.CorrectBallPos(Position((a+b)/2.));
@@ -282,7 +282,7 @@ bool Scene::ValidMoveBallEnvironment(const Position& a, const Position& b) const
 bool Scene::ValidMoveRobotRobot(const Position& a, const Position& b) const
 {
 	double length = Position((b-a)).Norm();
-	if(length<=0.1)
+	if(length<=0.01)
 		return true;
 
 	Position mid = Position((a+b))/2.;
@@ -296,7 +296,7 @@ bool Scene::ValidMoveRobotEnvironment(const Position& a,
 										  const Position& b) const
 {
 	double length = Position((b-a)).Norm();
-	if(length<=0.1)
+	if(length<=0.01)
 		return true;
 
 	bool isOk = true;
@@ -335,7 +335,7 @@ bool Scene::ValidMoveRobotEnvironment(const Position& a,
 bool Scene::ValidMoveMovingBallRobot(const Position& a, const Position& b) const
 {
 	double length = Position((b-a)).Norm();
-	if(length<=0.1)
+	if(length<=0.01)
 		return true;
 
 	Position mid = Position((a+b))/2.;
