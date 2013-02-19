@@ -104,12 +104,12 @@ void Display::Render()
 	Position position = UpdatePosition(lastRender, timediff);
 	if(scene->Collision(position, TAKING_BALL))
 	{
-		std::cout<<"Collision:"<<std::endl;
+		/*std::cout<<"Collision:"<<std::endl;
 		for(auto p : trajectory[lastWaypoint])
 			std::cout<<"start[]="<<p<<";"<<std::endl;
 		for(auto p : trajectory[lastWaypoint+1])
 			std::cout<<"end[]="<<p<<";"<<std::endl;
-		color[0] = .8; color[1] = 0; color[2] = 0;
+		color[0] = .8; color[1] = 0; color[2] = 0;*/
 	}
 	else
 	{

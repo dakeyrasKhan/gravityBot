@@ -7,6 +7,7 @@
 #include <random>
 #include <ctime>
 
+#define NB_DENSIFY 20
 #define NB_WAYPOINTS_WITH 300
 #define NB_WAYPOINTS_WITHOUT 1000
 
@@ -38,6 +39,7 @@ private:
 
 	std::mt19937 rng;
 	double GetGaussianValue(const double m, const double sigma);
+	Position GetGaussianPosition(const Position p, const double sigma);
 
 	std::vector<std::vector<Adj>> adjacency;
 	

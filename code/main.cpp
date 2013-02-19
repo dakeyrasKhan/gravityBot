@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
 	//start[0]=-Pi/4.;
 	//Position r = scene.robot.RandomCatch(posDrop);
 	
-	end[0]=0;end[1]=Pi/4.;end[2]=Pi/4.;end[3]=-3;end[4]=-2;
+	end[0]=0;end[1]=Pi/4.;end[2]=Pi/4.;end[3]=4;end[4]=-5;
 	end = scene.robot.CorrectBallPos(end);
 	try{
 		posDrop = scene.Drop(end);

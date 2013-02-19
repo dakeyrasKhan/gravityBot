@@ -270,7 +270,7 @@ Path Roadmap::OkCatch(Position start,Position end,Point* ball)
 Roadmap::Roadmap(Scene* scene) :
 	scene(scene),
 	tree(Coord(0), scene->MaxSize()*2),
-	rng(clock()),
+	rng(clock())
 {
 	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
 	std::cout<<"pass #1"<<std::endl;
@@ -282,10 +282,27 @@ Roadmap::Roadmap(Scene* scene) :
 
 		addNode(node, IGNORE_BALL_COLLISION);
 	}
-
+	std::cout<<"densify"<<std::endl;
+	std::vector<double> failRateOrdered = failRate;
+	sort(failRateOrdered.begin(),failRateOrdered.end());
+	double limit = failRateOrdered[failRateOrdered.size()-21];
+	//std::cout<<"limit : "<<limit<<std::endl;
+	int nbIterDens = waypoints.size();
+	for(int wp=0;wp<nbIterDens;wp++){
+		if(failRate[wp]>=limit){
+			//std::cout<<"let's generate "<<failRate[wp]<<std::endl;
+			int stop=waypoints.size()+NB_DENSIFY;
+			while(waypoints.size()<stop){
+				Position randompos = GetGaussianPosition(waypoints[wp].pos,1.);
+				FullNode node(randompos,waypoints.size(), false);
+				addNode(node, IGNORE_BALL_COLLISION);
+			}
+		}
+	}
+	
 	std::cout<<"pass #2"<<std::endl;
-
-	while(waypoints.size() < NB_WAYPOINTS_WITHOUT+NB_WAYPOINTS_WITH)
+	int stop = waypoints.size()+NB_WAYPOINTS_WITH;
+	while(waypoints.size() < stop)
 	{
 		Position randompos = Random(scene->NegSize(), scene->PosSize(), true, scene->robot);
 		FullNode node(randompos,waypoints.size(), true);
@@ -352,4 +369,11 @@ double Roadmap::GetGaussianValue(const double m, const double sigma)
 {
 	std::normal_distribution<> distrib(m, sigma);
 	return distrib(rng);
+}
+
+Position Roadmap::GetGaussianPosition(const Position p, const double sigma){
+	Position res;
+	for(int i=0;i<DIM_CONF;i++)
+		res[i]=GetGaussianValue(p[i],sigma);
+	return res;
 }
