@@ -13,7 +13,7 @@ int main(int argc, char * argv[])
 
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
-	Scene scene("../scenes/scene3.obj", robotSize);
+	Scene scene("../scenes/scene2.obj", robotSize);
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
@@ -55,7 +55,7 @@ int main(int argc, char * argv[])
 	//start[0]=-Pi/4.;
 	//Position r = scene.robot.RandomCatch(posDrop);
 	
-	end[0]=0;end[1]=Pi/4.;end[2]=Pi/4.;end[3]=-2;end[4]=-3;
+	end[0]=0;end[1]=Pi/4.;end[2]=Pi/4.;end[3]=-3;end[4]=-2;
 	end = scene.robot.CorrectBallPos(end);
 	try{
 		posDrop = scene.Drop(end);
@@ -64,7 +64,8 @@ int main(int argc, char * argv[])
 		std::cout<<"oops"<<std::endl;
 	}
 
-	//end.setBall(&posDrop);
+	end.setBall(&posDrop);
+	end[3]=3;end[4]=2;
 	Roadmap roadmap;
 	display.roadmap=NULL;
 	std::vector<bool> ballOnArm;
@@ -75,7 +76,7 @@ int main(int argc, char * argv[])
 		display.roadmap=&roadmap;
 		std::cout<<"roadmap created with "<<roadmap.waypoints.size()<<" waypoints"<<std::endl;	
 		//return 0;
-		Path p = roadmap.getPath(FullNode(start,-1,true),FullNode(end,-1,true),NULL,true);
+		Path p = roadmap.getPath(FullNode(start,-1,true),FullNode(end,-1,false),NULL,true);
 
 		if(optimize)
 			trajectory = scene.Optimize(p.waypoints);
@@ -103,8 +104,8 @@ int main(int argc, char * argv[])
 		std::cout << "empty trajectory" << std::endl;
 		trajectory.push_back(start);
 		ballOnArm.push_back(false);
-		//trajectory.push_back(end);
-		//ballOnArm.push_back(false);
+		trajectory.push_back(end);
+		ballOnArm.push_back(false);
 	}
 
 	display.SetTrajectory(trajectory, ballOnArm);

@@ -137,7 +137,8 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 			//if(!end.with)
 				//neighbour.pos=neighbour.pos.setBall(&end.pos.getBall());
 			if(end.with==neighbour.with && scene->ValidMove(end.pos,neighbour.pos,TAKING_BALL)){
-				std::cout<<"---atteignant neighbour id "<<neighbour.id<<std::endl;
+				if(main)
+					std::cout<<"---atteignant neighbour id "<<neighbour.id<<std::endl;
 				//Si c'est mieux
 				if(distances[neighbour.id]+Position(neighbour.pos-end.pos).Norm()<distToEnd){
 					distToEnd=distances[neighbour.id]+Position(neighbour.pos-end.pos).Norm();
@@ -233,7 +234,6 @@ void Roadmap::addNode(FullNode node, int flags)
 
 	std::vector<FullNode> neighbours;
 	tree.AddNeighbors(node.pos.ToCoord(), NB_NEIGHBOURS, node.with, neighbours);
-	std::cout<<"neighbours.size : "<<neighbours.size()<<std::endl;
 	double fail=0;
 	for(int n=0;n<neighbours.size();n++){
 		FullNode& neighbour = neighbours[n];
@@ -271,19 +271,28 @@ Roadmap::Roadmap(Scene* scene) :
 	tree(Coord(0), scene->MaxSize()*2)
 {
 	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
-	for(int i=0;i<2;i++)
+	std::cout<<"pass #1"<<std::endl;
+
+	while(waypoints.size() < NB_WAYPOINTS_WITHOUT)
 	{
-		std::cout<<"pass #"<<i<<std::endl;
+		Position randompos = Random(scene->NegSize(), scene->PosSize(), false, scene->robot);
+		FullNode node(randompos,waypoints.size(), false);
 
-		while(waypoints.size() < NB_WAYPOINTS/(2-i))
-		{
-			Position randompos = Random(scene->NegSize(), scene->PosSize(), i, scene->robot);
-			FullNode node(randompos,waypoints.size(), (i==1));
-
-			// Lors de la deuxième passe, on ajoute le flag BALL_ON_ARM
-			addNode(node, (i==1) ? TRANSPORTING_BALL:IGNORE_BALL_COLLISION);
-		}
+		// Lors de la deuxième passe, on ajoute le flag BALL_ON_ARM
+		addNode(node, IGNORE_BALL_COLLISION);
 	}
+
+	std::cout<<"pass #2"<<std::endl;
+
+	while(waypoints.size() < NB_WAYPOINTS_WITHOUT+NB_WAYPOINTS_WITH)
+	{
+		Position randompos = Random(scene->NegSize(), scene->PosSize(), true, scene->robot);
+		FullNode node(randompos,waypoints.size(), true);
+
+		// Lors de la deuxième passe, on ajoute le flag BALL_ON_ARM
+		addNode(node, TRANSPORTING_BALL);
+	}
+
 
 	// Pour chaque waypoints du robot tenant l'objet
 	int nbIter = waypoints.size();
