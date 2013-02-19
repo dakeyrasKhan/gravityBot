@@ -119,10 +119,11 @@ void Display::Render()
 	DrawObject(scene->RobotObject(position));
 	
 	if(roadmap!=NULL){
+		/*
 		for(int i=0;i<roadmap->waypoints.size();i++){
 			if(roadmap->failRate[i]>limit)
 				DrawObject(scene->RobotObject(roadmap->waypoints[i].pos));
-		}
+		}*/
 	}
 
 

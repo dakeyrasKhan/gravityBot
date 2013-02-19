@@ -14,7 +14,7 @@ int main(int argc, char * argv[])
 	Point robotSize;
 	robotSize[0] = 1; robotSize[1] = .5; robotSize[2] = 1.5;
 
-	Scene scene("../scenes/scene3.obj", robotSize);
+	Scene scene("../scenes/scene5.obj", robotSize);
 	Display display(&argc, argv, &scene);
 	
 	std::vector<Position> trajectory;
@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
 	
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
 	start[0] = -Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
-	start[3] = 7;start[4]=6;
+	start[3] = 5;start[4]=5;
 	start = scene.robot.CorrectBallPos(start);
 	Point posDrop;
 	try{
@@ -57,13 +57,13 @@ int main(int argc, char * argv[])
 	//Position r = scene.robot.RandomCatch(posDrop);
 	
 	end[0]=0;end[1]=Pi/4.;end[2]=Pi/4.;end[3]=-3;end[4]=-2;
-	//end = scene.robot.CorrectBallPos(end);
-	/*try{
+	end = scene.robot.CorrectBallPos(end);
+	try{
 		posDrop = scene.Drop(end);
 	}
 	catch(NoDropPointException e){
 		std::cout<<"oops"<<std::endl;
-	}*/
+	}
 
 	end.setBall(&posDrop);
 	//end[3]=7;end[4]=-5;

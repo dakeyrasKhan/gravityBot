@@ -278,7 +278,6 @@ Roadmap::Roadmap(Scene* scene) :
 		Position randompos = Random(scene->NegSize(), scene->PosSize(), false, scene->robot);
 		FullNode node(randompos,waypoints.size(), false);
 
-		// Lors de la deuxième passe, on ajoute le flag BALL_ON_ARM
 		addNode(node, IGNORE_BALL_COLLISION);
 	}
 
