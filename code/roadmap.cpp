@@ -3,6 +3,7 @@
 #include <exception>
 
 
+
 Path findPath(std::vector<Adj>& neighbours,int cible){
 	for(auto n : neighbours){
 		if(n.node.id==cible)
@@ -267,7 +268,8 @@ Path Roadmap::OkCatch(Position start,Position end,Point* ball)
 
 Roadmap::Roadmap(Scene* scene) :
 	scene(scene),
-	tree(Coord(0), scene->MaxSize()*2)
+	tree(Coord(0), scene->MaxSize()*2),
+	rng(clock()),
 {
 	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
 	for(int i=0;i<2;i++)
@@ -335,3 +337,10 @@ Roadmap::Roadmap(Scene* scene) :
 
 	}	
 } 
+
+
+double Roadmap::GetGaussianValue(const double m, const double sigma)
+{
+	std::normal_distribution<> distrib(m, sigma);
+	return distrib(rng);
+}
