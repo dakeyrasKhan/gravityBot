@@ -5,7 +5,7 @@
 
 Display* display;
 //#define DEBUG_DROP
-#define DEBUG_BB
+//#define DEBUG_BB
 
 void Render()
 {

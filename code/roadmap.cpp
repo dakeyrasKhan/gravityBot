@@ -233,6 +233,7 @@ void Roadmap::addNode(FullNode node, int flags)
 
 	std::vector<FullNode> neighbours;
 	tree.AddNeighbors(node.pos.ToCoord(), NB_NEIGHBOURS, node.with, neighbours);
+	std::cout<<"neighbours.size : "<<neighbours.size()<<std::endl;
 	double fail=0;
 	for(int n=0;n<neighbours.size();n++){
 		FullNode& neighbour = neighbours[n];

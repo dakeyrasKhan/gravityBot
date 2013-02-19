@@ -42,7 +42,7 @@ void QuadTree::AddValue(const FullNode& value)
 
 int QuadTree::FindSon(const Coord& coord) const
 {
-	return(coord[0] > center[0] ? 0 : 2) + (coord[1] > center[1] ? 1 : 0);
+	return(coord[0] > center[0] ? 2 : 0) + (coord[1] > center[1] ? 1 : 0);
 }
 
 

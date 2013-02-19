@@ -34,7 +34,7 @@ public:
 class QuadTree
 {
 public:
-	QuadTree() : sons(nullptr) { };
+	QuadTree() : sons(nullptr),cWith(0),cWithout(0) { };
 	QuadTree(const Coord& center, const double size);
 	QuadTree(const double centerX, const double centerZ, const double size);
 	~QuadTree();
