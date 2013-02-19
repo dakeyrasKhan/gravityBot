@@ -270,11 +270,7 @@ Path Roadmap::OkCatch(Position start,Position end,Point* ball)
 Roadmap::Roadmap(Scene* scene) :
 	scene(scene),
 	tree(Coord(0), scene->MaxSize()*2),
-<<<<<<< HEAD
 	rng(clock())
-=======
-	rng(clock()),
->>>>>>> 4e5e087b19b473a9b955380d027be68c81e915b4
 {
 	// On fait 2 roadmap, une avec le robot tenant l'objet, et une sans
 	std::cout<<"pass #1"<<std::endl;
