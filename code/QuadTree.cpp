@@ -2,23 +2,28 @@
 
 
 QuadTree::QuadTree(const Coord& center, const double size) : 
-	size(size), sons(nullptr), center(center), cWith(0), cWithout(0)
+	size(size), center(center), cWith(0), cWithout(0)
 {
-
+	for(int i=0; i<4; i++)
+		sons[i] = nullptr;
 }
 
 QuadTree::QuadTree(const double centerX, const double centerZ, const double size) : 
-	size(size), sons(nullptr), cWith(0), cWithout(0)
+	size(size), cWith(0), cWithout(0)
 {
 	center[0] = centerX;
 	center[1] = centerZ;
+
+	for(int i=0; i<4; i++)
+		sons[i] = nullptr;
 }
 
 
 QuadTree::~QuadTree()
 {
-	if(sons != nullptr)
-		delete[] sons;
+	for(int i=0; i<4; i++)
+		if(sons[i] == nullptr)
+			delete sons[i];
 }
 
 
@@ -29,14 +34,14 @@ void QuadTree::AddValue(const FullNode& value)
 	else
 		cWithout++;
 
-	if(sons == nullptr)
+	if(sons[0] == nullptr)
 	{
 		values.push_back(value);
 		if(values.size() > maxCluster)
 			Split();
 	}
 	else
-		sons[FindSon(value.pos.ToCoord())].AddValue(value);
+		sons[FindSon(value.pos.ToCoord())]->AddValue(value);
 }
 
 
@@ -48,16 +53,15 @@ int QuadTree::FindSon(const Coord& coord) const
 
 void QuadTree::Split()
 {
-	sons = new QuadTree[4];
 	double newSize = size/2;
 
-	sons[0] = QuadTree(center[0]-newSize/2, center[1]-newSize/2, newSize);
-	sons[1] = QuadTree(center[0]-newSize/2, center[1]+newSize/2, newSize);
-	sons[2] = QuadTree(center[0]+newSize/2, center[1]-newSize/2, newSize);
-	sons[3] = QuadTree(center[0]+newSize/2, center[1]+newSize/2, newSize);
+	sons[0] = new QuadTree(center[0]-newSize/2, center[1]-newSize/2, newSize);
+	sons[1] = new QuadTree(center[0]-newSize/2, center[1]+newSize/2, newSize);
+	sons[2] = new QuadTree(center[0]+newSize/2, center[1]-newSize/2, newSize);
+	sons[3] = new QuadTree(center[0]+newSize/2, center[1]+newSize/2, newSize);
 
 	for(auto x : values)
-		sons[FindSon(x.pos.ToCoord())].AddValue(x);
+		sons[FindSon(x.pos.ToCoord())]->AddValue(x);
 
 	values.clear();
 }
@@ -96,7 +100,7 @@ void QuadTree::AddNeighborsInCube(const Coord& p, const double cubeSize, const b
 {
 	if(IsInCube(p, center, size+cubeSize))
 	{
-		if(sons == nullptr)
+		if(sons[0] == nullptr)
 		{
 			for(auto x : values)
 				if(x.with == withBall && IsInCube(x.pos.ToCoord(), p, cubeSize))
@@ -104,7 +108,7 @@ void QuadTree::AddNeighborsInCube(const Coord& p, const double cubeSize, const b
 		}
 		else
 			for(int i=0; i<4; i++)
-				sons[i].AddNeighborsInCube(p, cubeSize, withBall, neighbors);
+				sons[i]->AddNeighborsInCube(p, cubeSize, withBall, neighbors);
 	}
 }
 
@@ -118,7 +122,7 @@ int QuadTree::CountInCube(const Coord& p, const double cubeSize, const bool with
 {
 	if(IsInCube(p, center, size+cubeSize))
 	{
-		if(sons == nullptr)
+		if(sons[0] == nullptr)
 		{
 			int c=0;
 			for(auto x : values)
@@ -132,7 +136,7 @@ int QuadTree::CountInCube(const Coord& p, const double cubeSize, const bool with
 		{
 			int c=0;
 			for(int i=0; i<4; i++)
-				c += sons[i].CountInCube(p, cubeSize, with);
+				c += sons[i]->CountInCube(p, cubeSize, with);
 			return c;
 		}
 	}

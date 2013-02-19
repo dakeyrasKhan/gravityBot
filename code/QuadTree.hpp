@@ -34,7 +34,6 @@ public:
 class QuadTree
 {
 public:
-	QuadTree() : sons(nullptr) { };
 	QuadTree(const Coord& center, const double size);
 	QuadTree(const double centerX, const double centerZ, const double size);
 	~QuadTree();
@@ -54,7 +53,7 @@ private:
 	int CountInCube(const Coord& p, const double cubeSize, const bool with) const;
 	static bool IsInCube(const Coord& p, const Coord& c, const double cubeSize);
 
-	QuadTree* sons;
+	QuadTree* sons[4];
 	double size;
 	Coord center;
 
