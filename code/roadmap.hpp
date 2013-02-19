@@ -5,7 +5,7 @@
 #include <queue>
 #include <stack>
 
-#define NB_WAYPOINTS 600
+#define NB_WAYPOINTS 100
 
 #define NB_DROP 1
 
@@ -19,7 +19,7 @@ struct Adj{
 
 class Roadmap{
 public:
-	Roadmap(){};
+	Roadmap() : tree(0, 0, 1) {};
 	Roadmap(Scene*);
 	void explore(int,int);
 	Path getPath(FullNode,FullNode,Point*,bool);

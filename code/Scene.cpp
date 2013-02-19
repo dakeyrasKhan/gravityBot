@@ -221,7 +221,7 @@ bool Scene::ValidMove(const Position& a, const Position& b, const int ballStatus
 		
 
 	return ValidMoveRobotRobot(a, b)
-		|| ValidMoveRobotEnvironment(a, b);
+		&& ValidMoveRobotEnvironment(a, b);
 }
 
 bool Scene::ValidMoveBallRobot(const Position& a, const Position& b) const
@@ -298,11 +298,6 @@ bool Scene::ValidMoveRobotEnvironment(const Position& a,
 	double length = Position((b-a)).Norm();
 	if(length<=0.1)
 		return true;
-
-	Point ballPos;
-	ballPos[X] = a[BALL_X];
-	ballPos[Y] = a[BALL_Y];
-	ballPos[Z] = a[BALL_Z];
 
 	bool isOk = true;
 	auto bb = robot.GetBoundingBoxes(a, b);
