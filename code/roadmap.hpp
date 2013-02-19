@@ -4,6 +4,8 @@
 #include "path.hpp"
 #include <queue>
 #include <stack>
+#include <random>
+#include <ctime>
 
 #define NB_WAYPOINTS_WITH 300
 #define NB_WAYPOINTS_WITHOUT 1000
@@ -33,6 +35,9 @@ private:
 	QuadTree tree;
 	int nbClasses;
 	std::vector<int> classes;
+
+	std::mt19937 rng;
+	double GetGaussianValue(const double m, const double sigma);
 
 	std::vector<std::vector<Adj>> adjacency;
 	
