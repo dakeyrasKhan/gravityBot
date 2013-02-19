@@ -39,6 +39,7 @@ Display::Display(int* argc, char* argv[], Scene* scene) : scene(scene), width(80
 	display = this;
 	isTrajectoryEnded = true;
 	lastWaypoint = 0;
+	limit=0;
 	for(auto& x : keys)
 		x = false;
 
@@ -103,6 +104,11 @@ void Display::Render()
 	Position position = UpdatePosition(lastRender, timediff);
 	if(scene->Collision(position, TAKING_BALL))
 	{
+		std::cout<<"Collision:"<<std::endl;
+		for(auto p : trajectory[lastWaypoint])
+			std::cout<<"start[]="<<p<<";"<<std::endl;
+		for(auto p : trajectory[lastWaypoint+1])
+			std::cout<<"end[]="<<p<<";"<<std::endl;
 		color[0] = .8; color[1] = 0; color[2] = 0;
 	}
 	else
@@ -113,9 +119,10 @@ void Display::Render()
 	DrawObject(scene->RobotObject(position));
 	
 	if(roadmap!=NULL){
-		/*
-		for(auto p : roadmap->waypoints)
-			DrawObject(scene->RobotObject(p.pos));*/
+		for(int i=0;i<roadmap->waypoints.size();i++){
+			if(roadmap->failRate[i]>limit)
+				DrawObject(scene->RobotObject(roadmap->waypoints[i].pos));
+		}
 	}
 
 
@@ -301,6 +308,12 @@ void Display::KeyboardFunc(unsigned char key, bool down)
 		break;
 	case '0':
 		keys[N_0] = down;
+		break;
+	case '+':
+		limit+=0.01;
+		break;
+	case '-':
+		limit-=0.01;
 		break;
 	case '.':
 		keys[DOT] = down;

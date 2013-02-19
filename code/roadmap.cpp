@@ -86,7 +86,7 @@ Path Roadmap::getPath(FullNode _start, FullNode _end,Point *pos=NULL,bool main=f
 		for(int n=0;n<adjacency[current.id].size();n++){
 			Adj& neighbour = adjacency[current.id][n];
 			if(pos!=NULL){
-				if(!scene->ValidMove(current.setBall(pos),neighbour.node.setBall(pos),TAKING_BALL)){
+				if(!scene->ValidMoveBallRobot(current.setBall(pos),neighbour.node.setBall(pos))){
 					continue;
 				}
 			}

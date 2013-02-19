@@ -2,7 +2,7 @@
 #include "Vector.hpp"
 #include <vector>
 
-const int NB_NEIGHBOURS = 5;
+const int NB_NEIGHBOURS = 50;
 
 class FullNode{
 public:

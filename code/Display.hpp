@@ -21,6 +21,7 @@ public:
 	void SetTrajectory(const std::vector<Position>& trajectory, const std::vector<bool>& ballOnArm);
 	void SetTrajectory(const Position& position, const bool ballOnArm = false);
 	Roadmap* roadmap;
+	double limit;
 
 private:
 	typedef std::chrono::high_resolution_clock clock;

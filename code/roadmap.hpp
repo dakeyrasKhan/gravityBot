@@ -5,8 +5,8 @@
 #include <queue>
 #include <stack>
 
-#define NB_WAYPOINTS_WITH 300
-#define NB_WAYPOINTS_WITHOUT 1000
+#define NB_WAYPOINTS_WITH 5
+#define NB_WAYPOINTS_WITHOUT 500
 
 #define NB_DROP 1
 
@@ -26,6 +26,7 @@ public:
 	Path getPath(FullNode,FullNode,Point*,bool);
 	Path OkCatch(Position start,Position end,Point* ball);
 	std::vector<FullNode> waypoints;
+	std::vector<double> failRate;
 private:
 	void addNode(FullNode,int);
 	Scene* scene;
@@ -34,5 +35,5 @@ private:
 	std::vector<int> classes;
 
 	std::vector<std::vector<Adj>> adjacency;
-	std::vector<double> failRate;
+	
 };
