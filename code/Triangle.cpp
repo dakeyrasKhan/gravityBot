@@ -26,15 +26,16 @@ bool Triangle::IntersectSphere(const Point& center, const double radius) const
 
 	double radius2 = radius*radius;
 	for(int i=0; i<3; i++)
-		if( (p[i]|p[i])  < radius2)
+		if( p[i].Norm2()  < radius2)
 			return true;
-                    
+             
+	// This is the buggy part
 	for(int i=0; i<3; i++)
 	{
 		e[i] = p[i] - p[(i+1)%3];
 		double n2 = e[i].Norm2();
-		double d = -(p[i] | e[i]);
-		if(d > 0 && d < n2 && p[i].Norm2() - d*d/n2 < radius2 )
+		double d = (p[i] | e[i]);
+		if(d > 0 && -d < n2 && p[i].Norm2() - d*d/n2 < radius2 )
 			return true;
 	}
 

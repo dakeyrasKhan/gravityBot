@@ -22,24 +22,21 @@ int main(int argc, char * argv[])
 	bool optimize=false;
 
 	Position start,end;
-	/*
-	start[0]=5.44703   ;
-	start[1]=1.53704   ;
-	start[2]=-0.175478 ;
-	start[3]=0.548019  ;
-	start[4]=-3.63848  ;
-	start[5]=-0.0519309;
-	start[6]=1.92743   ;
-	start[7]=-2.83547  ;
+	
+	start[0]=0;
+	start[1]=0;
+	start[2]=2;
+	start[3]=-3;
+	start[4]=-3;
+	start=scene.robot.CorrectBallPos(start);
 
-	end[0]=3.44801;
-	end[1]=0.977036;
-	end[2]=1.87892;
-	end[3]=-1.11081;
-	end[4]=-3.17048;
-	end[5]=-0.0519309;
-	end[6]=0.2;
-	end[7]=-2.83547;*/
+	end[0]=0;
+	end[1]=0;
+	end[2]=2;
+	end[3]=3;
+	end[4]=3;
+	end=scene.robot.CorrectBallPos(end);
+
 	
 	//start=Random(scene.NegSize(),scene.PosSize(),true,scene.robot);
 	start[0] = -Pi/4.;start[1]=Pi/4.;start[2]=Pi/4.;
@@ -104,11 +101,12 @@ int main(int argc, char * argv[])
 	if(!withRoadmap || trajectory.empty()){
 		std::cout << "empty trajectory" << std::endl;
 		trajectory.push_back(start);
-		ballOnArm.push_back(false);
+		ballOnArm.push_back(true);
 		trajectory.push_back(end);
-		ballOnArm.push_back(false);
+		ballOnArm.push_back(true);
 	}
 
+	//std::cout << scene.ValidMove(start, end, TRANSPORTING_BALL) << std::endl;
 	display.SetTrajectory(trajectory, ballOnArm);
 
 
